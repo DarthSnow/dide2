@@ -309,7 +309,7 @@ function TSearchWidget.getOptions: TSynSearchOptions;
 begin
   result := [];
   if chkRegex.Checked     then
-    result += [ssoRegExpr];
+    result += [ssoRegExpr, ssoRegExprMultiLine];
   if chkWWord.Checked     then
     result += [ssoWholeWord];
   if chkBack.Checked      then
@@ -468,6 +468,7 @@ begin
     search.Sensitive := ssoMatchCase in options;
     search.Whole := ssoWholeWord in options;
     search.RegularExpressions:= ssoRegExpr in options;
+    search.RegExprMultiLine:=ssoRegExpr in options;
     search.Pattern:=fToFind;
     if (fFindScope = scSel) and fDoc.SelAvail then
     begin
