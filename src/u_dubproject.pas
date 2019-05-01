@@ -151,6 +151,7 @@ type
     procedure executeDub(command: TDubCommand; const runArgs: string = '');
     procedure restorePersistentMetadata;
     procedure storePersistentMetadata;
+    function getSubPackage(const value: string): TJSONObject;
   public
     constructor create(aOwner: TComponent); override;
     destructor destroy; override;
@@ -198,6 +199,7 @@ type
     property json: TJSONObject read fJSON;
     property packageName: string read fPackageName;
     property isSDL: boolean read fIsSdl;
+    property subPackage[value: string]: TJSONObject read getSubPackage;
   end;
 
   // these 9 built types always exist
@@ -1201,6 +1203,29 @@ function TDubProject.getPersistentEnvironment: TStrings;
 begin
   result := fMetaEnv;
 end;
+
+function TDubProject.getSubPackage(const value: string): TJSONObject;
+var
+  i: integer;
+  a: TJSONArray;
+  o: TJSONObject;
+  d: TJSONData;
+begin
+  result := nil;
+  if value.isBlank or fJSON.isNil or not fJSON.findArray('subPackages', a) then
+    exit;
+  for i := 0 to a.Count-1 do
+  begin
+    d := a.Items[i];
+    if d.JSONType <> jtObject then
+      continue;
+    o := TJSONObject(d);
+    if not o.findAny('name', d) then
+      continue;
+    result := o;
+    exit;
+  end;
+end;
 {$ENDREGION --------------------------------------------------------------------}
 
 {$REGION JSON to internal fields -----------------------------------------------}
@@ -1500,6 +1525,7 @@ procedure TDubProject.updateImportPathsFromJson;
     u: PSemVer;
     i: integer;
     k: integer;
+    x: integer;
     c: TJSONObject;
     b: TStringList;
   begin
@@ -1512,6 +1538,15 @@ procedure TDubProject.updateImportPathsFromJson;
       try for i := 0 to deps.Count-1 do
       begin
         n := deps.Names[i];
+
+        // inline sub package
+        x := pos(':', n);
+        if x > 0 then
+        begin
+          // in case something has to be done with the subpackage...
+          // c := subPackage[n[x .. n.length]];
+          continue;
+        end;
 
         // local path specified
         if deps.findObject(n, c) and c.findAny('path', j) then
