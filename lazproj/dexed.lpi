@@ -883,11 +883,9 @@
       <CompilerMessages>
         <IgnoredMessages idx5024="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dRELEASE
--dGTK_REMOVE_CLIPBOARD_NULL"/>
-      <OtherDefines Count="2">
+      <CustomOptions Value="-dRELEASE"/>
+      <OtherDefines Count="1">
         <Define0 Value="RELEASE"/>
-        <Define1 Value="GTK_REMOVE_CLIPBOARD_NULL"/>
       </OtherDefines>
     </Other>
   </CompilerOptions>
