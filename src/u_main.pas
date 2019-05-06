@@ -3171,7 +3171,7 @@ begin
   fRunProc := TDexedProcess.Create(nil);
   if redirect then
   begin
-  	fRunProc.Options := [poStderrToOutPut, poUsePipes, poWaitOnExit];
+  	fRunProc.Options := [poStderrToOutPut, poUsePipes];
   	fRunProc.ShowWindow := swoHIDE;
   	fRunProc.OnReadData := @asyncprocOutput;
   	fRunProc.OnTerminate:= @asyncprocTerminate;
