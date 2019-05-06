@@ -1544,7 +1544,7 @@ procedure TDubProject.updateImportPathsFromJson;
         if x > 0 then
         begin
           // in case something has to be done with the subpackage...
-          // c := subPackage[n[x .. n.length]];
+          // c := subPackage[n[x + 1 .. n.length]];
           continue;
         end;
 
