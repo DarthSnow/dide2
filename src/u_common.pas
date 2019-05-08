@@ -1307,6 +1307,8 @@ begin
   result := false;
   case ext of
     '.d', '.di', '.dd', '.lst', '.md', '.txt', '.map' , '.sx': result := true;
+    else if hasCppSyntax(ext) then
+      result := true;
   end;
 end;
 
