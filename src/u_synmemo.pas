@@ -3538,6 +3538,7 @@ begin
           decCallTipsLvl;
     end;
     VK_RETURN:
+    if isDSource then
     begin
       fCanDscan:=true;
       line := LineText;
