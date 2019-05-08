@@ -233,8 +233,7 @@ string patchPascalString(size_t lenLimit = 0)(string value)
                     app ~= value[i];
                 else
                     app ~= "'#39";
-                if (i != len-1)
-                    app ~= "'";
+                app ~= "'";
                 skip = false;
                 break;
             }
