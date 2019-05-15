@@ -240,11 +240,11 @@ begin
   if fQueryParams then
   begin
     prm := '';
-    if InputQuery('Parameters', '', prm) then
+    if InputQuery('Parameters', '', prm) and not prm.isBlank then
     begin
       prm := fSymStringExpander.expand(prm);
-      arg := StringReplace(fParameters.Text, '<$1>', prm, [rfReplaceAll]);
-      if prm.isNotEmpty and (arg = fParameters.Text) then
+      arg := StringReplace(fProcess.Parameters.Text, '<$1>', prm, [rfReplaceAll]);
+      if prm.isNotEmpty and (arg = fProcess.Parameters.Text) then
         fProcess.Parameters.AddText(prm)
       else
         fProcess.Parameters.Text := arg;
