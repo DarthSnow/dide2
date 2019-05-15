@@ -100,7 +100,7 @@ struct Formater
 }
 
 static immutable string exePath, datPath, shortCutPath;
-version(linux) immutable bool asSu;
+version(linux) immutable string asSu;
 
 static this()
 {
@@ -112,7 +112,7 @@ static this()
     }
     else
     {
-        asSu = environment.get("SUDO_USER") != "";
+        asSu = environment.get("SUDO_USER");
         if (asSu)
         {
             exePath = "/usr/bin/";
@@ -333,7 +333,11 @@ bool installResource(ref ResType resource)
     const string fname = resource.targetFilename;
     const string path = fname.dirName;
     if (!path.exists)
+    {
         mkdirRecurse(path);
+        version(linux) if (asSu && resource.kind != Kind.exe)
+            executeShell("chown " ~ asSu ~ " " ~ path);
+    }
     if (!path.exists)
         return false;
     
@@ -343,8 +347,13 @@ bool installResource(ref ResType resource)
         f.rawWrite(resource.data);
         f.close;
         
-        version(linux) if (resource.kind == Kind.exe && fname.exists)
-            executeShell("chmod a+x " ~ fname);
+        version(linux)
+        {
+            if (resource.kind == Kind.exe && fname.exists)
+                executeShell("chmod a+x " ~ fname);
+            else if (fname.exists && asSu)
+                executeShell("chown " ~ asSu ~ " " ~ fname);
+        }
     } 
     catch (Exception e) 
         return false;
