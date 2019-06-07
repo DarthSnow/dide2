@@ -292,6 +292,7 @@ procedure TProjectInspectWidget.projFocused(project: ICommonProject);
 begin
   fLastFileOrFolder := '';
   fProject := project;
+  TreeFilterEdit1.Text:= '';
   DetectNewDubSources(nil);
   updateButtons;
   if Visible then
