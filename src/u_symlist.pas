@@ -584,6 +584,7 @@ begin
   if fDoc = document then
     exit;
   fDoc := document;
+  TreeFilterEdit1.Text:='';
   if not Visible then
     exit;
   if fAutoRefresh then
