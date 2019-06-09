@@ -1601,7 +1601,18 @@ procedure TDubProject.updateImportPathsFromJson;
           else if (p = 'master') or (v = '~master') then
             q.init('v0.0.0-master')
           else
-            q.init('v' + p);
+          begin
+            try
+              q.init('v' + p);
+            except
+              // while editing a DUB project from the DUB project editor,
+              // '<value>', i.e "undefined JSON value" can be found here.
+              // So get DUB to fetch the most recent if the 'autoFetch' IDE option
+              // is ON, even if another version is set later.
+              o := '>=';
+              q.init('v0.0.0');
+            end;
+          end;
 
           // Finds a match for the version in the local packages list.
           u := TDubLocalPackages.find(n, o, q, pck);
