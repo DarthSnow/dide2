@@ -539,6 +539,7 @@ begin
     fHasSearched := true;
     fHasRestarted := false;
     chkFromCur.Checked := true;
+    fDoc.setFocus;
   end;
   updateImperative;
 end;
