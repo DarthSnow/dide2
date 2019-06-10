@@ -507,6 +507,10 @@ begin
 end;
 
 procedure TSearchWidget.actFindNextExecute(sender: TObject);
+const
+  r: array[boolean] of string = ('beginning', 'end');
+var
+  s: string;
 begin
   if fDoc.isNil then
     exit;
@@ -533,7 +537,14 @@ begin
       fDoc.CaretX := fDoc.CaretX + 1;
   end;
   if fDoc.SearchReplace(fToFind, '', getOptions) = 0 then
-    dlgOkInfo('the expression cannot be found')
+  begin
+    s := format('the expression cannot be found, restart from the %s ?', [r[chkBack.Checked]]);
+    if dlgOkCancel(s) = mrOk then
+    begin
+      chkFromCur.Checked:=false;
+      actFindNextExecute(nil);
+    end;
+  end
   else
   begin
     fHasSearched := true;
