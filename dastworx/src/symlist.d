@@ -62,7 +62,7 @@ string makeSymbolTypeArray()
 
 mixin(makeSymbolTypeArray);
 
-class SymbolListBuilder(ListFmt Fmt): ASTVisitor
+final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
 {
     private immutable bool _deep;
 
@@ -129,7 +129,7 @@ class SymbolListBuilder(ListFmt Fmt): ASTVisitor
         }
     }
 
-    final string serialize()
+    string serialize()
     {
         static if (Fmt == ListFmt.Pas)
         {
@@ -148,7 +148,7 @@ class SymbolListBuilder(ListFmt Fmt): ASTVisitor
     }
 
     /// visitor implementation if the declaration has a "name".
-    final void namedVisitorImpl(DT, SymbolType st, bool dig = true)(const(DT) dt)
+    void namedVisitorImpl(DT, SymbolType st, bool dig = true)(const(DT) dt)
     if (__traits(hasMember, DT, "name"))
     {
         static if (Fmt == ListFmt.Pas)
@@ -216,7 +216,7 @@ class SymbolListBuilder(ListFmt Fmt): ASTVisitor
     }
 
     /// visitor implementation for special cases.
-    final void otherVisitorImpl(DT, bool dig = true)
+    void otherVisitorImpl(DT, bool dig = true)
         (const(DT) dt, SymbolType st, string name, size_t line, size_t col)
     {
         static if (Fmt == ListFmt.Pas)
@@ -254,64 +254,64 @@ class SymbolListBuilder(ListFmt Fmt): ASTVisitor
         }
     }
 
-    final override void visit(const AliasDeclaration decl)
+    override void visit(const AliasDeclaration decl)
     {
         if (decl.initializers.length)
             namedVisitorImpl!(AliasInitializer, SymbolType._alias)(decl.initializers[0]);
     }
 
-    final override void visit(const AnonymousEnumMember decl)
+    override void visit(const AnonymousEnumMember decl)
     {
         namedVisitorImpl!(AnonymousEnumMember, SymbolType._enum)(decl);
     }
 
-    final override void visit(const AnonymousEnumDeclaration decl)
+    override void visit(const AnonymousEnumDeclaration decl)
     {
         decl.accept(this);
     }
 
-    final override void visit(const AutoDeclarationPart decl)
+    override void visit(const AutoDeclarationPart decl)
     {
         otherVisitorImpl(decl, SymbolType._variable, decl.identifier.text,
             decl.identifier.line, decl.identifier.column);
     }
 
-    final override void visit(const ClassDeclaration decl)
+    override void visit(const ClassDeclaration decl)
     {
         namedVisitorImpl!(ClassDeclaration, SymbolType._class)(decl);
     }
 
-    final override void visit(const Constructor decl)
+    override void visit(const Constructor decl)
     {
         otherVisitorImpl(decl, SymbolType._function, "ctor", decl.line, decl.column);
     }
 
-    final override void visit(const Destructor decl)
+    override void visit(const Destructor decl)
     {
         otherVisitorImpl(decl, SymbolType._function, "dtor", decl.line, decl.column);
     }
 
-    final override void visit(const EnumDeclaration decl)
+    override void visit(const EnumDeclaration decl)
     {
         namedVisitorImpl!(EnumDeclaration, SymbolType._enum)(decl);
     }
 
-    final override void visit(const EponymousTemplateDeclaration decl)
+    override void visit(const EponymousTemplateDeclaration decl)
     {
         namedVisitorImpl!(EponymousTemplateDeclaration, SymbolType._template)(decl);
     }
 
-    final override void visit(const FunctionDeclaration decl)
+    override void visit(const FunctionDeclaration decl)
     {
         namedVisitorImpl!(FunctionDeclaration, SymbolType._function)(decl);
     }
 
-    final override void visit(const InterfaceDeclaration decl)
+    override void visit(const InterfaceDeclaration decl)
     {
         namedVisitorImpl!(InterfaceDeclaration, SymbolType._interface)(decl);
     }
 
-    final override void visit(const ImportDeclaration decl)
+    override void visit(const ImportDeclaration decl)
     {
         foreach (const(SingleImport) si; decl.singleImports)
         {
@@ -330,44 +330,44 @@ class SymbolListBuilder(ListFmt Fmt): ASTVisitor
                 identifierChain.identifiers[0].column);
     }
 
-    final override void visit(const Invariant decl)
+    override void visit(const Invariant decl)
     {
         otherVisitorImpl(decl, SymbolType._function, "invariant", decl.line, 0);
     }
 
-    final override void visit(const MixinTemplateDeclaration decl)
+    override void visit(const MixinTemplateDeclaration decl)
     {
         namedVisitorImpl!(TemplateDeclaration, SymbolType._mixin)(decl.templateDeclaration);
     }
 
-    final override void visit(const Postblit pb)
+    override void visit(const Postblit pb)
     {
         otherVisitorImpl(pb, SymbolType._function, "postblit", pb.line, pb.column);
         pb.accept(this);
     }
 
-    final override void visit(const StructDeclaration decl)
+    override void visit(const StructDeclaration decl)
     {
         namedVisitorImpl!(StructDeclaration, SymbolType._struct)(decl);
     }
 
-    final override void visit(const TemplateDeclaration decl)
+    override void visit(const TemplateDeclaration decl)
     {
         namedVisitorImpl!(TemplateDeclaration, SymbolType._template)(decl);
     }
 
-    final override void visit(const UnionDeclaration decl)
+    override void visit(const UnionDeclaration decl)
     {
         namedVisitorImpl!(UnionDeclaration, SymbolType._union)(decl);
     }
 
-    final override void visit(const Unittest decl)
+    override void visit(const Unittest decl)
     {
         otherVisitorImpl(decl, SymbolType._unittest, format("test%.4d",utc++),
             decl.line, decl.column);
     }
 
-    final override void visit(const VariableDeclaration decl)
+    override void visit(const VariableDeclaration decl)
     {
         if (decl.declarators)
             foreach (elem; decl.declarators)
@@ -376,24 +376,28 @@ class SymbolListBuilder(ListFmt Fmt): ASTVisitor
             visit(decl.autoDeclaration);
     }
 
-    final override void visit(const StaticConstructor decl)
+    override void visit(const StaticConstructor decl)
     {
         otherVisitorImpl(decl, SymbolType._function, "static ctor", decl.line, decl.column);
     }
 
-    final override void visit(const StaticDestructor decl)
+    override void visit(const StaticDestructor decl)
     {
         otherVisitorImpl(decl, SymbolType._function, "static dtor", decl.line, decl.column);
     }
 
-    final override void visit(const SharedStaticConstructor decl)
+    override void visit(const SharedStaticConstructor decl)
     {
         otherVisitorImpl(decl, SymbolType._function, "shared static ctor", decl.line, decl.column);
     }
 
-    final override void visit(const SharedStaticDestructor decl)
+    override void visit(const SharedStaticDestructor decl)
     {
         otherVisitorImpl(decl, SymbolType._function, "shared static dtor", decl.line, decl.column);
     }
+
+    override void visit(const Expression){}
+    override void visit(const ExpressionNode){}
+    override void visit(const ExpressionStatement){}
 }
 
