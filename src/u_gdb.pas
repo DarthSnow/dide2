@@ -473,6 +473,7 @@ type
     procedure Edit1KeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure lstCallStackDblClick(Sender: TObject);
     procedure lstThreadsDblClick(Sender: TObject);
+    procedure lstVariablesShowHint(Sender: TObject; HintInfo: PHintInfo);
     procedure mnuEvalDerefClick(Sender: TObject);
     procedure mnuEvalCustomClick(Sender: TObject);
     procedure mnuEvalSelectedClick(Sender: TObject);
@@ -2822,6 +2823,17 @@ begin
   doc := fDocHandler.findDocument(nme);
   if doc.isNotNil then
     doc.CaretY:= lne;
+end;
+
+procedure TGdbWidget.lstVariablesShowHint(Sender: TObject; HintInfo: PHintInfo);
+var
+  p: TPoint;
+  i: TListItem;
+begin
+  p := lstVariables.ScreenToControl(mouse.CursorPos);
+  i := lstVariables.GetItemAt(p.x, p.y);
+  if assigned(i) and (i.SubItems.Count > 0) then
+    HintInfo^.HintStr:= i.SubItems[0];
 end;
 
 procedure TGdbWidget.mnuEvalDerefClick(Sender: TObject);
