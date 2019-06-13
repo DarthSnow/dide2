@@ -412,13 +412,26 @@ end;
 
 procedure TDubProjectEditorWidget.addProp(const propName: string;
   tpe: TJSONtype);
+const
+  w: string = 'The property %s is already present';
 var
+  dat: TJSONData;
   arr: TJSONArray;
   obj: TJSONObject;
   nod: TTreeNode;
 begin
   if fSelectedNode.isNil then
     exit;
+  dat := TJSONData(fSelectedNode.Data);
+  if dat.JSONType = jtObject then
+  begin
+    obj := TJSONObject(dat);
+    if obj.findAny(propName, dat) then
+    begin
+      dlgOkInfo(format(w, [propName]));
+      exit;
+    end;
+  end;
   fProj.beginModification;
   if TJSONData(fSelectedNode.Data).JSONType = jtArray then
   begin
@@ -459,7 +472,7 @@ begin
     exit;
   if fSelectedNode.Level = 0 then
     exit;
-  if fSelectedNode.Text = 'name' then
+  if (fSelectedNode.Text = 'name') and (fSelectedNode.Level = 0) then
     exit;
   if fSelectedNode.Data.isNil then
     exit;
