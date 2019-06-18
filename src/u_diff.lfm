@@ -151,7 +151,7 @@ object DiffViewer: TDiffViewer
       ModalResult = 1
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 1
+      TabOrder = 2
     end
     object btnCancel: TBitBtn
       Left = 287
@@ -167,7 +167,7 @@ object DiffViewer: TDiffViewer
       ModalResult = 2
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 2
+      TabOrder = 1
     end
   end
   object Panel2: TPanel
