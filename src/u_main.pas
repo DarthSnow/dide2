@@ -1588,6 +1588,7 @@ begin
 
   getMessageDisplay(fMsgs);
 
+  fWidgList.Capacity := 32;
   fWidgList.addWidget(@fMesgWidg);
   fWidgList.addWidget(@fEditWidg);
   fWidgList.addWidget(@fProjWidg);
