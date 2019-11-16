@@ -1998,6 +1998,8 @@ begin
     exit;
   p := CaretXY;
   line := lineText;
+  if (line.length = 1) or (LogicalCaretXY.X > line.length) then
+    exit;
   if (CaretX = 1) or not (line[LogicalCaretXY.X] in IdentChars) or
     not (line[LogicalCaretXY.X-1] in IdentChars) then
       exit;
