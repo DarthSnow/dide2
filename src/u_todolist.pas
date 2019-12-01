@@ -347,7 +347,8 @@ begin
     exit;
   fDoc := nil;
   if Visible and fAutoRefresh then
-    callToolProcess;
+    clearTodoList;
+  killToolProcess();
 end;
 {$ENDREGION}
 
@@ -399,7 +400,7 @@ begin
     exit(tcFile);
   if (fProj <> nil) and fDoc.isNil then
     exit(tcProject);
-  //
+
   if fProj.isSource(fDoc.fileName) then
     exit(tcProject)
   else
@@ -410,7 +411,7 @@ procedure TTodoListWidget.killToolProcess;
 begin
   if fToolProc.isNil then
     exit;
-  //
+
   fToolProc.Terminate(0);
   fToolProc.Free;
   fToolProc := nil;

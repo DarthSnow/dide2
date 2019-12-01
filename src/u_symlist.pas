@@ -573,7 +573,8 @@ procedure TSymbolListWidget.docClosing(document: TDexedMemo);
 begin
   if fDoc <> document then
     exit;
-
+  if fToolProc.Running then
+    fToolProc.Terminate(0);
   fDoc := nil;
   clearTree;
   updateVisibleCat;
