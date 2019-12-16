@@ -3016,7 +3016,7 @@ begin
       if (s.length > 2) and (s[1..3] = '-of') then
       begin
         lst.Delete(i);
-        fMsgs.message('the option "-of" is not be handled in the runnable modules',
+        fMsgs.message('the option "-of" is ignored when compiling a runnable modules',
           fDoc, amcEdit, amkWarn);
       end
       else if s = '-c' then
@@ -3026,7 +3026,7 @@ begin
         else
         begin
           lst.Delete(i);
-          fMsgs.message('the option "-c" is not be handled when a module is tested',
+          fMsgs.message('the option "-c" is ignored when an individual module is tested',
             fDoc, amcEdit, amkWarn);
         end;
       end

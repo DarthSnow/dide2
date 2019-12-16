@@ -245,7 +245,7 @@ procedure TCompilersPaths.checkIfGlobalIsGlobal;
 begin
   if globalCompiler = DCompiler.global then
   begin
-    raise Exception.Create('global compiler should not be set the DCompiler.global');
+    raise Exception.Create('global compiler should not be set to DCompiler.global');
     globalCompiler := low(DCompiler);
   end;
 end;
