@@ -6,7 +6,7 @@ object CompilersPathsEditor: TCompilersPathsEditor
   Caption = 'CompilersPathsEditor'
   ClientHeight = 900
   ClientWidth = 460
-  LCLVersion = '2.0.0.3'
+  LCLVersion = '2.0.6.0'
   object ScrollBox1: TScrollBox
     Left = 0
     Height = 900
@@ -27,8 +27,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'DMD'
-      ClientHeight = 156
-      ClientWidth = 439
+      ClientHeight = 157
+      ClientWidth = 441
       TabOrder = 0
       object selDMDexe: TFileNameEdit
         Left = 2
@@ -121,8 +121,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'GDC'
-      ClientHeight = 156
-      ClientWidth = 439
+      ClientHeight = 157
+      ClientWidth = 441
       TabOrder = 1
       object selGDCexe: TFileNameEdit
         Left = 2
@@ -215,8 +215,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'LDC'
-      ClientHeight = 156
-      ClientWidth = 439
+      ClientHeight = 157
+      ClientWidth = 441
       TabOrder = 2
       object selLDCexe: TFileNameEdit
         Left = 2
@@ -309,8 +309,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'User 1'
-      ClientHeight = 156
-      ClientWidth = 439
+      ClientHeight = 157
+      ClientWidth = 441
       TabOrder = 3
       object selUSER1exe: TFileNameEdit
         Left = 2
@@ -403,8 +403,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'User 2'
-      ClientHeight = 156
-      ClientWidth = 439
+      ClientHeight = 157
+      ClientWidth = 441
       TabOrder = 4
       object selUSER2exe: TFileNameEdit
         Left = 2
@@ -497,8 +497,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'Default compiler for completion'
-      ClientHeight = 33
-      ClientWidth = 439
+      ClientHeight = 34
+      ClientWidth = 441
       TabOrder = 5
       object selDefault: TComboBox
         Left = 4
