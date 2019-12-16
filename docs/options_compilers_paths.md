@@ -25,7 +25,7 @@ Up to five D compilers can be defined.
 The combo box at the top is used to select which are the paths passed to the [completion daemon](features_dcd).
 If the completion daemon is launched by _Dexed_ then the change is applied directly after the validation, otherwise it has to be restarted manually.
 
-In other options categories one of these compilers can be selected.
+In other options categories one of these compilers or _global_ can be selected.
 
 * Category _Application_, _nativeProjectCompiler_: defines the compiler used to compile a project that has the native format.
 * Category [_Runnable modules_](features_runnables), _compiler_: defines the compiler used to compile a _runnable module_ or a DUB script.

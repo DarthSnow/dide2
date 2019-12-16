@@ -48,6 +48,8 @@ type
     procedure setUser2ExeName(const value: string);
     procedure setUser2RuntimePath(const value: string);
     procedure setUser2PhobosPath(const value: string);
+  private
+    procedure checkIfGlobalIsGlobal;
   protected
     procedure afterLoad; override;
   published
@@ -154,6 +156,9 @@ type
     destructor destroy; override;
   end;
 
+var
+  globalCompiler: DCompiler;
+
 implementation
 {$R *.lfm}
 
@@ -234,6 +239,15 @@ begin
   fPaths.saveToFile(getDocPath + optFname);
   EntitiesConnector.removeObserver(self);
   inherited;
+end;
+
+procedure TCompilersPaths.checkIfGlobalIsGlobal;
+begin
+  if globalCompiler = DCompiler.global then
+  begin
+    raise Exception.Create('global compiler should not be set the DCompiler.global');
+    globalCompiler := low(DCompiler);
+  end;
 end;
 
 procedure TCompilersPaths.assign(source: TPersistent);
@@ -521,6 +535,11 @@ begin
     DCompiler.ldmd: exit(exeFullName('ldmd2' + exeExt).fileExists);
     DCompiler.user1: exit(User1ExeName.fileExists);
     DCompiler.user2: exit(User2ExeName.fileExists);
+    DCompiler.global:
+    begin
+      fPaths.checkIfGlobalIsGlobal;
+      exit(isCompilerValid(globalCompiler));
+    end;
   end;
 end;
 
@@ -535,6 +554,11 @@ begin
     DCompiler.ldmd: exit(exeFullName('ldmd2' + exeExt));
     DCompiler.user1: exit(User1ExeName);
     DCompiler.user2: exit(User2ExeName);
+    DCompiler.global:
+    begin
+      checkIfGlobalIsGlobal;
+      exit(getCompilerPath(globalCompiler));
+    end;
   end;
 end;
 
@@ -555,6 +579,8 @@ begin
       begin tryAdd(User1RuntimePath); tryAdd(User1PhobosPath); end;
     DCompiler.user2:
       begin tryAdd(User2RuntimePath); tryAdd(User2PhobosPath); end;
+    DCompiler.global:
+      begin checkIfGlobalIsGlobal; getCompilerImports(globalCompiler, paths); end;
   end;
 end;
 {$ENDREGION}

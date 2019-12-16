@@ -24,6 +24,7 @@ The page exposes unsorted options. In the future some of them might be moved to 
 - **dscanUnittests**: If checked the content of the `unittest` blocks are analyzed when using the action __File/Verify with Dscanner__. Do not activate if the results of the static analysis tend to generate irrelevant messages in the tests.
 - **flatLook**: Doesn't draw the buttons shape unless they're hovered by the mouse.
 - **floatingWidgetOnTop**: Keeps the widgets that are not docked on top of the application window.
+- **globalCompiler**: Sets the compiler used when _global_ is used elsewhere. This also to easily switch to a specific compiler when _global_ is selected in all the contexts (runnables, native, dub).
 - **maxReventDocuments**: Sets how many entries can be stored in __File/Open recent file__.
 - **maxReventDocuments**: Sets how many entries can be stored in __Project/Open recent project__.
 - **maxReventProjectsGroups**: Sets how many entries can be stored in __Projects group/Open recent group__.

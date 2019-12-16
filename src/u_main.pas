@@ -10,7 +10,7 @@ uses
   Graphics, strutils, Dialogs, Menus, ActnList, ExtCtrls, process,
   {$IFDEF WINDOWS}Windows, {$ENDIF} XMLPropStorage, SynExportHTML,
   fpjson, jsonscanner, LCLIntf,
-  u_common, u_ceproject, u_synmemo, u_writableComponent, u_simpleget,
+  u_common, u_ceproject, u_synmemo, u_writableComponent, u_simpleget, u_compilers,
   u_widget, u_messages, u_interfaces, u_editor, u_projinspect, u_ceprojeditor,
   u_search, u_miniexplorer, u_libman, u_libmaneditor, u_todolist, u_observer,
   u_toolseditor, u_procinput, u_optionseditor, u_symlist, u_mru, u_processes,
@@ -619,12 +619,14 @@ type
     fShowBuildDuration: boolean;
     fToolBarScaling: TToolBarScaling;
     fAutoKillProcThreshold: dword;
+    fGlobalCompiler: DCompiler;
     function getConsoleProgram: string;
     procedure setConsoleProgram(const value: string);
     function getAdditionalPATH: string;
     procedure setAdditionalPATH(const value: string);
     function getNativeProjecCompiler: DCompiler;
     procedure setNativeProjecCompiler(value: DCompiler);
+    procedure setGlobalCompiler(value: DCompiler);
     procedure setSplitterScsrollSpeed(value: byte);
   published
     property additionalPATH: string read getAdditionalPATH write setAdditionalPath;
@@ -643,6 +645,7 @@ type
     property flatLook: boolean read fFlatLook write fFlatLook;
     property splitterScrollSpeed: byte read fSplitterScrollSpeed write setSplitterScsrollSpeed;
     property showBuildDuration: boolean read fShowBuildDuration write fShowBuildDuration default false;
+    property globalCompiler: DCompiler read fGlobalCompiler write setGLobalCompiler;
     // property toolBarScaling: TToolBarScaling read fToolBarScaling write fToolBarScaling stored false;
     // published for IEditableOptions but stored by DCD wrapper since it reloads before MainForm
     property dcdPort: word read fDcdPort write fDcdPort stored false;
@@ -861,6 +864,14 @@ end;
 procedure TApplicationOptionsBase.setNativeProjecCompiler(value: DCompiler);
 begin
   u_ceproject.setCEProjectCompiler(value);
+end;
+
+procedure TApplicationOptionsBase.setGlobalCompiler(value: DCompiler);
+begin
+  if value = DCompiler.global then
+    value := low(DCompiler);
+  fGlobalCompiler := value;
+  u_compilers.globalCompiler := value;
 end;
 
 procedure TApplicationOptionsBase.setSplitterScsrollSpeed(value: byte);
@@ -3044,11 +3055,9 @@ begin
     dmdproc.Options := [poUsePipes, poStderrToOutPut];
     dmdproc.CurrentDirectory:=fDoc.fileName.extractFileDir;
     case fRunnablesOptions.compiler of
-      dmd: dmdProc.Executable := fCompilerSelector.getCompilerPath(dmd);
       gdc, gdmd: dmdProc.Executable := fCompilerSelector.getCompilerPath(gdmd);
       ldc, ldmd: dmdProc.Executable := fCompilerSelector.getCompilerPath(ldmd);
-      user1: dmdProc.Executable := fCompilerSelector.getCompilerPath(user1);
-      user2: dmdProc.Executable := fCompilerSelector.getCompilerPath(user2);
+      else dmdProc.Executable       := fCompilerSelector.getCompilerPath(fRunnablesOptions.compiler);
     end;
     dmdproc.Parameters.Add(fDoc.fileName);
     if not asObj then

@@ -379,7 +379,7 @@ type
   end;
 
 
-  DCompiler = (dmd, gdc, gdmd, ldc, ldmd, user1, user2);
+  DCompiler = (dmd, gdc, gdmd, ldc, ldmd, user1, user2, global);
 
   (**
    * Single service provided by the options editor.
@@ -665,7 +665,7 @@ end;
 function usingCompilerInfo(value: DCompiler): string;
 const
   c2id: array[DCompiler] of string = ('dmd', 'gdc', 'gdmd', 'ldc', 'ldmd',
-    'user1', 'user2');
+    'user1', 'user2', 'global');
 begin
   result := format('using %s (%s)',
     [getCompilerSelector.getCompilerPath(value), c2id[value]]);
