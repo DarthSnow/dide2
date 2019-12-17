@@ -1,6 +1,6 @@
 Dexed, the _D Extended EDitor_, is an IDE for the [D programming language](https://dlang.org), its compilers, tools and libraries.
 
-[![](https://basile-z.github.io/dexed/img/coedit_kde4_thumb.png)](https://basile-z.github.io/dexed/img/coedit_kde4.png)
+<!-- [![](https://basile-z.github.io/dexed/img/coedit_kde4_thumb.png)](https://basile-z.github.io/dexed/img/coedit_kde4.png) -->
 
 ## Overview
 
@@ -20,13 +20,15 @@ Dexed, the _D Extended EDitor_, is an IDE for the [D programming language](https
 - static library manager that supports auto-registration from local DUB projects, from online DUB packages or from dexed custom project format.
 - todo list based on the _todo comments_ located in a project or in the current source.
 - user-defined tools powered by a string interpolation system.
-- integrated file browser, dfmt interface, search & replace, [discover more in the manual](https://basile-z.github.io/dexed/).
+- integrated file browser, dfmt interface, search & replace  <!--, [discover more in the manual](https://basile-z.github.io/dexed/).-->
 
 ## Project information
 
 - :bookmark: latest release: version 3.7.10, Mon 10 Jun 2019.
 - :scroll: licensed under the terms of the Boost software license.
 - :dollar: Development can be supported with [Paypal donations](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AQDJVC39PJF7J).
+
+<!--
 
 ## Download version 3.7.10
 
@@ -49,3 +51,5 @@ FreeBSD (all archs), Linux (32 bit) and Windows (32 bit) versions must be [built
 ## Building
 
 Follow the procedure described [**here**](https://basile-z.github.io/dexed/build.html).
+
+-->
