@@ -136,6 +136,7 @@ type
     fNextTerminatedCommand: TDubCommand;
     fAsProjectItf: ICommonProject;
     fMetaEnv: TStringList;
+    class var fCompilerSelector: ICompilerSelector;
     procedure doModified;
     procedure updateFields;
     procedure updatePackageNameFromJson;
@@ -217,7 +218,6 @@ type
 
 var
   DubCompiler: DCompiler = dmd;
-  DubCompilerFilename: string;
   Lfm: ILifetimeManager = nil;
 
 const
@@ -674,6 +674,9 @@ end;
 constructor TDubProject.create(aOwner: TComponent);
 begin
   inherited;
+  if not assigned(fCompilerSelector) then
+    fCompilerSelector := getCompilerSelector;
+  assert(assigned(fCompilerSelector));
   fAsProjectItf := self as ICommonProject;
   fSaveAsUtf8 := true;
   fJSON := TJSONObject.Create();
@@ -895,9 +898,7 @@ begin
     str.Add('--build=' + fBuildTypes[fBuiltTypeIx]);
     if (fConfigs.Count <> 1) and (fConfigs[0] <> DubDefaultConfigName) then
       str.Add('--config=' + fConfigs[fConfigIx]);
-    if DubCompilerFilename.isEmpty then
-      setDubCompiler(dubBuildOptions.compiler);
-    str.Add('--compiler=' + DubCompilerFilename);
+    str.Add('--compiler=' + fCompilerSelector.getCompilerPath(DubCompiler));
     dubBuildOptions.getOpts(str);
     result := str.Text;
   finally
@@ -1159,9 +1160,7 @@ begin
     if (fConfigs.Count <> 1) and (fConfigs[0] <> DubDefaultConfigName) then
       fDubProc.Parameters.Add('--config=' + fConfigs[fConfigIx]);
   end;
-  if DubCompilerFilename.isEmpty then
-    setDubCompiler(dubBuildOptions.compiler);
-  fDubProc.Parameters.Add('--compiler=' + DubCompilerFilename);
+  fDubProc.Parameters.Add('--compiler=' + fCompilerSelector.getCompilerPath(DubCompiler));
   dubBuildOptions.getOpts(fDubProc.Parameters);
   if (command <> dcBuild) and runArgs.isNotEmpty then
   begin
@@ -1896,14 +1895,11 @@ begin
   DubCompiler := value;
   if not sel.isCompilerValid(DubCompiler) then
     DubCompiler := dmd;
-  DubCompilerFilename:=sel.getCompilerPath(DubCompiler);
 end;
 {$ENDREGION}
 
 initialization
-  // setDubCompiler(dmd);
   dubBuildOptions:= TDubBuildOptions.create(nil);
-  DubCompilerFilename := '';
 finalization
   dubBuildOptions.free;
   TDubLocalPackages.deinit;

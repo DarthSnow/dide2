@@ -50,6 +50,7 @@ type
     fMsgs: IMessagesDisplay;
     fAsProjectItf: ICommonProject;
     fVersionFile: string;
+    class var fCompilerSelector: ICompilerSelector;
     procedure updateOutFilename;
     procedure doChanged(modified: boolean = true);
     procedure getBaseConfig;
@@ -147,12 +148,13 @@ uses
   controls, dialogs, u_libman, u_dcd;
 
 var
-  CEProjectCompilerFilename: string = 'dmd';
-  CEProjectCompiler: DCompiler;
+  CEProjectCompiler: DCompiler = dmd;
 
 constructor TNativeProject.create(aOwner: TComponent);
 begin
   inherited create(aOwner);
+  if not assigned (fCompilerSelector) then
+    fCompilerSelector := getCompilerSelector;
   fAsProjectItf := self as ICommonProject;
   fSymStringExpander := getSymStringExpander;
   fMsgs:= getMessageDisplay;
@@ -869,7 +871,7 @@ begin
   fMsgs.message('compiling ' + prjname, fAsProjectItf, amcProj, amkInf);
   fMsgs.message(usingCompilerInfo(CEProjectCompiler), fAsProjectItf, amcProj, amkInf);
   fCompilProc.CurrentDirectory := prjpath;
-  fCompilProc.Executable := CEProjectCompilerFilename;
+  fCompilProc.Executable := fCompilerSelector.getCompilerPath(CEProjectCompiler);
   fCompilProc.Options := fCompilProc.Options + [poStderrToOutPut, poUsePipes];
   fCompilProc.ShowWindow := swoHIDE;
   fCompilProc.OnReadData:= @compProcOutput;
@@ -1062,7 +1064,7 @@ var
 begin
   str := TStringList.Create;
   try
-    str.Add(CEProjectCompilerFilename);
+    str.Add(fCompilerSelector.getCompilerPath(CEProjectCompiler));
     getOpts(str);
     result := str.Text;
   finally
@@ -1136,6 +1138,7 @@ var
   sel: ICompilerSelector;
 begin
   sel := getCompilerSelector;
+  assert(assigned(sel));
   if value = gdc then
     value := gdmd
   else if value = ldc then
@@ -1143,7 +1146,6 @@ begin
   CEProjectCompiler := value;
   if not sel.isCompilerValid(CEProjectCompiler) then
     CEProjectCompiler := dmd;
-  CEProjectCompilerFilename:=sel.getCompilerPath(CEProjectCompiler);
 end;
 
 initialization
