@@ -14,7 +14,7 @@ type
 
   TCompilersPaths = class(TWritableLfmTextComponent)
   strict private
-    fDefaultCompiler: DCompiler;
+    fPathsForCompletion: DCompiler;
     fDmdExeName: string;
     fDmdRuntimePath: string;
     fDmdPhobosPath: string;
@@ -32,7 +32,9 @@ type
     fUser2PhobosPath: string;
     fModified: boolean;
     fWouldNeedRestart: boolean;
-    procedure setDefaultCompiler(value: DCompiler);
+    fDefinedAsGlobal: DCompiler;
+    procedure setDefinedAsGlobal(value: DCompiler);
+    procedure setPathsForCompletion(value: DCompiler);
     procedure setDmdExeName(const value: string);
     procedure setDmdRuntimePath(const value: string);
     procedure setDmdPhobosPath(const value: string);
@@ -53,7 +55,8 @@ type
   protected
     procedure afterLoad; override;
   published
-    property defaultCompiler: DCompiler read fDefaultCompiler write setDefaultCompiler;
+    property definedAsGlobal: DCompiler read fDefinedAsGlobal write setDefinedAsGlobal;
+    property pathsForCompletion: DCompiler read fPathsForCompletion write setPathsForCompletion;
     property DmdExeName: string read fDmdExeName write setDmdExeName;
     property DmdRuntimePath: string read fDmdRuntimePath write setDmdRuntimePath;
     property DmdPhobosPath: string read fDmdPhobosPath write setDmdPhobosPath;
@@ -78,7 +81,9 @@ type
   { TCompilersPathsEditor }
 
   TCompilersPathsEditor = class(TForm, IEditableOptions, ICompilerSelector, IProjectObserver)
+    GroupBox7: TGroupBox;
     selDefault: TComboBox;
+    selGlobal: TComboBox;
     selDMDrt: TDirectoryEdit;
     selUSER2std: TDirectoryEdit;
     selDMDstd: TDirectoryEdit;
@@ -128,6 +133,7 @@ type
     procedure selectedRt(sender: TObject; var value: string);
     procedure selectedStd(sender: TObject; var value: string);
     procedure selectedDefault(sender: TObject);
+    procedure selectedGlobal(sender: TObject);
     procedure autoDetectDMD;
     procedure autoDetectGDC;
     procedure autoDetectLDC;
@@ -156,8 +162,8 @@ type
     destructor destroy; override;
   end;
 
-var
-  globalCompiler: DCompiler;
+//var
+// globalCompiler: DCompiler;
 
 implementation
 {$R *.lfm}
@@ -175,8 +181,64 @@ const
 constructor TCompilersPathsEditor.create(aOwner: TComponent);
 var
   fname: string;
+  dcomp: DCompiler;
 begin
   inherited;
+
+  selDefault.Items.BeginUpdate;
+  selGlobal.Items.BeginUpdate;
+  try for dcomp in DCompiler do
+  begin
+    case dcomp of
+      dmd:
+      begin
+        selDefault.Items.Add('DMD');
+        selGlobal.Items.Add('DMD');
+      end;
+      gdc:
+      begin
+        selDefault.Items.Add('GDC');
+        selGlobal.Items.Add('GDC');
+      end;
+      gdmd:
+      begin
+        selDefault.Items.Add('GDMD (same paths as GDC)');
+        selGlobal.Items.Add('GDMD (same paths as GDC)');
+      end;
+      ldc:
+      begin
+        selDefault.Items.Add('LDC');
+        selGlobal.Items.Add('LDC');
+      end;
+      ldmd:
+      begin
+        selDefault.Items.Add('GDMD (same paths as LDC)');
+        selGlobal.Items.Add('GDMD (same paths as LDC)');
+      end;
+      user1:
+      begin
+        selDefault.Items.Add('USER1');
+        selGlobal.Items.Add('USER1');
+      end;
+      user2:
+      begin
+        selDefault.Items.Add('USER2');
+        selGlobal.Items.Add('USER2');
+      end;
+      global:
+      begin
+        selDefault.Items.Add('GLOBAL (as defined in the options)');
+        // 'global' must be everything but 'global'
+        selGlobal.Items.Add('<N/A>');
+      end;
+      else raise Exception.create('missing DCompiler value in a case of');
+    end;
+  end;
+  finally
+    selDefault.Items.EndUpdate;
+    selGlobal.Items.EndUpdate;
+  end;
+
   fPaths:= TCompilersPaths.Create(self);
   fPathsBackup:= TCompilersPaths.Create(self);
 
@@ -229,6 +291,7 @@ begin
   selUSER2std.OnEditingDone:= @editedStd;
 
   selDefault.OnSelect:= @selectedDefault;
+  selGlobal.OnSelect:= @selectedGlobal;
 
   EntitiesConnector.addSingleService(self);
   EntitiesConnector.addObserver(self);
@@ -243,9 +306,9 @@ end;
 
 procedure TCompilersPaths.checkIfGlobalIsGlobal;
 begin
-  if globalCompiler = DCompiler.global then
+  if fDefinedAsGlobal = DCompiler.global then
   begin
-    globalCompiler := low(DCompiler);
+    fDefinedAsGlobal := low(DCompiler);
     raise Exception.Create('global compiler should not be set to DCompiler.global');
   end;
 end;
@@ -257,7 +320,7 @@ begin
   if source is TCompilersPaths then
   begin
     src := TCompilersPaths(source);
-    DefaultCompiler  := src.fDefaultCompiler;
+    pathsForCompletion  := src.fPathsForCompletion;
     DmdExeName       := src.fDmdExeName;
     DmdRuntimePath   := src.fDmdRuntimePath;
     DmdPhobosPath    := src.fDmdPhobosPath;
@@ -277,13 +340,20 @@ begin
   else inherited;
 end;
 
-procedure TCompilersPaths.setDefaultCompiler(value: Dcompiler);
+procedure TCompilersPaths.setPathsForCompletion(value: Dcompiler);
 begin
-  if fDefaultCompiler = value then
+  if fPathsForCompletion = value then
     exit;
-  fDefaultCompiler:=value;
+  fPathsForCompletion:=value;
   fWouldNeedRestart := true;
   fModified:=true;
+end;
+
+procedure TCompilersPaths.setDefinedAsGlobal(value: DCompiler);
+begin
+  if value = DCompiler.global then
+    value := low(DCompiler);
+  fDefinedAsGlobal := value;
 end;
 
 procedure TCompilersPaths.setDmdExeName(const value: string);
@@ -300,7 +370,7 @@ begin
     exit;
   fDmdRuntimePath:=value;
   fModified:=true;
-  if fDefaultCompiler = dmd then
+  if fPathsForCompletion = dmd then
     fWouldNeedRestart := true;
 end;
 
@@ -310,7 +380,7 @@ begin
     exit;
   fDmdPhobosPath:=value;
   fModified:=true;
-  if fDefaultCompiler = dmd then
+  if fPathsForCompletion = dmd then
     fWouldNeedRestart := true;
 end;
 
@@ -328,7 +398,7 @@ begin
     exit;
   fGdcRuntimePath:=value;
   fModified:=true;
-  if fDefaultCompiler in [gdc,gdmd] then
+  if fPathsForCompletion in [gdc,gdmd] then
     fWouldNeedRestart := true;
 end;
 
@@ -338,7 +408,7 @@ begin
     exit;
   fGdcPhobosPath:=value;
   fModified:=true;
-  if fDefaultCompiler in [gdc,gdmd] then
+  if fPathsForCompletion in [gdc,gdmd] then
     fWouldNeedRestart := true;
 end;
 
@@ -356,7 +426,7 @@ begin
     exit;
   fLdcRuntimePath:=value;
   fModified:=true;
-  if fDefaultCompiler in [ldc,ldmd] then
+  if fPathsForCompletion in [ldc,ldmd] then
     fWouldNeedRestart := true;
 end;
 
@@ -366,7 +436,7 @@ begin
     exit;
   fLdcPhobosPath:=value;
   fModified:=true;
-  if fDefaultCompiler in [ldc,ldmd] then
+  if fPathsForCompletion in [ldc,ldmd] then
     fWouldNeedRestart := true;
 end;
 
@@ -384,7 +454,7 @@ begin
     exit;
   fUser1RuntimePath:=value;
   fModified:=true;
-  if fDefaultCompiler = user1 then
+  if fPathsForCompletion = user1 then
     fWouldNeedRestart := true;
 end;
 
@@ -394,7 +464,7 @@ begin
     exit;
   fUser1PhobosPath:=value;
   fModified:=true;
-  if fDefaultCompiler = user1 then
+  if fPathsForCompletion = user1 then
     fWouldNeedRestart := true;
 end;
 
@@ -412,7 +482,7 @@ begin
     exit;
   fUser2RuntimePath:=value;
   fModified:=true;
-  if fDefaultCompiler = user2 then
+  if fPathsForCompletion = user2 then
     fWouldNeedRestart := true;
 end;
 
@@ -422,7 +492,7 @@ begin
     exit;
   fUser2PhobosPath:=value;
   fModified:=true;
-  if fDefaultCompiler = user2 then
+  if fPathsForCompletion = user2 then
     fWouldNeedRestart := true;
 end;
 
@@ -538,7 +608,7 @@ begin
     DCompiler.global:
     begin
       fPaths.checkIfGlobalIsGlobal;
-      exit(isCompilerValid(globalCompiler));
+      exit(isCompilerValid(fPaths.definedAsGlobal));
     end;
   end;
 end;
@@ -557,7 +627,7 @@ begin
     DCompiler.global:
     begin
       checkIfGlobalIsGlobal;
-      exit(getCompilerPath(globalCompiler));
+      exit(getCompilerPath(fPaths.definedAsGlobal));
     end;
   end;
 end;
@@ -580,7 +650,7 @@ begin
     DCompiler.user2:
       begin tryAdd(User2RuntimePath); tryAdd(User2PhobosPath); end;
     DCompiler.global:
-      begin checkIfGlobalIsGlobal; getCompilerImports(globalCompiler, paths); end;
+      begin checkIfGlobalIsGlobal; getCompilerImports(fPaths.definedAsGlobal, paths); end;
   end;
 end;
 {$ENDREGION}
@@ -592,7 +662,7 @@ var
 begin
   imprt := TStringList.Create;
   try
-    getCompilerImports(fPaths.defaultCompiler, imprt);
+    getCompilerImports(fPaths.pathsForCompletion, imprt);
     DcdWrapper.addImportFolders(imprt);
   finally
     imprt.free;
@@ -623,7 +693,8 @@ begin
     selUSER2rt.Directory  := User2RuntimePath;
     selUSER2std.Directory := User2PhobosPath;
 
-    selDefault.ItemIndex := integer(defaultCompiler);
+    selDefault.ItemIndex := integer(pathsForCompletion);
+    selGlobal.ItemIndex  := integer(definedAsGlobal);
   end;
 end;
 
@@ -751,7 +822,17 @@ end;
 
 procedure TCompilersPathsEditor.selectedDefault(sender: TObject);
 begin
-  fPaths.defaultCompiler:= DCompiler(selDefault.ItemIndex);
+  fPaths.pathsForCompletion:= DCompiler(selDefault.ItemIndex);
+end;
+
+procedure TCompilersPathsEditor.selectedGlobal(sender: TObject);
+var
+  v: DCompiler;
+begin
+  v := DCompiler(selGlobal.ItemIndex);
+  if v = DCompiler.global then
+    v := DCompiler.dmd;
+  fPaths.definedAsGlobal := v;
 end;
 
 procedure TCompilersPathsEditor.autoDetectDMD;

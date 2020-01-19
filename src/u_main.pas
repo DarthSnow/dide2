@@ -626,7 +626,6 @@ type
     procedure setAdditionalPATH(const value: string);
     function getNativeProjecCompiler: DCompiler;
     procedure setNativeProjecCompiler(value: DCompiler);
-    procedure setGlobalCompiler(value: DCompiler);
     procedure setSplitterScsrollSpeed(value: byte);
   published
     property additionalPATH: string read getAdditionalPATH write setAdditionalPath;
@@ -645,7 +644,7 @@ type
     property flatLook: boolean read fFlatLook write fFlatLook;
     property splitterScrollSpeed: byte read fSplitterScrollSpeed write setSplitterScsrollSpeed;
     property showBuildDuration: boolean read fShowBuildDuration write fShowBuildDuration default false;
-    property globalCompiler: DCompiler read fGlobalCompiler write setGLobalCompiler;
+    property globalCompiler: DCompiler write fGlobalCompiler; deprecated;
     // property toolBarScaling: TToolBarScaling read fToolBarScaling write fToolBarScaling stored false;
     // published for IEditableOptions but stored by DCD wrapper since it reloads before MainForm
     property dcdPort: word read fDcdPort write fDcdPort stored false;
@@ -864,14 +863,6 @@ end;
 procedure TApplicationOptionsBase.setNativeProjecCompiler(value: DCompiler);
 begin
   u_ceproject.setCEProjectCompiler(value);
-end;
-
-procedure TApplicationOptionsBase.setGlobalCompiler(value: DCompiler);
-begin
-  if value = DCompiler.global then
-    value := low(DCompiler);
-  fGlobalCompiler := value;
-  u_compilers.globalCompiler := value;
 end;
 
 procedure TApplicationOptionsBase.setSplitterScsrollSpeed(value: byte);
