@@ -212,8 +212,8 @@ begin
       end;
       ldmd:
       begin
-        selDefault.Items.Add('GDMD (same paths as LDC)');
-        selGlobal.Items.Add('GDMD (same paths as LDC)');
+        selDefault.Items.Add('LDMD (same paths as LDC)');
+        selGlobal.Items.Add('LDMD (same paths as LDC)');
       end;
       user1:
       begin

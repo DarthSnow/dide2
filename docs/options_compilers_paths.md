@@ -25,6 +25,9 @@ Up to five D compilers can be defined.
 The combo box at the top is used to select which are the paths passed to the [completion daemon](features_dcd).
 If the completion daemon is launched by _Dexed_ then the change is applied directly after the validation, otherwise it has to be restarted manually.
 
+The second combo box defines which of the 5 defined compiler matches to the _global_ alias. This way it's possible to change the compiler used in a single step, assuming that all the compilation contexts (runnable, DUB, dexed projects) are set to follow the _global_ alias.
+In most of the cases this is not useful but was added to make easier testing experimental branches of DMD or the beta versions.
+
 In other options categories one of these compilers or _global_ can be selected.
 
 * Category _Application_, _nativeProjectCompiler_: defines the compiler used to compile a project that has the native format.
