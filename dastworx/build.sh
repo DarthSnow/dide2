@@ -1,5 +1,6 @@
 if [[ -z "$DC" ]]; then DC=dmd; fi
 if [[ "$DC" == "ldc" ]]; then DC=ldmd2; fi
+if [[ "$DC" == "ldc2" ]]; then DC=ldmd2; fi
 if [[ "$DC" == "gdc" ]]; then DC=gdmd; fi
 if [[ -z "$MFLAGS" ]]; then MFLAGS=-m64; fi
 
