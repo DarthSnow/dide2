@@ -335,7 +335,7 @@ object CompilersPathsEditor: TCompilersPathsEditor
       object selUSER1rt: TDirectoryEdit
         Left = 2
         Height = 33
-        Hint = 'select the root of druntime sources, note it might alos contain phobos (GDC or LDC style)'
+        Hint = 'select the root of druntime sources, note that it might also contain phobos (GDC or LDC style)'
         Top = 77
         Width = 439
         ShowHidden = False
@@ -351,7 +351,7 @@ object CompilersPathsEditor: TCompilersPathsEditor
       object selUSER1std: TDirectoryEdit
         Left = 2
         Height = 33
-        Hint = 'select the root of phobos sources'
+        Hint = 'select the root of phobos sources (can be empty)'
         Top = 133
         Width = 439
         ShowHidden = False
@@ -429,7 +429,7 @@ object CompilersPathsEditor: TCompilersPathsEditor
       object selUSER2rt: TDirectoryEdit
         Left = 2
         Height = 33
-        Hint = 'select the root of druntime sources, note it might alos contain phobos (GDC or LDC style)'
+        Hint = 'select the root of druntime sources, note that it might also contain phobos (GDC or LDC style)'
         Top = 77
         Width = 439
         ShowHidden = False
@@ -445,7 +445,7 @@ object CompilersPathsEditor: TCompilersPathsEditor
       object selUSER2std: TDirectoryEdit
         Left = 2
         Height = 33
-        Hint = 'select the root of phobos sources'
+        Hint = 'select the root of phobos sources (can be empty)'
         Top = 133
         Width = 439
         ShowHidden = False
