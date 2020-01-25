@@ -247,9 +247,10 @@ begin
     fPaths.loadFromFile(fname);
   if not isCompilerValid(dmd) then
     autoDetectDMD;
+  if not isCompilerValid(gdc) then
+    autoDetectGDC;
+
   // #148 / #210
-  // if not isCompilerValid(gdc) then
-  //  autoDetectGDC;
   // if not isCompilerValid(ldc) then
   //  autoDetectLDC;
   fPathsBackup.Assign(fPaths);
@@ -880,28 +881,24 @@ begin
 end;
 
 procedure TCompilersPathsEditor.autoDetectGDC;
-var
-  path: string;
-  str: TStringList;
 begin
-  path := exeFullName('gdc' + exeExt);
-  if path.fileExists then
-  begin
-    fPaths.GdcExeName:= path;
-    str := TStringList.Create;
-    try
-      path := path.extractFileDir.extractFilePath;
-      FindAllDirectories(str, path, true);
-      for path in str do
-        if pos('include' + DirectorySeparator + 'd', path) > 0 then
-      begin
-        fPaths.GdcRuntimePath:= path;
-        break;
-      end;
-    finally
-      str.Free;
-    end;
-  end;
+  {$IFDEF LINUX}
+  if '/usr/bin/gdc'.fileExists then
+    fPaths.GdcExeName:='/usr/bin/dmd';
+  // redhat
+  if '/usr/lib/gcc/x86_64-redhat-linux/9/include/d'.dirExists then
+    fPaths.GdcRuntimePath:='/usr/lib/gcc/x86_64-redhat-linux/9/include/d'
+  else if '/usr/lib/gcc/x86_64-redhat-linux/10/include/d'.dirExists then
+    fPaths.GdcRuntimePath:='/usr/lib/gcc/x86_64-redhat-linux/10/include/d'
+  // debian
+  else if '/usr/lib/gcc/x86_64-linux-gnu/9/include/d'.dirExists then
+    fPaths.GdcRuntimePath:='/usr/lib/gcc/x86_64-linux-gnu/9/include/d'
+  else if '/usr/lib/gcc/x86_64-linux-gnu/10/include/d'.dirExists then
+    fPaths.GdcRuntimePath:='/usr/lib/gcc/x86_64-linux-gnu/10/include/d'
+  // arch
+  else if 'usr/lib/gcc/x86_64-pc-linux-gnu/9.2.0/include/d'.dirExists then
+    fPaths.GdcRuntimePath:='usr/lib/gcc/x86_64-pc-linux-gnu/9.2.0/include/d';
+  {$ENDIF}
 end;
 
 procedure TCompilersPathsEditor.autoDetectLDC;
