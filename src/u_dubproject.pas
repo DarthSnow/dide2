@@ -1007,7 +1007,10 @@ begin
 
   t := n[1..p-1];
   c := n[p + 3 .. n.length];
-  f := fBasePath + DirectorySeparator + '.dub' + DirectorySeparator + '.editor_meta_data.ini';
+  f := fBasePath + DirectorySeparator + '.dub';
+  if not f.dirExists then
+    exit;
+  f := f + DirectorySeparator + '.editor_meta_data.ini';
   with TStringList.Create do
   try
     values['last_dexed_buildType'] := t;
