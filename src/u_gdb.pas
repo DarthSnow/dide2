@@ -501,6 +501,7 @@ type
     fSubj: TDebugObserverSubject;
     fDoc: TDexedMemo;
     fDbgRunnable: boolean;
+    fCatchCustomEval: boolean;
     fProj: ICommonProject;
     fJson: TJsonObject;
     fLog: TStringList;
@@ -2231,6 +2232,30 @@ var
   fFpuRaw: array[0..9] of Byte absolute fFpuExtended;
 begin
 
+  if fCatchCustomEval then
+  begin
+    fCatchCustomEval := false;
+    if fJson.findAny('value', val) then
+    begin
+      case fEvalKind of
+        TGdbEvalKind.gekSelectedVar:
+          lstVariables.AddItem(format('reevaluation of `%s`', [fLastEvalStuff]), nil);
+        TGdbEvalKind.gekDerefSelectedVar:
+          lstVariables.AddItem(format('dereference of `*(%s)`', [fLastEvalStuff]), nil);
+        TGdbEvalKind.gekCustom:
+          lstVariables.AddItem(format('evaluation of `%s`', [fLastEvalStuff]), nil);
+      end;
+      with lstVariables.Items[lstVariables.Items.Count-1] do
+      begin
+        SubItems.Add(val.AsString);
+        MakeVisible(false);
+        Selected:=true;
+      end;
+    end
+    else dlgOkInfo(format('it was not possible to evaluate '#10#9'`%s`', [fLastEvalStuff]));
+    exit;
+  end;
+
   if fJson.findAny('reason', val) then
   begin
     reason := val.AsString;
@@ -2666,7 +2691,8 @@ end;
 procedure TGdbWidget.evalStuff(const stuff: string);
 begin
   fLastEvalStuff := stuff;
-  gdbCommand('-data-evaluate-expression "' + stuff + '"');
+  fCatchCustomEval := true;
+  gdbCommand('-data-evaluate-expression "' + stuff + '"', @gdboutJsonize);
 end;
 
 procedure TGdbWidget.continueDebugging;
