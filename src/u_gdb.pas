@@ -290,6 +290,8 @@ type
 
   TDlangBreakpoints = set of TDlangBreakpoint;
 
+  TGdbEvalKind = (gekSelectedVar, gekDerefSelectedVar, gekCustom);
+
   TDebugOptionsBase = class(TWritableLfmTextComponent)
   private
     fAutoDisassemble: boolean;
@@ -310,6 +312,7 @@ type
     fStopAllThreadsOnBreak: boolean;
     fHideCpuView: boolean;
     fDlangBreakpoints: TDlangBreakpoints;
+    fCurrentEvalKind: TGdbEvalKind;
     procedure setIgnoredSignals(value: TStringList);
     procedure setCommandsHistory(value: TStringList);
     procedure setCustomEvalHistory(value: TStringList);
@@ -325,6 +328,7 @@ type
     property autoGetThreads: boolean read fAutoGetThreads write fAutoGetThreads;
     property commandsHistory: TStringList read fCommandsHistory write setCommandsHistory;
     property coreBreakingSymbols: TDlangBreakpoints read fDlangBreakpoints write fDlangBreakpoints;
+    property currentEvalKind: TGdbEvalKind read fCurrentEvalKind write fCurrentEvalKind;
     property customEvalHistory: TStringList read fCustomEvalHistory write setCustomEvalHistory;
     property hideCpuView: boolean read fHideCpuView write fHideCpuView default false;
     property ignoredSignals: TStringList read fIgnoredSignals write setIgnoredSignals;
@@ -402,8 +406,6 @@ type
     property projectByIndex[index: integer]: TDebugeeOption read getProjectByIndex;
     property projectByFile[const fname: string]: TDebugeeOption read getProjectByFile; default;
   end;
-
-  TGdbEvalKind = (gekSelectedVar, gekDerefSelectedVar, gekCustom);
 
   { TGdbWidget }
   TGdbWidget = class(TDexedWidget, IProjectObserver, IDocumentObserver, IDebugger)
@@ -760,6 +762,7 @@ begin
     fCommandsHistory.Assign(src.fCommandsHistory);
     fShortcuts.assign(src.fShortcuts);
     fKeepRedirectedStreams := src.fKeepRedirectedStreams;
+    fCurrentEvalKind := src.fCurrentEvalKind;
   end
   else inherited;
 end;
@@ -1273,6 +1276,7 @@ destructor TGdbWidget.destroy;
 begin
   fInput.free;
   fOutput.Free;
+  fOptions.fCurrentEvalKind:=fEvalKind;
   fOptions.commandsHistory.Assign(edit1.Items);
   fOptions.Free;
   fLog.Free;
@@ -1425,6 +1429,13 @@ begin
   btnEval.toBitmap(bmp);
   itm.Bitmap.Assign(bmp);
   itm.ImageIndex:= fMenu.GetImageList.Add(bmp, nil);
+
+  fEvalKind:= fOptions.fCurrentEvalKind;
+  case fEvalKind of
+    TGdbEvalKind.gekSelectedVar     : mnuEvalSelected.Click();
+    TGdbEvalKind.gekDerefSelectedVar: mnuEvalDeref.Click();
+    TGdbEvalKind.gekCustom          : mnuEvalCustom.Click();
+  end;
 
   bmp.Free;
 end;
