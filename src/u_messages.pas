@@ -1146,6 +1146,7 @@ var
   rng: TStringRange = (ptr:nil; pos:0; len: 0);
   lne: string;
   col: string = '';
+  gnuStyle: boolean;
 begin
   Result := Point(-1,-1);
   if aMessage.isEmpty then
@@ -1155,10 +1156,20 @@ begin
   if (aMessage.length > 3) and (aMessage[2..3] = ':\') then
     rng.popFrontN(3);
   {$ENDIF}
-  rng.popUntil(['(', ':'])^.popWhile(['(', ':']);
-  lne := rng.takeUntil([',', ':', ')', ' ']).yield;
-  if rng.front in [',', ':'] then
-    col := rng.popWhile([',', ':'])^.takeUntil(')').yield;
+  rng.popUntil(['(', ':']);
+  gnuStyle := (rng.front = ':') and (not rng.empty) and (rng.popFront^.front in ['1'..'9']);
+  if gnuStyle then
+  begin
+    lne := rng.takeUntil(':').yield;
+    if rng.front = ':' then
+      col := rng.popWhile(':')^.takeUntil(' ').yield;
+  end else
+  begin
+    rng.popWhile(['(', ':']);
+    lne := rng.takeUntil([',', ':', ')', ' ']).yield;
+    if rng.front in [',', ':'] then
+      col := rng.popWhile([',', ':'])^.takeUntil(')').yield;
+  end;
   result.y := strToIntDef(lne, -1);
   result.x := strToIntDef(col, -1);
 end;
