@@ -1074,7 +1074,7 @@ begin
       break;
     end;
   end;
-  if (li <> -1) and (li <> -1) then
+  if (li <> -1) and (ri > li) then
   begin
     for i := li to ri do
       result += tokens[i]^.Data;
