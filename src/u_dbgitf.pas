@@ -23,9 +23,10 @@ type
     procedure addBreakPoint(const fname: string; line: integer; kind: TBreakPointKind = bpkBreak);
     procedure removeBreakPoint(const fname: string; line: integer; kind: TBreakPointKind = bpkBreak);
     procedure removeBreakPoints(const fname: string);
+    function evaluate(const exp: string): string;
   end;
 
-  // Enumerates th e reason why debuging breaks.
+  // Enumerates the reason why debuging breaks.
   TDebugBreakReason = (
     dbUnknown,      // ?
     dbBreakPoint,   // a break point is reached.

@@ -2773,12 +2773,28 @@ end;
 
 procedure TDexedMemo.showDDocs;
 var
+  exp: string;
+  ev1: string;
+  ev2: string;
   str: string;
 begin
   fCanShowHint := false;
   if not fIsDSource and not alwaysAdvancedFeatures then
     exit;
-  DcdWrapper.getDdocFromCursor(str);
+
+  if assigned(fDebugger) and fDebugger.running then
+  begin
+    lexWholeText([TLexOption.lxoNoComments]);
+    exp := getExpressionAt(fLexToks, fMousePos);
+    ev1 := fDebugger.evaluate(exp);
+    if ev1.isEmpty then
+      ev1 := '???';
+    ev2 := fDebugger.evaluate('*' + exp);
+    if ev2.isEmpty then
+      ev2 := '???';
+    str := format('exp: %s'#10'---'#10'%s'#10'---'#10'%s', [exp, ev1, ev2]);
+  end
+  else DcdWrapper.getDdocFromCursor(str);
 
   if str.isNotEmpty then
   begin

@@ -153,6 +153,12 @@ procedure getImports(list: TLexTokenList; imports: TStrings);
  *)
 function getIndexOfTokenLeftTo(tokens: TLexTokenList; caretPos: TPoint): integer;
 
+(**
+ * Get the expression, as a string, that ends at the caret position.
+ * This helper is mostly used by GDB commander
+ *)
+function getExpressionAt(tokens: TLexTokenList; caretPos: TPoint): string;
+
 implementation
 
 {$REGION TReaderHead -----------------------------------------------------------}
@@ -1023,6 +1029,55 @@ begin
       result := i;
       break;
     end;
+  end;
+end;
+
+function getExpressionAt(tokens: TLexTokenList; caretPos: TPoint): string;
+var
+  ri: integer;
+  li: integer = -1;
+  p : integer = 1;
+  i : integer;
+  t : PLexToken;
+begin
+  result := '';
+  ri := getIndexOfTokenLeftTo(tokens, caretPos);
+  if ri <> -1 then
+    for i := ri downto 0 do
+  begin
+    t := tokens[i];
+    //  other; a.b.c|.d  ->  a.b.c
+    if (t^.kind = TLexTokenKind.ltkSymbol) and
+       ((t^.Data = ';') or (t^.Data = ',') or (t^.Data = '{') or (t^.Data = ':') or (t^.Data = '?')) then
+    begin
+      li := i+1;
+      break;
+    end
+    //  other; a.b c|.d  ->  c
+    else if (t^.kind = TLexTokenKind.ltkWhite) then
+    begin
+      li := i+1;
+      break;
+    end
+    //  other; a + b.c|.d  ->  b.c
+    else if (t^.kind = TLexTokenKind.ltkOperator) then
+    begin
+      li := i+1;
+      break;
+    end;
+    p += Byte((t^.kind = TLexTokenKind.ltkSymbol) and (t^.Data = ')'));
+    p -= Byte((t^.kind = TLexTokenKind.ltkSymbol) and (t^.Data = '('));
+    //  (a.(b).c|.d)  ->  a.(b).c
+    if p = 0 then
+    begin
+      li := i+1;
+      break;
+    end;
+  end;
+  if (li <> -1) and (li <> -1) then
+  begin
+    for i := li to ri do
+      result += tokens[i]^.Data;
   end;
 end;
 

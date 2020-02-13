@@ -36,8 +36,8 @@ inherited GdbWidget: TGdbWidget
           Width = 672
           Align = alClient
           Caption = 'CPU'
-          ClientHeight = 156
-          ClientWidth = 670
+          ClientHeight = 155
+          ClientWidth = 668
           TabOrder = 0
           object cpuViewer: TTIPropertyGrid
             Left = 0
@@ -77,8 +77,8 @@ inherited GdbWidget: TGdbWidget
           OnChange = PageControl2Change
           object TabSheet3: TTabSheet
             Caption = 'Variables'
-            ClientHeight = 169
-            ClientWidth = 662
+            ClientHeight = 173
+            ClientWidth = 670
             object lstVariables: TListView
               Left = 2
               Height = 130
@@ -124,8 +124,8 @@ inherited GdbWidget: TGdbWidget
           end
           object TabSheet4: TTabSheet
             Caption = 'Assembler'
-            ClientHeight = 169
-            ClientWidth = 662
+            ClientHeight = 173
+            ClientWidth = 670
             object lstAsm: TListView
               Left = 2
               Height = 161
@@ -214,8 +214,8 @@ inherited GdbWidget: TGdbWidget
         TabOrder = 3
         object TabSheet1: TTabSheet
           Caption = 'Call stack'
-          ClientHeight = 169
-          ClientWidth = 662
+          ClientHeight = 173
+          ClientWidth = 670
           object lstCallStack: TListView
             Left = 0
             Height = 169
@@ -251,8 +251,8 @@ inherited GdbWidget: TGdbWidget
         end
         object TabSheet2: TTabSheet
           Caption = 'Thread list'
-          ClientHeight = 169
-          ClientWidth = 662
+          ClientHeight = 173
+          ClientWidth = 670
           object lstThreads: TListView
             Left = 0
             Height = 169
@@ -307,8 +307,8 @@ inherited GdbWidget: TGdbWidget
         end
         object TabSheet5: TTabSheet
           Caption = 'Debugee options'
-          ClientHeight = 169
-          ClientWidth = 662
+          ClientHeight = 173
+          ClientWidth = 670
           object dbgeeOptsEd: TTIPropertyGrid
             Left = 2
             Height = 161
@@ -330,6 +330,7 @@ inherited GdbWidget: TGdbWidget
       end
     end
     inherited toolbar: TDexedToolBar
+      Height = 30
       Width = 664
       object btnStack: TDexedToolButton[0]
         Left = 238
@@ -353,7 +354,7 @@ inherited GdbWidget: TGdbWidget
       end
       object button4: TDexedToolButton[2]
         Left = 205
-        Height = 28
+        Height = 5
         Top = 0
         AutoSize = True
         Caption = 'button4'

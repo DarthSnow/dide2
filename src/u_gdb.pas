@@ -502,6 +502,8 @@ type
     fDoc: TDexedMemo;
     fDbgRunnable: boolean;
     fCatchCustomEval: boolean;
+    fCatchCustomEvalAsString: boolean;
+    fCaughtCustomEvalAstring: string;
     fProj: ICommonProject;
     fJson: TJsonObject;
     fLog: TStringList;
@@ -576,6 +578,7 @@ type
     procedure removeBreakPoint(const fname: string; line: integer;
       kind: TBreakPointKind = bpkBreak);
     procedure removeBreakPoints(const fname: string);
+    function evaluate(const exp: string): string;
     procedure executeFromShortcut(sender: TObject);
   public
     constructor create(aOwner: TComponent); override;
@@ -1686,6 +1689,20 @@ begin
   updateButtonsState;
 end;
 
+function TGdbWidget.evaluate(const exp: string): string;
+begin
+  result := '';
+  if fGdbState <> gsPaused then
+    exit;
+  fCatchCustomEvalAsString:=true;
+  fCaughtCustomEvalAstring := '';
+  gdbCommand('-data-evaluate-expression "' + exp + '"', @gdboutJsonize);
+  sleep(25);
+  Application.ProcessMessages();
+  sleep(25);
+  result := fCaughtCustomEvalAstring;
+end;
+
 procedure TGdbWidget.updateButtonsState;
 begin
   case fGdbState of
@@ -2253,6 +2270,15 @@ begin
       end;
     end
     else dlgOkInfo(format('it was not possible to evaluate '#10#9'`%s`', [fLastEvalStuff]));
+    exit;
+  end;
+
+  if fCatchCustomEvalAsString then
+  begin
+    fCatchCustomEvalAsString := false;
+    fCaughtCustomEvalAstring := '';
+    if fJson.findAny('value', val) then
+      fCaughtCustomEvalAstring := val.AsString;
     exit;
   end;
 
