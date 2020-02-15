@@ -1023,8 +1023,31 @@ begin
     y := caretPos.y;
     if t^.position.y > y then
       continue;
-    if ((t^.position.y = y) and (t^.position.x <= x))
-      or (t^.position.y < y) then
+    if ((t^.position.y = y) and (t^.position.x <= x)) then
+      //or (t^.position.y < y) then
+    begin
+      result := i;
+      break;
+    end;
+  end;
+end;
+
+function getIndexOfTokenAt(tokens: TLexTokenList; caretPos: TPoint): integer;
+var
+  i: integer;
+  x: integer;
+  y: integer;
+  t: PLexToken;
+begin
+  result := -1;
+  for i := tokens.Count-1 downto 0 do
+  begin
+    t := tokens[i];
+    x := caretPos.x - 2;
+    y := caretPos.y;
+    if t^.position.y > y then
+      continue;
+    if (t^.position.y = y) and (t^.position.x <= x) and (x < t^.position.x + t^.Data.length) then
     begin
       result := i;
       break;
@@ -1041,9 +1064,9 @@ var
   t : PLexToken;
 begin
   result := '';
-  ri := getIndexOfTokenLeftTo(tokens, caretPos);
+  ri := getIndexOfTokenAt(tokens, caretPos);
   if ri <> -1 then
-    for i := ri downto 0 do
+    for i := ri-1 downto 0 do
   begin
     t := tokens[i];
     //  other; a.b.c|.d  ->  a.b.c
@@ -1074,7 +1097,7 @@ begin
       break;
     end;
   end;
-  if (li <> -1) and (ri > li) then
+  if (li <> -1) and (ri >= li) then
   begin
     for i := li to ri do
       result += tokens[i]^.Data;
