@@ -1023,8 +1023,8 @@ begin
     y := caretPos.y;
     if t^.position.y > y then
       continue;
-    if ((t^.position.y = y) and (t^.position.x <= x)) then
-      //or (t^.position.y < y) then
+    if ((t^.position.y = y) and (t^.position.x <= x))
+      or (t^.position.y < y) then
     begin
       result := i;
       break;
