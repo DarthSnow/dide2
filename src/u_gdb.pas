@@ -1689,6 +1689,85 @@ begin
   updateButtonsState;
 end;
 
+function formatEvaluationResult(const str: string): string;
+var
+  c: char = #0;
+  p: char;
+  i: integer = 0;
+  t: integer = 0;
+  s: boolean = false;
+
+  procedure writeIndent();
+  var
+    i: integer;
+  begin
+    for i := 1 to t do
+      result += '     ';
+  end;
+  procedure newLineAndIndent();
+  begin
+    result += #10;
+    writeIndent();
+  end;
+
+begin
+  result := '';
+  while i <> str.length do
+  begin
+    i += 1;
+    p := c;
+    c := str[i];
+    if s and (c <> #38) then
+    begin
+      result += c;
+      continue;
+    end;
+    case c of
+      #10, #13:
+      begin
+        continue;
+      end;
+      '\':
+      begin
+        result += c;
+        if i <> str.length then
+        begin
+          result += str[i +1];
+          i += 1;
+        end;
+      end;
+      '{':
+      begin
+        if t = 0 then
+          writeIndent()
+        else
+          newLineAndIndent();
+        result += c;
+        t += 1;
+        newLineAndIndent();
+      end;
+      '}':
+      begin
+        t -= 1;
+        newLineAndIndent();
+        result += c;
+        newLineAndIndent();
+      end;
+      ',':
+      begin
+        if p <> '}' then
+          newLineAndIndent();
+      end;
+      #38:
+      begin
+        s := not s;
+        result += c;
+      end;
+      else result += c;
+    end;
+  end;
+end;
+
 function TGdbWidget.evaluate(const exp: string): string;
 begin
   result := '';
@@ -1700,7 +1779,7 @@ begin
   sleep(25);
   Application.ProcessMessages();
   sleep(25);
-  result := fCaughtCustomEvalAstring;
+  result := demangle(formatEvaluationResult(fCaughtCustomEvalAstring));
 end;
 
 procedure TGdbWidget.updateButtonsState;
