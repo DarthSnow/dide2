@@ -422,7 +422,7 @@ begin
   fMsgColors[amkInf]  := $FFD0A8;
   fMsgColors[amkHint] := $C2FFC2;
 
-  updaterByLoopInterval := 12;
+  updaterByLoopInterval := 200;
   fOptions := TMessagesOptions.Create(Self);
   fOptions.assign(self);
   fOptions.Name:= 'messageOptions';
@@ -993,10 +993,11 @@ procedure TMessagesWidget.updateLoop;
 begin
   if fastDisplay then
   begin
+    List.BeginUpdate;
     clearOutOfRangeMessg;
     scrollToBack;
-    List.Update;
     filterMessages(fCtxt);
+    List.EndUpdate;
   end;
 end;
 

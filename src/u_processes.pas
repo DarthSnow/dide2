@@ -178,7 +178,7 @@ begin
   fStdoutEx := TMemoryStream.Create;
   fStderrEx := TMemoryStream.Create;
   FTerminateChecker := TTimer.Create(nil);
-  FTerminateChecker.Interval := 50;
+  FTerminateChecker.Interval := 200;
   fTerminateChecker.OnTimer := @checkTerminated;
   fTerminateChecker.Enabled := false;
   TAsyncProcess(self).OnTerminate := @internalDoOnTerminate;
