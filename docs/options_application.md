@@ -3,7 +3,7 @@ title: Widgets - application options
 ---
 
 {% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 {% endraw %}
 
 #### Application
@@ -16,6 +16,7 @@ The page exposes unsorted options. In the future some of them might be moved to 
 
 - **additionalPATH**: Used to defined more paths were the background tools can be found. Each item must be separated by a path separator (`:` under Linux and `;` under Windows).
 - **autoCheckUpdates**: If checked and if a newer release is available then a dialog proposes to open the matching html page on github.
+- **autoCleanMRU**: If checked then the MRU lists wont display files that dont exist. When using a version control software or removable disk it can be preferable not to use this option.
 - **autoKillProcThreshold**: When not zero this setting indicates the size of the stdandard output, in bytes, over which an inferior process gets killed automatically. By default set to 2 Mb. This is usefull for example to prevent issues when an inferior falls into an infinite loop that prints.
 - **autoSaveProjectFiles**: If checked the sources are automatically saved before compilation.
 - **consoleProgram**: Allows to set the terminal emulator used to execute programs. By default XTerm is used and an error can occur if it's not setup. The setting is used by the [runnable modules](features_runnables), the [custom tools](widgets_custom_tools) and the project launcher. Under Windows this option is not used.

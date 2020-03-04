@@ -388,6 +388,7 @@ type
 
     fDockingIsInitialized: boolean;
     fGitIconIndex: integer;
+    fCleanIconIndex: integer;
     fImages: TImageList;
     fOptionCategories: TEditableOptionsSubject;
     fRunnablesOptions: TEditableRunnableOptions;
@@ -529,6 +530,7 @@ type
     procedure mruProjItemClick(Sender: TObject);
     procedure mruProjGroupItemClick(Sender: TObject);
     procedure mruClearClick(Sender: TObject);
+    procedure mruClearInvalidClick(Sender: TObject);
 
     // layout
     procedure setSplitterWheelEvent;
@@ -620,6 +622,7 @@ type
     fToolBarScaling: TToolBarScaling;
     fAutoKillProcThreshold: dword;
     fGlobalCompiler: DCompiler;
+    fAutoCleanMRU: boolean;
     function getConsoleProgram: string;
     procedure setConsoleProgram(const value: string);
     function getAdditionalPATH: string;
@@ -630,6 +633,7 @@ type
   published
     property additionalPATH: string read getAdditionalPATH write setAdditionalPath;
     property autoCheckUpdates: boolean read fAutoCheckUpdates write fAutoCheckUpdates;
+    property autoCleanMRU: boolean read fAutoCleanMRU write fAutoCleanMRU default true;
     property autoKillProcThreshold: dword read fAutoKillProcThreshold write fAutoKillProcThreshold default 1024 * 1024 * 2;
     property consoleProgram: string read getConsoleProgram write setConsoleProgram;
     property coverModuleTests: boolean read fCovModUt write fCovModUt;
@@ -853,6 +857,7 @@ begin
   fFlatLook:=true;
   fDcdPort:=DCDWrapper.port;
   fAutoKillProcThreshold := 1024 * 1024 * 2;
+  fAutoCleanMRU := true;
 end;
 
 function TApplicationOptionsBase.getNativeProjecCompiler: DCompiler;
@@ -956,7 +961,9 @@ begin
   begin
     MainForm.fCovModUt:= fCovModUt;
     MainForm.fProjMru.maxCount := fMaxRecentProjs;
+    MainForm.fProjMru.removeNotExisting := fAutoCleanMRU;
     MainForm.fFileMru.maxCount := fMaxRecentDocs;
+    MainForm.fFileMru.removeNotExisting:= fAutoCleanMRU;
     MainForm.fPrjGrpMru.maxCount:= fMaxRecentGroups;
     MainForm.updateFloatingWidgetOnTop(fFloatingWidgetOnTop);
     MainForm.fDscanUnittests := fDscanUnittests;
@@ -1556,6 +1563,8 @@ begin
 
   i := loadIcon('ARROW_UPDATE');
   actProjGitBranchesUpd.ImageIndex:=i;
+
+  fCleanIconIndex := loadIcon('CLEAN');
 end;
 
 procedure TMainForm.InitWidgets;
@@ -2334,9 +2343,17 @@ begin
 
     trgMnu.AddSeparator;
     itm := TMenuItem.Create(trgMnu);
-    itm.Caption := 'Clear';
+    itm.Caption := 'Clear all';
     itm.OnClick := @mruClearClick;
     itm.Tag := PtrInt(srcLst);
+    itm.ImageIndex:=fCleanIconIndex;
+    trgMnu.Add(itm);
+
+    itm := TMenuItem.Create(trgMnu);
+    itm.Caption := 'Remove invalid entries';
+    itm.OnClick := @mruClearInvalidClick;
+    itm.Tag := PtrInt(srcLst);
+    itm.ImageIndex:=fCleanIconIndex;
     trgMnu.Add(itm);
 
   finally
@@ -2351,6 +2368,21 @@ begin
   srcLst := TMRUFileList(TmenuItem(Sender).Tag);
   if srcLst.isNotNil then
     srcLst.Clear;
+end;
+
+procedure TMainForm.mruClearInvalidClick(Sender: TObject);
+var
+  srcLst: TMRUFileList;
+  i: integer;
+begin
+  srcLst := TMRUFileList(TmenuItem(Sender).Tag);
+  if srcLst.isNil then
+    exit;
+  srcLst.BeginUpdate;
+  for i := srcLst.Count-1 downto 0 do
+    if not srcLst.Strings[i].fileExists then
+      srcLst.Delete(i);
+  srcLst.EndUpdate;
 end;
 {$ENDREGION}
 

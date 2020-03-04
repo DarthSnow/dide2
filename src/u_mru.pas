@@ -36,11 +36,14 @@ type
    * MRU list for filenames.
    *)
   TMRUFileList = class(TMruList)
+  private
+    fRemoveNotExisting: boolean;
   protected
     function checkItem(const value: string): boolean; override;
   public
     constructor create; override;
     procedure assign(source: TPersistent); override;
+    property removeNotExisting: boolean read fRemoveNotExisting write fRemoveNotExisting;
   end;
 
   (**
@@ -164,7 +167,9 @@ end;
 
 function TMRUFileList.checkItem(const value: string): boolean;
 begin
-  exit( inherited checkItem(value) and value.fileExists);
+  result := inherited checkItem(value);
+  if fRemoveNotExisting then
+     result := result and value.fileExists;
 end;
 
 constructor TMRUDocumentList.create;
