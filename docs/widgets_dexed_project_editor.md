@@ -1,14 +1,12 @@
 ---
-title: Widgets - DEXED project editor
+title: Widgets - DEXED Project Editor
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
-
-The widget is used to edit the properties of a project that has the DEXED format (*.dprj extension)
+The widget is used to edit the properties of a project that has the DEXED format (_*.dprj_ extension)
 It's no recommended to use this format anymore.
 
 ![](img/ce_project_editor.png)
-
 
 The format is modeled based on the DMD command line interface but it can be compiled with LDC or GDC too,
 using the bridges that convert DMD options to LDC (LDMD) or to GDC (GDMD), which is done automatically when they are [set to compile CE the projects](options_application.html).
@@ -150,7 +148,7 @@ This is possible when the post compilation process _executable_ is set to the [s
 They define the options applied when running the project output (e.g: menu **"project"**, **"compile and run"**). 
 The _executable_ field is not present because it relies on the project parameters (**-of** for a CE project and the combination of _targetPath_ with _targetName_ for a DUB project).
 
-If the output is piped then the [process input widget][lnk_widg_procinp] can be used to pass the input to the program being executed.
+If the output is piped then the [process input widget](widgets_process_input.html) can be used to pass the input to the program being executed.
 These options are defined per-configuration.
 These options are not compatible with the system of _base_ & _overridden_ configuration.
 

@@ -1,5 +1,5 @@
 ---
-title: Widgets - library manager
+title: Widgets - Library Manager
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 --- 
 
@@ -46,6 +46,4 @@ The text field is used to select the name of the package to install.
 - ![](icons/other/accept.png): Closes the dialog and start downloading before installing.
 - ![](icons/other/cancel.png): Cancels and does nothing.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

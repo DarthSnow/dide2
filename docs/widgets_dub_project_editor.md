@@ -1,5 +1,5 @@
 ---
-title: Widgets - DUB project editor
+title: Widgets - DUB Project Editor
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
@@ -27,6 +27,4 @@ When the second method is used the property type is selected automatically, whic
 The property name is not always required. For example when when an array item is added the content of the field is ignored.
 After adding a property, its value still needs to be set at the bottom of the tree.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

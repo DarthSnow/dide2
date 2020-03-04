@@ -1,5 +1,5 @@
 ---
-title: Setup dexed
+title: Setup
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
@@ -19,9 +19,9 @@ For each platform Dexed can be setup using a setup program or by extracting the 
 
 ## Linux dependencies
 
-The software is based on the GTK2 toolkit.
+The official build of the software is based on the GTK2 toolkit.
 The runtime libraries must be setup (libgtk2, libglib, libgdk-pixbuf2, etc; they usually comes together, libc).
-You must also setup some theme engines (such as Adwaita, Clearlooks, Nimbus, Industrial, etc).
+To enhance the appearence, you can also setup some theme engines (such as Adwaita, Clearlooks, Nimbus, Industrial, etc).
 
 Windows interface is based on native win32 controls.
 

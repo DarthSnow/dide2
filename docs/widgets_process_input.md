@@ -1,9 +1,9 @@
 ---
-title: Widgets - process input
+title: Widgets - Process Input
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
-The process input widget is used to pass input to the processes that are executed within Coedit.
+The process input widget is used to pass input to the processes that are executed within Dexed.
 
 ![](img/process_input.png)
 
@@ -13,6 +13,4 @@ The process input widget is used to pass input to the processes that are execute
 
 The input text can contain [symbolic strings](features_symbolic_strings.html).
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

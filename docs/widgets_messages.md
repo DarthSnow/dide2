@@ -1,5 +1,5 @@
 ---
-title: Widgets - messages
+title: Widgets - Messages
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 ## Description
@@ -19,7 +19,7 @@ The messages can be filtered according to their context:
 
 When a message is double clicked, it is parsed in order to extract a *position* and a *file name*.
 If the operation succeeds then the *file* will be opened at a *position*.
-For now *DMD*, [*Dscanner*](https://www.github.com/Hackerpilot/Dscanner) and DUB messages are well parsed.
+For now *DMD*, [*Dscanner*](https://www.github.com/dlang-community/D-Scanner) and DUB messages are well parsed.
 The messages emitted by the custom tools may also be clickable if they follow a the format: **`<relative|absolute filename>(<line[:column]>)<message body>`**.
 
 The context menu contains a few useful actions, such as *copy messages*, *save message(s) to file*.
@@ -40,6 +40,4 @@ This is a recommended setting because if a run-time error happens, it will be im
 - **maxMessageCount**: Allows to limit the maximum number of messages kept in the list.
 - **singleMessageClick**: Allows to open the file that the message parser has found by a single click.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

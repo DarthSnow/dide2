@@ -1,5 +1,5 @@
 ---
-title: Widgets - Profile viewer
+title: Widgets - Profile Viewer
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
@@ -28,6 +28,4 @@ The list displays all the results, which can be inspected more accurately after 
 - **hideStandardLibraryCalls**: When checked, all the functions starting with `std.` are excluded.
 - **otherExclusion**: Allows to define other sub-strings masks.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

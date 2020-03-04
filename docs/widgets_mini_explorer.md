@@ -1,5 +1,5 @@
 ---
-title: Widgets - mini explorer
+title: Widgets - Mini Explorer
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
@@ -29,6 +29,4 @@ A few options are available in the [option editor](widgets_options_editor.html).
 - **doubleClick**: Defines what happens when a file is double clicked.
 - **showHidden**: Sets if hidden folders and files are displayed.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

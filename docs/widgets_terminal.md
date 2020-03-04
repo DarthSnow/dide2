@@ -32,6 +32,4 @@ Commonly used keys are:
 - **scrollbackLines**: The max count of previous lines that are stored.
 - **selectedColor**: The bacground when some text is selected. Selected text color is then simply inverted.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

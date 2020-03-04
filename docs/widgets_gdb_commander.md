@@ -1,5 +1,5 @@
 ---
-title: Widgets - GDB commander
+title: Widgets - GDB Commander
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
@@ -98,6 +98,4 @@ The text following the symbol is written to the input stream, with an implicit n
 - **showRawMiOutput**: For the custom commands or for debugging the widget. When checked the GDB output (after JSON-ization) is displayed in [the messages](widgets_messages.html).
 - **stopAllThreadsOnBreak**: Sets if all the threads of the target are stopped when the execution breaks. Not applied until next debugging cession.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

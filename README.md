@@ -1,6 +1,6 @@
 Dexed, the _D Extended EDitor_, is an IDE for the [D programming language](https://dlang.org), its compilers, tools and libraries.
 
-[![](https://basile.b.gitlab.io/dexed/img/coedit_kde4_thumb.png)](https://basile.b.gitlab.io/dexed/img/coedit_kde4.png)
+![](https://basile.b.gitlab.io/dexed/img/coedit_kde4_thumb.png)
 
 ## Overview
 
@@ -28,7 +28,7 @@ Dexed, the _D Extended EDitor_, is an IDE for the [D programming language](https
 - :scroll: licensed under the terms of the Boost software license.
 - :dollar: Development can be supported with [Paypal donations](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AQDJVC39PJF7J).
 
-## Download version 3.7.10
+## Download version 3.7.11
 
 ***coming soon...***
 

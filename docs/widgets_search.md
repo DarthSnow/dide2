@@ -1,5 +1,5 @@
 ---
-title: Widgets - search and replace
+title: Widgets - Search and Replace
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 --- 
 
@@ -29,6 +29,4 @@ Notes:
 - To find the declaration of a symbol, <kbd>Ctrl</kbd> + <kbd>MB Left</kbd> or the [symbol list](widgets_symbol_list.html) are faster.
 - To rename a variable or a type, local identifier renaming (<kbd>Ctrl</kbd> + <kbd>F2</kbd>) can be more accurate than _Replace all_ since the action uses the semantic.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

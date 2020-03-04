@@ -1,5 +1,5 @@
 ---
-title: Widgets - options editor
+title: Widgets - Options Editor
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
@@ -22,6 +22,4 @@ The options are persistent and saved in a specific folder:
 
 Each software component saves its own file with a self-explanatory name so it's easy to find and modify the file that matches a particular setting.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

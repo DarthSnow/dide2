@@ -1,11 +1,11 @@
 ---
-title: index
+title: Dexed Manual
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
 ![](img/coedit_kde4_thumb.png)
 
-This documentation is based on version 3.7.5.
+This documentation is based on Dexed version 3.7.10.
 Screenshots can be outdated but descriptions are up to date.
 
 ## First steps
@@ -49,7 +49,6 @@ _Full description of Dexed options. May redirect to a specific widget page._
 * [Profile viewer](widgets_profile_viewer.html)
 * [Runnable modules](features_runnables.html)
 * [Shortcuts editor](options_shortcuts_editor.html)
-* [Static macros](widgets_editor.html)
 * [Symbol list](widgets_symbol_list.html)
 * [Terminal](widgets_terminal.html)
 * [Todo list](widgets_todo_list.html)

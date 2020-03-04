@@ -1,5 +1,5 @@
 ---
-title: Widgets - project groups
+title: Widgets - Project Groups
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
@@ -47,6 +47,4 @@ The field at the bottom indicates the status of the FSP.
 - **Compiles projects group sequentially**: Starts compiling the group. Wait points are ignored and items are compiled one by one.
 - **Compiles projects group using wait points**: Starts compiling the group. Wait points are respected.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>

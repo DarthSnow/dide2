@@ -1,5 +1,5 @@
 ---
-title: Widgets - project inspector
+title: Widgets - Project Inspector
 header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
@@ -7,7 +7,7 @@ The project inspector is used to
 
 - select the project configuration.
 - open sources in an new editor.
-- add or remove source if the active project has the [CE format](features_projects.html).
+- add or remove source if the active project has the [Dexed format](features_projects.html).
 
 ![](img/project_inspector.png)
 
@@ -25,6 +25,4 @@ The following toolbar buttons are only visible for CE projects:
 
 Note that instead of using the dialogs to add files, it's also possible to drop items from a file explorer.
 
-<script>
-anchors.add();
-</script>
+<script>anchors.add();</script>
