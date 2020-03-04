@@ -2124,7 +2124,7 @@ end;
 
 procedure TMainForm.mnuItemManualClick(Sender: TObject);
 begin
-  OpenURL('https://basile.b.gitlab.io/dexed/);
+  OpenURL('https://basile.b.gitlab.io/dexed/');
 end;
 
 destructor TMainForm.destroy;
