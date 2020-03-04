@@ -1,23 +1,17 @@
 ---
 title: Widgets - messages
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
-
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
-
-### Messages
-
-#### Description
+## Description
 
 The widget displays a stream of information about the current file or about the current project.
 The messages can be filtered according to their context:
 
 - __All__: no filter.
-- __Editor__: filters the messages related to the editor that has the focus (compilation, standard output of the module when executed as a [_runnable_](features_runnables)).
+- __Editor__: filters the messages related to the editor that has the focus (compilation, standard output of the module when executed as a [_runnable_](features_runnables.html)).
 - __Project__: filters the messages related to the current project (DMD or DUB messages, pre/post compilation process output, project execution).
 - __Application__: filters the messages emitted by CE (applications warnings, application exceptions).
-- __Misc__: miscellaneous messages (messages emitted by the widgets, by the custom tools when their output is redirected, [find all](widgets_search) results, etc). 
+- __Misc__: miscellaneous messages (messages emitted by the widgets, by the custom tools when their output is redirected, [find all](widgets_search.html) results, etc). 
 
 ![](img/messages1.png)
 ![](img/messages2.png)
@@ -32,7 +26,7 @@ The context menu contains a few useful actions, such as *copy messages*, *save m
 By default only the last 500 messages are displayed, regardless of the categories. 
 This value and several other options can be changed in the options.
 
-#### Options
+## Options
 
 ![](img/options_messages.png)
 
@@ -46,8 +40,6 @@ This is a recommended setting because if a run-time error happens, it will be im
 - **maxMessageCount**: Allows to limit the maximum number of messages kept in the list.
 - **singleMessageClick**: Allows to open the file that the message parser has found by a single click.
 
-{% raw %}
 <script>
 anchors.add();
 </script>
-{% endraw %}

@@ -1,10 +1,7 @@
 ---
 title: Widgets - search and replace
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 --- 
-
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
 
 The _find and replace_ widget allows to find and replace text patterns in the focused source editor.
 
@@ -20,7 +17,7 @@ The _find and replace_ widget allows to find and replace text patterns in the fo
 - **allow regex**: When checked, the search is performed by a regex engine. Note that it doesn't mean that the pattern to find has to be a regex).
 
 By default <kbd>CTRL</kbd> + <kbd>F</kbd> is used to pass the current identifier to the first field and <kbd>F3</kbd> to execute a search.
-The _Find all_ results are displayed in the [messages widget](widgets_messages), with the context and they can be clicked.
+The _Find all_ results are displayed in the [messages widget](widgets_messages.html), with the context and they can be clicked.
 
 ![](img/find_all_results.png)
 
@@ -29,11 +26,9 @@ The scope of _Replace all_ only works in the current document or its selection, 
 
 Notes:
 
-- To find the declaration of a symbol, <kbd>Ctrl</kbd> + <kbd>MB Left</kbd> or the [symbol list](widgets_symbol_list) are faster.
+- To find the declaration of a symbol, <kbd>Ctrl</kbd> + <kbd>MB Left</kbd> or the [symbol list](widgets_symbol_list.html) are faster.
 - To rename a variable or a type, local identifier renaming (<kbd>Ctrl</kbd> + <kbd>F2</kbd>) can be more accurate than _Replace all_ since the action uses the semantic.
 
-{% raw %}
 <script>
 anchors.add();
 </script>
-{% endraw %}

@@ -1,41 +1,34 @@
 ---
 title: Widgets - Editor
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
-
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
-
-{% include xstyle.css %}
-
-### Editor
 
 The _editor widget_ is a standard code editor, specialized for highlighting D source files.
 
 ![](img/editor_overview.png)
 
-#### Navigation
+## Navigation
 
 In addition to the standard actions used to navigate in a source, Dexed implements several helpers:
 
-- **Next/Previous location**: The two actions are used to jump to the locations where the caret was activated. They follow the chronology and not the line numbers. In the [shortcut editor](options_shortcuts_editor) they can be found under the names _PreviousLocation_ and _NextLocation_. The actions are also hard linked to the mouse buttons X1 and X2 and the multimedia keys usually used by web browsers to reload the next or the previous page.
-- **Next/Previous changed area**: The two actions are used to jump to the locations that contain changes. They follow the line numbers. In the [shortcut editor](options_shortcuts_editor) they can be found under the names _PreviousChangedArea_ and _NextChangedArea_.
-- **Next/Previous protection attribute**: This especially made to navigate in the aggregates. In the [shortcut editor](options_shortcuts_editor) they can be found under the names _PrevProtGroup_ and _NextProtGroup_.
+- **Next/Previous location**: The two actions are used to jump to the locations where the caret was activated. They follow the chronology and not the line numbers. In the [shortcut editor](options_shortcuts_editor.html) they can be found under the names _PreviousLocation_ and _NextLocation_. The actions are also hard linked to the mouse buttons X1 and X2 and the multimedia keys usually used by web browsers to reload the next or the previous page.
+- **Next/Previous changed area**: The two actions are used to jump to the locations that contain changes. They follow the line numbers. In the [shortcut editor](options_shortcuts_editor.html) they can be found under the names _PreviousChangedArea_ and _NextChangedArea_.
+- **Next/Previous protection attribute**: This especially made to navigate in the aggregates. In the [shortcut editor](options_shortcuts_editor.html) they can be found under the names _PrevProtGroup_ and _NextProtGroup_.
 
-#### Edition helpers
+## Edition helpers
 
 - **Upper / Lower case**: The two actions change the case of the selection.
 - **Sort lines**: Shows a dialog with the options allowing to sort the selection.
 - **Comment selected lines**: Comments or uncomments the current line or the selection.
 - **Comment identifier**: Comments or uncomments the identifier located at the caret.
 - **Invert version all none**: Changes the `version(none)` to `version(all)` and conversely.
-- **Synchro-edit**: When there's a selection, click the pen icon in the gutter. This allows to rename all the identifier that are lexically equals. To rename using the semantic, see [DCD](features_dcd).
+- **Synchro-edit**: When there's a selection, click the pen icon in the gutter. This allows to rename all the identifier that are lexically equals. To rename using the semantic, see [DCD](features_dcd.html).
 
 ![](img/editor_synchro_edit.png)
 
-All these actions are assignable to a shortcut via the [shortcut editor](options_shortcuts_editor)
+All these actions are assignable to a shortcut via the [shortcut editor](options_shortcuts_editor.html)
 
-#### Automatic features
+## Automatic features
 
 Options exist to automatically close the curly brackets (`{ }`), the square brackets (`[ ]`), the double quotes (`" "`), the back-ticks (`` ` ` ``) and the single quotes (`' '`).
 
@@ -53,7 +46,7 @@ Options for the curly brackets:
 
 The last option is the default. Use the <kbd>CTRL</kbd> key to skip the auto closing done with <kbd>ENTER</kbd>.
 
-#### Custom regions
+## Custom regions
 
 The custom regions are defined in single line comments.
 A region starts with a comment that ends with at least three hyphens and a plus symbol.
@@ -76,7 +69,7 @@ T opIndex(size_t i){}
 
 Regions are saved and reloaded with the editor cache. They give a clear and compact view of a module.
 
-#### Split view
+## Split view
 
 The split view allows to pin one of the document to the right of all the other documents.
 
@@ -86,7 +79,7 @@ The document to pin can be replaced on the fly, still using the same button, and
 
 It's useful to display a module that contains the declarations of a library binding since it's not anymore necessary to change the editor page to verify the members of an enum or the parameters of a function.
 
-#### External Modification tracking
+## External Modification tracking
 
 When a document that's edited in Dexed is modified by another program, a _diff_ is displayed.
 
@@ -94,15 +87,15 @@ When a document that's edited in Dexed is modified by another program, a _diff_ 
 
 The dialog is guaranteed to be only displayed when the content contains changes. A simple date of modification has no effect.
 
-#### Linting
+## Linting
 
 If activated in the options (see beyond), the source can be automatically linted, after a relative period of time, following the last keystroke.
 Results are displayed in the gutter and the warning body can be consulted in the hint displayed when the mouse motin stops over the icon.
 Linting requires [D-Scanner](https://github.com/dlang-community/D-Scanner) to be setup.
-It's possible to use the [information box](widgets_about) to determine if Dexed can find the tool.
+It's possible to use the [information box](widgets_about.html) to determine if Dexed can find the tool.
 Note that linting can also be launched manually from the _File_ or the _Project_ menus.
 
-#### Notable options
+## Notable options
 
 The editor is highly configurable. 
 
@@ -111,7 +104,7 @@ The editor is highly configurable.
 The options related to the visual look are mainly located in the _highlighterDlang_ and the _highlighterGeneric_ sub categories. 
 The category _Highlighter presets_ can be used to customize more easily the style.
 
-The shortcuts are editable in the [shortcut editor](options_shortcuts_editor), under the category _Code editor._
+The shortcuts are editable in the [shortcut editor](options_shortcuts_editor.html), under the category _Code editor._
 
 - **alwaysAdvancedFeatures**: When checked, auto-closing or DCD features also work on documents that don't have the _.d_ or the _.di_ extensions.
 - **autoCallCompletion**: Call completion after an alphabetic character, without explicit <kbd>CTRL</kbd>+<kbd>SPACE</kbd>.
@@ -136,8 +129,4 @@ The shortcuts are editable in the [shortcut editor](options_shortcuts_editor), u
 - **resetFontSize**: When checked and if the font size is modified then the font size is resets in all the documents that are opened. The option can be disabled in order to keep the current zoom ratio.
 - **smartDdocNewLine**: Allow the auto insertion of a leading `*` or a `+` while writing documentation comments.
 
-{% raw %}
-<script>
-anchors.add();
-</script>
-{% endraw %}
+<script>anchors.add();</script>

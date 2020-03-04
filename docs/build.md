@@ -1,14 +1,9 @@
 ---
 title: Build Dexed
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
-
-### Build
-
-#### Dexed
+## Dexed
 
 Dexed is mostly programmed in Object Pascal, using the the [Lazarus development platform](http://www.lazarus-ide.org/).
 
@@ -37,7 +32,7 @@ You're now ready to build Dexed. This can be done in the IDE or using the _lazbu
 
 After what Dexed should be build. The executable is output to the _bin_ folder.
 
-#### Dastworx
+## Dastworx
 
 The background tool used by the IDE is a D program.
 
@@ -48,13 +43,9 @@ The background tool used by the IDE is a D program.
 
 You can also build it in dexed using the project file _dastworx.dprj_.
 
-#### Third party tools:
+## Third party tools
 
 Additionally you'll have to build [the completion daemon **DCD**](https://github.com/dlang-community/DCD#setup) and the [D linter **Dscanner**](https://github.com/dlang-community/Dscanner#building-and-installing).
 See the products documentation for more information.
 
-{% raw %}
-<script>
-anchors.add();
-</script>
-{% endraw %}
+<script>anchors.add();</script>

@@ -1,12 +1,7 @@
 ---
 title: D Completion Daemon
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
-
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
-
-### D Completion Daemon
 
 The D Completion Daemon (DCD) is used to accomplish IDE-grade features such as
 
@@ -21,7 +16,7 @@ The D Completion Daemon (DCD) is used to accomplish IDE-grade features such as
 - jump to declaration
 - redirection to html documentation
 
-#### Setup
+## Setup
 
 _DCD_ is a third part software, it's bundled in the archives distributed for each new [release](https://github.com/Basile-z/dexed/releases).
 However, _DCD_ may have to be build manually, for example if a new version is released while _Dexed_ development is paused for a while.
@@ -30,22 +25,22 @@ Visit the product [homepage](https://github.com/dlang-community/DCD) for more in
 Once DCD build or extracted from the release archive, copy the two programs (_dcd-client_ and _dcd-server_) to the folder where the Dexed executable stands.
 They can be put elsewhere, as long as the target directory is a known operating system PATH.
 
-#### Imports
+## Imports
 
-In _Dexed_, _DCD_ relies on the [compilers paths](options_compilers_paths), on the [library manager](widgets_library_manager) entries and on the project parameters. When the [_libman_](widgets_library_manager) is empty then the scope of DCD is limited to the symbols of current module, of the current project sources and of the standard library, that's why it necessary to register the development libraries used in the _libman_.
+In _Dexed_, _DCD_ relies on the [compilers paths](options_compilers_paths.html), on the [library manager](widgets_library_manager.html) entries and on the project parameters. When the [_libman_](widgets_library_manager.html) is empty then the scope of DCD is limited to the symbols of current module, of the current project sources and of the standard library, that's why it necessary to register the development libraries used in the _libman_.
 
 _DCD_ also has its own configuration system. Refer to the official [Readme](https://github.com/dlang-community/DCD#configuration-files).
 
-#### Initialization
+## Initialization
 
 When Dexed starts and if the DCD server is not already listening then it's launched by CE.
 When Dexed stops, the server is only terminated if it was not already running when starting.
 
 If the DCD server crashes while Dexed is running then both must be restarted.
 
-#### Usage
+## Usage
 
-- <kbd>CTRL</kbd> + <kbd>SPACE</kbd>: Calls the completion menu or completes automatically if possible. The default shortcut can be modified in the [shortcut editor](options_shortcuts_editor).
+- <kbd>CTRL</kbd> + <kbd>SPACE</kbd>: Calls the completion menu or completes automatically if possible. The default shortcut can be modified in the [shortcut editor](options_shortcuts_editor.html).
 - <kbd>.</kbd> invokes the completion if the editor option _autoDotDelay_ is greater than 0.
 - <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>UP</kbd>: Jumps to the declaration of the symbol located at the cursor. The default shortcut can be modified.
 - <kbd>CTRL</kbd> + <kbd>LEFT MOUSE BUTTON</kbd>: ditto.
@@ -57,8 +52,4 @@ If the DCD server crashes while Dexed is running then both must be restarted.
 
 Documentation comments associated to a symbol are displayed when the cursor motion stops over a symbol.
 
-{% raw %}
-<script>
-anchors.add();
-</script>
-{% endraw %}
+<script>anchors.add();</script>

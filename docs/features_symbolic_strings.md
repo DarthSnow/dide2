@@ -1,20 +1,15 @@
 ---
 title: Symbolic strings
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
-
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
-
-### Symbolic strings
 
 The symbolic strings represent variables defined by the software. They are used by several widgets:
 
-- the [runnable modules shebang line](features_runnables).
-- the [native project confirguration widget](widgets_ce_project_editor): many fields accept symbols.
-- the [custom tools](widgets_custom_tools): parameters, working directory.
-- the [process input](widgets_process_input): the input field can include a symbol.
-- the [GDB commander](widgets_gdb_commander) custom commands.
+- the [runnable modules shebang line](features_runnables.html).
+- the [native project confirguration widget](widgets_ce_project_editor.html): many fields accept symbols.
+- the [custom tools](widgets_custom_tools.html): parameters, working directory.
+- the [process input](widgets_process_input.html): the input field can include a symbol.
+- the [GDB commander](widgets_gdb_commander.html) custom commands.
 
 Possible symbols, by context, include:
 
@@ -22,7 +17,7 @@ Application:
 
 - **`<AF>`**: Expanded to the application (Dexed) filename.
 - **`<AP>`**: Expanded to the application (Dexed) path.
-- **`<MEP>`**: Expanded to the path of the folder selected in the [mini-explorer](widgets_mini_explorer).
+- **`<MEP>`**: Expanded to the path of the folder selected in the [mini-explorer](widgets_mini_explorer.html).
 
 Environment:
 
@@ -34,7 +29,7 @@ Current file:
 
 - **`<CFF>`**: also _`<CurrentFileFile>`_. Expanded to the current file filename.
 - **`<CFP>`**: also _`<CurrentFilePath>`_. Expanded to the current file path.
-- **`<CFR>`**: also _`<CurrentFileRunnable>`_. Expanded to the runnable produced for the current file. The [OutputFolder](features_runnables) option is not handled.
+- **`<CFR>`**: also _`<CurrentFileRunnable>`_. Expanded to the runnable produced for the current file. The [OutputFolder](features_runnables.html) option is not handled.
 - **`<CI>`**: also _`<CurrentIdentifier>`_. Expanded to the identifier located at the caret position.
 - **`<CL>`**: also _`<CurrentLine>`_. Expanded to the current line of code.
 - **`<CS>`**: also _`<CurrentSelection>`_. Expanded to the current selection.
@@ -49,7 +44,7 @@ Current project:
 - **`<CPP>`**: also _`<CurrentProjectPath>`_. Expanded to the project path.
 - **`<CPR>`**: also _`<CurrentProjectRoot>`_. Expanded to the field _RootFolder_ of a CE project (n/a if the current project is for DUB).
 - **`<CPCD>`**: also _`<CurrentProjectCommonFilesDirectory>`_. Expanded to the sources common directory.
-- **`<CPV>`**: also _`<CurrentProjectVersion>`_. Expanded to the value of the _version_ field of a [CE project](widgets_ce_project_editor).
+- **`<CPV>`**: also _`<CurrentProjectVersion>`_. Expanded to the value of the _version_ field of a [CE project](widgets_ce_project_editor.html).
 
 The expanded form of a symbol is never empty. When a symbol expands to nothing it's set to a pair of back quotes, e.g **\``** for a **`<CPP>`** when no project is opened.
 
@@ -61,8 +56,4 @@ is expanded to:
 
 `http://www.google.com/search?q="dlang.org"indexOf&btnI=Im+Feeling+Lucky` if **indexOf** is the current identifier. 
 
-{% raw %}
-<script>
-anchors.add();
-</script>
-{% endraw %}
+<script>anchors.add();</script>
