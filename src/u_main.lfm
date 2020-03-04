@@ -1,17 +1,17 @@
 object MainForm: TMainForm
   Left = 383
-  Height = 35
+  Height = 34
   Top = 610
-  Width = 687
+  Width = 673
   AllowDropFiles = True
   Caption = 'Dexed'
+  DesignTimePPI = 94
   Menu = mainMenu
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnDropFiles = FormDropFiles
   OnResize = FormResize
   ShowHint = True
-  LCLVersion = '2.0.6.0'
   object mainMenu: TMainMenu
     top = 1
     object MenuItem1: TMenuItem
@@ -413,7 +413,7 @@ object MainForm: TMainForm
     end
   end
   object Actions: TActionList
-    left = 32
+    left = 31
     top = 1
     object actEdCopy: TAction
       Category = 'Edit'
@@ -857,7 +857,7 @@ object MainForm: TMainForm
   object ApplicationProperties1: TApplicationProperties
     OnActivate = ApplicationProperties1Activate
     OnException = ApplicationProperties1Exception
-    left = 64
+    left = 63
     top = 1
   end
 end
