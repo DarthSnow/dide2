@@ -1,16 +1,13 @@
 ---
-title: Setup Dexed
+title: Setup dexed
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
-
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
 
 There are four ways to get the program:
 
 * download and run the setup program build for each release.
 * download and extract the binaries build for each release.
-* [build](build) the program from the sources.
+* [build](build.html) the program from the sources.
 * download and install the official package for a linux distribution.
 
 In all the cases, the _DMD_ D2 compiler must setup and its location has to match to one of the directory of the PATH environment variable.
@@ -20,7 +17,7 @@ Note that DMD is only required for the _ddemangle_ tool otherwise the software c
 
 For each platform Dexed can be setup using a setup program or by extracting the binaries.
 
-### Linux dependencies
+## Linux dependencies
 
 The software is based on the GTK2 toolkit.
 The runtime libraries must be setup (libgtk2, libglib, libgdk-pixbuf2, etc; they usually comes together, libc).
@@ -28,7 +25,9 @@ You must also setup some theme engines (such as Adwaita, Clearlooks, Nimbus, Ind
 
 Windows interface is based on native win32 controls.
 
-### Setup program
+## Setup program
+
+**Note that this section contain obsolete link and should not be follwed you put your hands on an old version of the setup program**
 
 * Go to [the release page](https://github.com/Basile-z/dexed/releases),
 * Choose the zipped setup for your platform (at the bottom of a release log, the buttons labeled `dexed.<version>.<platform>.setup.zip`).
@@ -48,7 +47,9 @@ Note for the future versions:
 * it's possible to uninstall from a newer setup program.
 * always use the same privileges to uninstall or update as used previously.
 
-### Binaries
+## Binaries
+
+**Note that this section contain obsolete link and should not be follwed you put your hands on an old version of the zips containing the binaries**
 
 * Go to [the release page](https://github.com/Basile-z/dexed/releases),
 * Choose the binaries for your platform (at the bottom of an entry, the buttons labeled `dexed.<version>.<platform>.zip`).
@@ -64,18 +65,14 @@ the early alpha zip were all done on Windows (files attributes were lost) but it
 
 If they are not correctly set, for each of the following file **dexed**, **dcd-client**, **dcd-server**, **dastworx**, either set the permission in the context menu (check _allow execution_ or _executable_ depending on the desktop) or `chmod +x` the file in a console.
 
-### Linux package
+## Linux package
 
 Are provided a _deb_ package (Debian and derived Ubuntu, Mint, etc) and a _rpm_ (Fedora, openSUSE), only for x86_64 (amd64).
-After the installation, you must also build [DCD](features_dcd).
+After the installation, you must also build [DCD](features_dcd.html).
 
-### First steps
+## First steps
 
-- verify the [compilers paths](options_compilers_paths).
-- check the information [about the tools](widgets_about).
+- verify the [compilers paths](options_compilers_paths.html).
+- check the information [about the tools](widgets_about.html).
 
-{% raw %}
-<script>
-anchors.add();
-</script>
-{% endraw %}
+<script>anchors.add();</script>

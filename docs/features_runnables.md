@@ -1,14 +1,9 @@
 ---
 title: Runnable modules
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
-
-### Runnable modules
-
-#### Description
+## Description
 
 Dexed is able to compile and execute the module that's currently edited even if it's not part of a project.
 Such a module is called a **runnable** module.
@@ -19,7 +14,7 @@ By default the binary is produced in the folder where is located the D source bu
 
 A runnable is useful to quickly test an idea, learn how to use new libraries, or even to use modules as scripts, always without messing with the parameters that a project would require.
 
-#### Shebang line
+## Shebang line
 
 By default runnables don't need any setting however the shebang line can be used when specific compiler options are required.
 Two typical scenarios:
@@ -36,20 +31,20 @@ Dexed doesn't handle the program specified after the She-Bang, which means that 
 In the three cases, every non white character after the She-Bang is ignored.
 Options are detected right after the first non blank characters of the script line.
 
-#### Runnable I/O handling
+## Runnable I/O handling
 
-In general the program output is redirected to the [messages](widgets_messages).
+In general the program output is redirected to the [messages](widgets_messages.html).
 This is true unless the _Compile file and run outside_ or the _Run compiled file outside_ actions are used.
-Note that in this case the [consoleProgram global options](options_application) allows to define the terminal used.
+Note that in this case the [consoleProgram global options](options_application.html) allows to define the terminal used.
 
-When the program is not run outside, the [process input widget](widgets_process_input) is used to pass input to the runnable.
+When the program is not run outside, the [process input widget](widgets_process_input.html) is used to pass input to the runnable.
 
-#### Other
+## Other
 
 To be runnable, a module must verify:
 
 - a `void main()` is present or the option to automatically detect the `main()` function is activated.
-- the modules to import must be known, either by the [library manager](widgets_library_manager) or by the compiler configuration file.
+- the modules to import must be known, either by the [library manager](widgets_library_manager.html) or by the compiler configuration file.
 - _import expressions_ ( `import(file);` ) are allowed if _file_ stands in the same folder as the module being edited.
 
 The _Compile file and run outside_ action can be used to execute in an external console.
@@ -74,13 +69,13 @@ When the action _Run file unittests_ is used, **single_module** and **test_singl
 The executable produced is deleted after each run unless the file has been saved explicitly out of the initial temporary folder.
 Note that the action _Run file unittest_ is based on the same internal function excepted that the `-main` and `-unittest` switches are automatically added to the switch list (menu **File**, action **Set runnable switches**).
 
-#### Options
+## Options
 
 ![](img/options_runnables.png)
 
 - **alwaysToFolder**: deprecated, checked meant **outputFolderCondition** set to [ifSaved, ifInProject], and [ifInProject] otherwise.
-- **compiler**: Select the [compiler](options_compilers_paths) used to produce the runnable binary. When GDC or LDC is selected their bridges based on the DMD command line interface are used (GDMD or LDMD). This setting is also used when a DUB script is compiled (see [Run DUB single file package](menu_file)).
-- **detectLibraries**: When checked the static libraries used by a runnable are detected from the [library manager](widgets_library_manager) by performing import analysis. When unchecked, all the library manager entries are passed and the compiler does the selection.
+- **compiler**: Select the [compiler](options_compilers_paths.html) used to produce the runnable binary. When GDC or LDC is selected their bridges based on the DMD command line interface are used (GDMD or LDMD). This setting is also used when a DUB script is compiled (see [Run DUB single file package](menu_file.html)).
+- **detectLibraries**: When checked the static libraries used by a runnable are detected from the [library manager](widgets_library_manager.html) by performing import analysis. When unchecked, all the library manager entries are passed and the compiler does the selection.
 - **detectMain**: When checked the `main()` function is detected automatically and the `-main` switch is set accordingly. When not checked `-main` is never passed. This options is useful with the **Run file unittests** action because it allows to test a module that's also a valid program.
 - **outputFolder**: Defines a folder where the runnable binary is output. If the value starts by a drive letter or a directory separator then the folder must exist, otherwise it's considered as a subfolder, relative to the runnable filename, which is created automatically.
 - **outputFolderConditions**: Defines the conditions for which **outputFolder** is handled.
@@ -89,8 +84,4 @@ Note that the action _Run file unittest_ is based on the same internal function 
     - **ifNotSaved**: The runnable file is not part of the project and has never been saved explicitly.
 - **staticSwitches**: Defines a list of switches that are always passed to the compiler when a runnable is produced or when a module is tested.
 
-{% raw %}
-<script>
-anchors.add();
-</script>
-{% endraw %}
+<script>anchors.add();</script>

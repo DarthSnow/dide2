@@ -1,12 +1,7 @@
 ---
-title: Options - DUB build
+title: Options - Editor pages
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
-
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
-
-#### Editor pages
 
 This category exposes the options of the page control that hosts the code editors.
 
@@ -19,12 +14,8 @@ This category exposes the options of the page control that hosts the code editor
 - **pageButtons**: Defines which buttons are visible in the toolbar.
 - **pagesOptions**: Miscellaneous options.
     - **poPageHistory**: Means the creation order is saved and used to select a particular page when another is closed.
-    - **poFlatButtons**: Sets the tool bar buttons look. Normally controlled by the [application option **flatLook**](options_application).
+    - **poFlatButtons**: Sets the tool bar buttons look. Normally controlled by the [application option **flatLook**](options_application.html).
     - **poBottomHeader**: Sets if the toolbar is displayed at the bottom.
 - **previousPage**: Sets the shortcut used to select the previous page.
 
-{% raw %}
-<script>
-anchors.add();
-</script>
-{% endraw %}
+<script>anchors.add();</script>

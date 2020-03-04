@@ -1,16 +1,9 @@
 ---
 title: Widgets - Todo list
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
 
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
-
-{% include xstyle.css %}
-
-### Todo list
-
-#### Description
+## Description
 
 The _todo list_ widget displays the _todo comments_ located in the source files.
 
@@ -23,10 +16,10 @@ Otherwise if a file has the focus and if it's part of the project then the whole
 It's possible to display the comment that matches to a particular item with a double click.
 The items cannot be edited in the widget.
 
-- <img src="{%include icurl%}arrow/arrow_update.png" class="tlbric"/>: Refreshes the list manually.
-- <img src="{%include icurl%}arrow/arrow_pen.png" class="tlbric"/>: Jump to the item declaration.
+- ![](icons/arrow/arrow_update.png): Refreshes the list manually.
+- ![](icons/other/pencil_go.png): Jump to the item declaration.
 
-#### Format
+## Format
 
 The _todo comments_ must follow this format:
 
@@ -45,7 +38,7 @@ For example
 
 are valid _todos_.
 
-#### Options
+## Options
 
 ![](img/options_todo_list.png)
 
@@ -53,8 +46,4 @@ are valid _todos_.
 - **columns**: Selects which columns are visible. Despite of the settings a column is only displayed when at least one item uses the matching field.
 - **singleClickSelect**: Defines how the mouse is used to go to the item declaration.
 
-{% raw %}
-<script>
-anchors.add();
-</script>
-{% endraw %}
+<script>anchors.add();</script>

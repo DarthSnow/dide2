@@ -1,0 +1,13 @@
+pages:
+  before_script:
+  - apt-get update -y
+  - apt-get install -y pandoc
+  script:
+  - cd docs
+  - bash generate.sh
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  - merge_requests

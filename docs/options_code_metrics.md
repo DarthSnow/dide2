@@ -1,12 +1,7 @@
 ---
 title: Options - code metrics
+header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
 ---
-
-{% raw %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/4.0.0/anchor.min.js"></script>
-{% endraw %}
-
-### Code metrics
 
 The quality of the D code is verifiable using code metrics.
 In general several metrics exist:
@@ -17,7 +12,7 @@ In general several metrics exist:
 
 Dexed implements the Halstead metric. The others may be added in a further version.
 
-#### Halstead complexity
+## Halstead complexity
 
 The metric uses the count and the sum of the functions operands and operators to compute several indexes. Even it's clearly related to the SLOC it's more accurate. For example:
 
@@ -63,8 +58,4 @@ Default values can be modified in the option editor:
 
 The maximal volume of a module is not verified, simply because it's possible to have huge modules with many small functions of high quality.
 
-{% raw %}
-<script>
-anchors.add();
-</script>
-{% endraw %}
+<script>anchors.add();</script>
