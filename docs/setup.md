@@ -23,11 +23,9 @@ The official build of the software is based on the GTK2 toolkit.
 The runtime libraries must be setup (libgtk2, libglib, libgdk-pixbuf2, etc; they usually comes together, libc).
 To enhance the appearence, you can also setup some theme engines (such as Adwaita, Clearlooks, Nimbus, Industrial, etc).
 
-Windows interface is based on native win32 controls.
-
 ## Setup program
 
-**Note that this section contain obsolete link and should not be follwed you put your hands on an old version of the setup program**
+**Note that this section contains obsolete links and should not be followed unless you put your hands on an old version of the setup program**
 
 * Go to [the release page](https://github.com/Basile-z/dexed/releases),
 * Choose the zipped setup for your platform (at the bottom of a release log, the buttons labeled `dexed.<version>.<platform>.setup.zip`).
@@ -40,7 +38,7 @@ Windows interface is based on native win32 controls.
 * To uninstall, run the same program but with the `-u` option.
     * Linux: if Dexed has been setup with `sudo` you must also uninstall with elevated privileges: `sudo ./dexed.<version>.<platform>.setup -u`.
     * Windows: start a console as administrator and execute: `dexed.<version>.win32.setup -u`.
-    * Troubleshooting: run the setup program with the `-l` (or `--list`) option to get the status of the files and use the report to uninstall manually the files or open a ticket [here][lnk_bugtracker].
+    * Troubleshooting: run the setup program with the `-l` (or `--list`) option to get the status of the files and use the report to uninstall manually the files or open a ticket [here][https://gitlab.com/basile.b/dexed/issues].
 
 Note for the future versions:
 * Updating doesn't require to uninstall.
@@ -49,7 +47,7 @@ Note for the future versions:
 
 ## Binaries
 
-**Note that this section contain obsolete link and should not be follwed you put your hands on an old version of the zips containing the binaries**
+**Note that this section contains obsolete links and should not be followed unless you put your hands on an old version of the zips containing the binaries**
 
 * Go to [the release page](https://github.com/Basile-z/dexed/releases),
 * Choose the binaries for your platform (at the bottom of an entry, the buttons labeled `dexed.<version>.<platform>.zip`).
@@ -61,7 +59,7 @@ Under Windows, the releases are compressed with the latest [7-zip beta](http://w
 Under Linux, the command line tool *zip* is used (_deflate_ and _-9_).
 
 Under Linux you could have to set the files permission to allow their execution. This used to be necessary when
-the early alpha zip were all done on Windows (files attributes were lost) but it shouldn't be the case anymore.
+the early versions were all packed on Windows (files attributes were lost) but it shouldn't be the case anymore.
 
 If they are not correctly set, for each of the following file **dexed**, **dcd-client**, **dcd-server**, **dastworx**, either set the permission in the context menu (check _allow execution_ or _executable_ depending on the desktop) or `chmod +x` the file in a console.
 
