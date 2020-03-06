@@ -76,8 +76,9 @@ type
   private
     fTerm: TTerminal;
     fOpts: TTerminalOptions;
-    fLastCd: string;
+    fLastCheckedDirectory: string;
     fNeedApplyChanges: boolean;
+    procedure checkDirectory(const dir: string);
 
     procedure docNew(document: TDexedMemo);
     procedure docFocused(document: TDexedMemo);
@@ -277,6 +278,16 @@ begin
   fNeedApplyChanges := true;
 end;
 
+procedure TTermWidget.checkDirectory(const dir: string);
+begin
+  fLastCheckedDirectory := dir;
+  fTerm.SendControlChar(TASCIIControlCharacter.HOME);
+  fTerm.SendControlChar(TASCIIControlCharacter.VT);
+  fNeedApplyChanges := true;
+  fOpts.applyChanges;
+  fTerm.Command('cd ' + dir);
+end;
+
 procedure TTermWidget.SetVisible(Value: boolean);
 begin
   inherited;
@@ -313,14 +324,8 @@ end;
 procedure TTermWidget.mnexDirectoryChanged(const directory: string);
 begin
   if fOpts.followExplorer and directory.dirExists and
-    not SameText(directory, fLastCd) then
-  begin
-    fLastCd := directory;
-    fTerm.Restart;
-    fNeedApplyChanges := true;
-    fOpts.applyChanges;
-    fTerm.Command('cd ' + directory);
-  end;
+    not SameText(directory, fLastCheckedDirectory) then
+      checkDirectory(directory);
 end;
 
 procedure TTermWidget.docNew(document: TDexedMemo);
@@ -332,14 +337,8 @@ var
   s: string;
 begin
   s := document.fileName.extractFileDir;
-  if fOpts.followEditors and s.fileExists and not SameText(s, fLastCd) then
-  begin
-    fLastCd := s;
-    fTerm.Restart;
-    fNeedApplyChanges := true;
-    fOpts.applyChanges;
-    fTerm.Command('cd ' + s);
-  end;
+  if fOpts.followProjects and s.dirExists and not SameText(s, fLastCheckedDirectory) then
+    checkDirectory(s);
 end;
 
 procedure TTermWidget.docChanged(document: TDexedMemo);
@@ -367,14 +366,8 @@ var
   s: string;
 begin
   s := project.fileName.extractFileDir;
-  if fOpts.followProjects and s.dirExists and not SameText(s, fLastCd) then
-  begin
-    fLastCd := s;
-    fTerm.Restart;
-    fNeedApplyChanges := true;
-    fOpts.applyChanges;
-    fTerm.Command('cd ' + s);
-  end;
+  if fOpts.followProjects and s.dirExists and not SameText(s, fLastCheckedDirectory) then
+    checkDirectory(s);
 end;
 
 procedure TTermWidget.projCompiling(project: ICommonProject);

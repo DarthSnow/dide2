@@ -17,6 +17,19 @@ uses
 
 type
 
+  TASCIIControlCharacter = (
+    HOME  = 1,
+    LEFT  = 2,
+    ETX   = 3, // interrupt, clear temp line
+    SUPR  = 4,
+    &END  = 5,
+    RIGHT = 6,
+    BS    = 8,
+    LF    = 10,
+    VT    = 11,  // delete from cursor pos to end of line
+    CR    = 13
+  );
+
   TTerminal = class(TCustomControl)
   private
     FInfo: Pointer;
@@ -51,8 +64,11 @@ type
     procedure Reparent;
     // Sends a command, as it would be manually typed. Line feed is automatically added.
     procedure Command(const data: string);
+    procedure SendControlChar(const cc: TASCIIControlCharacter);
     procedure copyToClipboard();
     procedure pasteFromClipboard();
+    function  getLine(const line: integer): string;
+    function  getCursorPosition: TPoint;
   published
     {$ifdef windows}
     property terminalProgram: string read fTermProgram write fTermProgram;
@@ -303,6 +319,17 @@ begin
   {$endif}
 end;
 
+procedure TTerminal.SendControlChar(const cc: TASCIIControlCharacter);
+var
+  c: char;
+begin
+  {$ifdef hasgtk2term}
+  c := Char(cc);
+  if assigned(fTerminalHanlde) and assigned(vte_terminal_feed_child) then
+    vte_terminal_feed_child(fTerminalHanlde, @c, 1);
+  {$endif}
+end;
+
 procedure TTerminal.copyToClipboard();
 begin
   {$ifdef hasgtk2term}
@@ -317,6 +344,30 @@ begin
   if assigned(fTerminalHanlde) and assigned(vte_terminal_paste_clipboard) then
     vte_terminal_paste_clipboard(fTerminalHanlde);
   {$endif}
+end;
+
+{$ifdef hasgtk2term}
+function clbckTrueSel(terminal: PVteTerminal; column: glong; row: glong; data: Pointer): gboolean; cdecl;
+begin
+  result := True;
+end;
+{$endif}
+
+function TTerminal.getLine(const line: integer): string;
+{$ifdef hasgtk2term}
+var
+  c: glong;
+  a: PGArray = nil;
+{$endif}
+begin
+  result := '';
+{$ifdef hasgtk2term}
+  if assigned(fTerminalHanlde) and assigned(vte_terminal_get_text_range) then
+  begin
+    c := vte_terminal_get_column_count(fTerminalHanlde);
+    result := vte_terminal_get_text_range(fTerminalHanlde, line, 0, line, c, @clbckTrueSel, nil, a);
+  end;
+{$endif}
 end;
 
 function TerminalAvailable: Boolean;
@@ -369,6 +420,25 @@ end;
 
 procedure TTerminal.Paint;
 begin
+end;
+
+function TTerminal.getCursorPosition: TPoint;
+{$ifdef hasgtk2term}
+var
+  col: glong = 0;
+  row: glong = 0;
+{$endif}
+begin
+{$ifdef hasgtk2term}
+  result.x:=0;
+  result.y:=0;
+  if assigned(fTerminalHanlde) and assigned(vte_terminal_get_cursor_position) then
+  begin
+    vte_terminal_get_cursor_position(fTerminalHanlde, @col, @row);
+    result.x:= col;
+    result.y:= row;
+  end;
+{$endif}
 end;
 
 procedure TTerminal.setScrollBackLines(value: LongWord);

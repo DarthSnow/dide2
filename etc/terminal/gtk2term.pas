@@ -49,12 +49,16 @@ const
 type
   TGSpawnChildSetupFunc = procedure(user_data: Pointer); cdecl;
 
+
+
   PVteTerminal = ^TVteTerminal;
   TVteTerminal = record
     widget: PGtkWidget;
   end;
 
   VTE_TERMINAL = PVteTerminal;
+
+  TVteSelectionFunc = function(terminal: PVteTerminal; column: glong; row: glong; data: Pointer): gboolean; cdecl;
 
 var
   vte_terminal_new: function: PGtkWidget; cdecl;
@@ -97,6 +101,12 @@ var
   vte_terminal_get_row_count: function(terminal: PVteTerminal): glong; cdecl;
 
   vte_terminal_get_column_count: function(terminal: PVteTerminal): glong; cdecl;
+
+  vte_terminal_get_cursor_position: procedure(terminal: PVteTerminal; column: Pglong; row: Pglong); cdecl;
+
+  vte_terminal_get_text_range: function (terminal: PVteTerminal;
+    start_row: glong; start_col: glong; end_row: glong; end_col: glong;
+    is_selected: TVteSelectionFunc; user_data: Pointer; attributes: PGArray): PChar; cdecl;
 
 function Gtk2TermLoad: Boolean;
 
@@ -152,6 +162,10 @@ begin
     'vte_terminal_get_row_count');
   @vte_terminal_get_column_count:= GetProcAddress(Lib,
     'vte_terminal_get_column_count');
+  @vte_terminal_get_cursor_position:= GetProcAddress(Lib,
+    'vte_terminal_get_cursor_position');
+  @vte_terminal_get_text_range:= GetProcAddress(Lib,
+    'vte_terminal_get_text_range');
 
   // assume all or none
   Loaded := @vte_terminal_new <> nil;
