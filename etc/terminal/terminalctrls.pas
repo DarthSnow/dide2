@@ -17,6 +17,12 @@ uses
 
 type
 
+  TTerminalScrollInfo = record
+    min, max, value: integer;
+  end;
+
+  TTerminalTextScrolled = procedure(sender: TObject; delta: integer) of Object;
+
   TASCIIControlCharacter = (
     HOME  = 1,
     LEFT  = 2,
@@ -43,19 +49,25 @@ type
     {$endif}
     fOnTerminate: TNotifyEvent;
     fOnTerminalVisibleChanged: TNotifyEvent;
+    fOnTerminalTextScrolled: TTerminalTextScrolled;
     fBackgroundColor: TColor;
     fForegroundColor: TColor;
     fSelectedColor: TColor;
     fScrollbackLines: LongWord;
+    fScrollOnOutput: boolean;
+    fScrollOnKeyStroke: boolean;
     procedure setBackgroundColor(value: TColor);
     procedure setForegroundColor(value: TColor);
     procedure setSelectedColor(value: TColor);
     procedure setScrollBackLines(value: LongWord);
+    procedure setScrollOnOutput(value: boolean);
+    procedure setScrollOnKeyStroke(value: boolean);
   protected
     // Only used at design-time.
     procedure Paint; override;
     procedure DoTerminate; virtual;
     procedure DoTerminalVisibleChanged; virtual;
+    procedure DoTerminalTextScrolled(delta: integer); virtual;
     procedure FontChanged(Sender: TObject); override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -68,11 +80,19 @@ type
     procedure copyToClipboard();
     procedure pasteFromClipboard();
     function  getLine(const line: integer): string;
+    function  getWholeText(): string;
     function  getCursorPosition: TPoint;
+    function  getVScrollInfo: TTerminalScrollInfo;
+    procedure setVScrollPosition(i: integer);
   published
     {$ifdef windows}
     property terminalProgram: string read fTermProgram write fTermProgram;
     {$endif}
+    // set if view is scrolled to the back on key stroke
+    property scrollOnOutut: boolean read fScrollOnKeyStroke write setScrollOnKeyStroke default true;
+    // set if view is scrolled to the back on output
+    property scrollOnKeyStroke: boolean read FScrollOnOutput write setScrollOnOutput default true;
+    // set the back buffer in line count
     property scrollbackLines: LongWord read fScrollbackLines write setScrollBackLines default 4096;
     // Background color
     property backgroundColor: TColor read fBackgroundColor write setBackgroundColor default clBlack;
@@ -127,6 +147,7 @@ type
     // Note: The hosted widget is there and visual settings can be applied.
     // In many cases DoFirstShow, OnShow and likes will happen too quickly.
     property OnTerminalVisibleChanged: TNotifyEvent read fOnTerminalVisibleChanged write fOnTerminalVisibleChanged;
+    property OnTextScrolled: TTerminalTextScrolled read fOnTerminalTextScrolled write fOnTerminalTextScrolled;
   end;
 
 function TerminalAvailable: Boolean;
@@ -149,6 +170,14 @@ type
         const AParams: TCreateParams): TLCLIntfHandle; override;
   end;
 
+procedure TerminalCommit(Widget: PGtkWidget; c: gchar; s: guint; user: Pointer); cdecl;
+var
+  Info: PWidgetInfo;
+begin
+  Info := PWidgetInfo(g_object_get_data(PGObject(Widget), 'widgetinfo'));
+  TTerminal(Info.LCLObject).DoTerminalTextScrolled(1);
+end;
+
 procedure TerminalExit(Widget: PGtkWidget; status: gint; user: Pointer); cdecl;
 var
   Info: PWidgetInfo;
@@ -163,6 +192,19 @@ var
 begin
   Info := PWidgetInfo(g_object_get_data(PGObject(Widget), 'widgetinfo'));
   TTerminal(Info.LCLObject).DoTerminalVisibleChanged;
+end;
+
+function TerminalTextScrolled(Widget: PGtkWidget; event: PGdkEvent; user: Pointer): gboolean; cdecl;
+var
+  Info: PWidgetInfo;
+begin
+  result := false;
+  Info := PWidgetInfo(g_object_get_data(PGObject(Widget), 'widgetinfo'));
+  if event^._type = 31 then //NOTE: should be 7 for scroll ?
+  begin
+    TTerminal(Info.LCLObject).DoTerminalTextScrolled(integer(event^.scroll.direction) and 1);
+    result := false;
+  end;
 end;
 
 class procedure TGtk2WSTerminal.SetCallbacks(const AGtkWidget: PGtkWidget;
@@ -217,8 +259,10 @@ begin
   Allocation.Width := AParams.Width;
   Allocation.Height := AParams.Height;
   gtk_widget_size_allocate(Info.CoreWidget, @Allocation);
-  g_signal_connect(Info.ClientWidget, 'child-exited', G_CALLBACK(@TerminalExit), nil);
-  g_signal_connect(Info.ClientWidget, 'contents-changed', G_CALLBACK(@TerminalRefresh), nil);
+  g_signal_connect(Info.ClientWidget, 'child-exited',    G_CALLBACK(@TerminalExit), nil);
+  g_signal_connect(Info.ClientWidget, 'contents-changed',G_CALLBACK(@TerminalRefresh), nil);
+  g_signal_connect(Info.ClientWidget, 'scroll-event',    G_CALLBACK(@TerminalTextScrolled), nil);
+  g_signal_connect(Info.ClientWidget, 'commit',          G_CALLBACK(@TerminalCommit), nil);
   SetCallbacks(Info.CoreWidget, Info);
   Result := {%H-}TLCLIntfHandle(Info.CoreWidget);
 end;
@@ -234,6 +278,12 @@ procedure TTerminal.DoTerminalVisibleChanged;
 begin
   if Assigned(fOnTerminalVisibleChanged) then
     fOnTerminalVisibleChanged(Self);
+end;
+
+procedure TTerminal.DoTerminalTextScrolled(delta: integer);
+begin
+  if Assigned(fOnTerminalTextScrolled) then
+    fOnTerminalTextScrolled(self, delta);
 end;
 
 {$ifdef windows}
@@ -370,6 +420,32 @@ begin
 {$endif}
 end;
 
+function TTerminal.getWholeText(): string;
+{$ifdef hasgtk2term}
+var
+  c: glong;
+  a: PGArray = nil;
+  s: string;
+  i: integer;
+{$endif}
+begin
+  result := '';
+{$ifdef hasgtk2term}
+  if assigned(fTerminalHanlde) and assigned(vte_terminal_get_text_range) then
+  begin
+    c := vte_terminal_get_column_count(fTerminalHanlde);
+    for i:= 0 to high(integer) do
+    begin
+      s := vte_terminal_get_text_range(fTerminalHanlde, i, 0, i, c, @clbckTrueSel, nil, a);
+      if (s.Length <> 0) and (s <> #10) then
+        result += s
+      else
+        break;
+    end;
+  end;
+{$endif}
+end;
+
 function TerminalAvailable: Boolean;
 begin
   {$ifdef hasgtk2term}
@@ -399,6 +475,8 @@ begin
   Font.Height:=11;
   Font.Name:='Monospace';
   fScrollbackLines:=4096;
+  scrollOnOutut:=true;
+  fScrollOnKeyStroke:=true;
 
   {$ifdef windows}
   fTermProgram := 'cmd.exe';
@@ -452,6 +530,38 @@ begin
   v.g_type:= G_TYPE_UINT;
   v.data[0].v_uint := fScrollbackLines;
   g_object_set_property(PGObject(PWidgetInfo(FInfo).ClientWidget), 'scrollback-lines', @v);
+{$else}
+begin
+{$endif}
+end;
+
+procedure TTerminal.setScrollOnOutput(value: boolean);
+{$ifdef hasgtk2term}
+var
+  v: TGValue;
+begin
+  fScrollOnOutput:=value;
+  if not assigned(FInFo) then
+    exit;
+  v.g_type:= G_TYPE_UINT;
+  v.data[0].v_uint := integer(fScrollOnOutput);
+  g_object_set_property(PGObject(PWidgetInfo(FInfo).ClientWidget), 'scroll-on-output', @v);
+{$else}
+begin
+{$endif}
+end;
+
+procedure TTerminal.setScrollOnKeyStroke(value: boolean);
+{$ifdef hasgtk2term}
+var
+  v: TGValue;
+begin
+  fScrollOnKeyStroke:=value;
+  if not assigned(FInFo) then
+    exit;
+  v.g_type:= G_TYPE_UINT;
+  v.data[0].v_uint := integer(fScrollOnKeyStroke);
+  g_object_set_property(PGObject(PWidgetInfo(FInfo).ClientWidget), 'scroll-on-keystroke', @v);
 {$else}
 begin
 {$endif}
@@ -522,6 +632,38 @@ begin
   end;
   {$pop}
   {$endif}
+end;
+
+function TTerminal.getVScrollInfo: TTerminalScrollInfo;
+{$ifdef hasgtk2term}
+var
+  a: PGtkAdjustment = nil;
+{$endif}
+begin
+{$ifdef hasgtk2term}
+  if assigned(fTerminalHanlde) and assigned(vte_terminal_get_adjustment) then
+  begin
+    a            := vte_terminal_get_adjustment(fTerminalHanlde);
+    result.max   := round(a^.upper);
+    result.min   := round(a^.lower);
+    result.value := round(a^.value);
+  end;
+{$endif}
+end;
+
+procedure TTerminal.setVScrollPosition(i: integer);
+{$ifdef hasgtk2term}
+var
+  a: PGtkAdjustment = nil;
+{$endif}
+begin
+{$ifdef hasgtk2term}
+  if assigned(fTerminalHanlde) and assigned(vte_terminal_get_adjustment) then
+  begin
+    a := vte_terminal_get_adjustment(fTerminalHanlde);
+    gtk_adjustment_set_value(a, i);
+  end;
+{$endif}
 end;
 
 {$ifdef hasgtk2term}

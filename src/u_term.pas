@@ -6,9 +6,9 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, LCLType,
-  ActnList, LMessages,
+  ActnList, LMessages, ExtCtrls, Menus, StdCtrls,
   u_widget, TerminalCtrls, u_interfaces, u_writableComponent, u_observer,
-  u_common, u_synmemo;
+  u_common, u_synmemo, u_dsgncontrols;
 
 type
 
@@ -71,14 +71,20 @@ type
   { TTermWidget }
 
   TTermWidget = class(TDexedWidget, IDocumentObserver, IProjectObserver, IMiniExplorerObserver)
+    Panel1: TPanel;
+    ScrollBar1: TScrollBar;
     procedure ContentPaint(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
+    procedure ScrollBar1Scroll(Sender: TObject; ScrollCode: TScrollCode;
+      var ScrollPos: Integer);
   private
     fTerm: TTerminal;
     fOpts: TTerminalOptions;
     fLastCheckedDirectory: string;
     fNeedApplyChanges: boolean;
     procedure checkDirectory(const dir: string);
+    procedure updateScrollBar();
+    procedure terminalTextScrolled(sender: TObject; delta: integer);
 
     procedure docNew(document: TDexedMemo);
     procedure docFocused(document: TDexedMemo);
@@ -251,10 +257,11 @@ begin
   inherited;
 
   toolbarVisible:=false;
-  fTerm := TTerminal.Create(self);
+  fTerm := TTerminal.Create(Panel1);
   fTerm.Align:= alClient;
   fTerm.BorderSpacing.Around:=4;
-  fterm.Parent := self;
+  fterm.Parent := Panel1;
+  fTerm.OnTextScrolled:= @terminalTextScrolled;
 
   fOpts:= TTerminalOptions.Create(self);
 
@@ -283,9 +290,11 @@ begin
   fLastCheckedDirectory := dir;
   fTerm.SendControlChar(TASCIIControlCharacter.HOME);
   fTerm.SendControlChar(TASCIIControlCharacter.VT);
+  fTerm.SendControlChar(TASCIIControlCharacter.LF);
   fNeedApplyChanges := true;
   fOpts.applyChanges;
   fTerm.Command('cd ' + dir);
+  updateScrollBar();
 end;
 
 procedure TTermWidget.SetVisible(Value: boolean);
@@ -301,6 +310,22 @@ begin
     exit;
   fNeedApplyChanges:=false;
   fOpts.applyChanges;
+end;
+
+procedure TTermWidget.terminalTextScrolled(sender: TObject; delta: integer);
+begin
+  updateScrollBar();
+end;
+
+procedure TTermWidget.updateScrollBar();
+var
+  i: TTerminalScrollInfo;
+begin
+  if not visible or fTerm.isNil then
+    exit;
+  i := fTerm.getVScrollInfo();
+  ScrollBar1.Max := i.max;
+  ScrollBar1.Position := i.value;
 end;
 
 procedure TTermWidget.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
@@ -319,6 +344,12 @@ begin
     fTerm.pasteFromClipboard();
     handled := true;
   end;
+end;
+
+procedure TTermWidget.ScrollBar1Scroll(Sender: TObject;
+  ScrollCode: TScrollCode; var ScrollPos: Integer);
+begin
+  fTerm.setVScrollPosition(ScrollPos);
 end;
 
 procedure TTermWidget.mnexDirectoryChanged(const directory: string);
@@ -379,4 +410,3 @@ begin
 end;
 
 end.
-

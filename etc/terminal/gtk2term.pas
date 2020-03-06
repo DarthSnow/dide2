@@ -104,9 +104,12 @@ var
 
   vte_terminal_get_cursor_position: procedure(terminal: PVteTerminal; column: Pglong; row: Pglong); cdecl;
 
-  vte_terminal_get_text_range: function (terminal: PVteTerminal;
+  vte_terminal_get_text_range: function(terminal: PVteTerminal;
     start_row: glong; start_col: glong; end_row: glong; end_col: glong;
     is_selected: TVteSelectionFunc; user_data: Pointer; attributes: PGArray): PChar; cdecl;
+
+  vte_terminal_get_adjustment: function(terminal: PVteTerminal): PGtkAdjustment; cdecl;
+
 
 function Gtk2TermLoad: Boolean;
 
@@ -166,6 +169,8 @@ begin
     'vte_terminal_get_cursor_position');
   @vte_terminal_get_text_range:= GetProcAddress(Lib,
     'vte_terminal_get_text_range');
+  @vte_terminal_get_adjustment:= GetProcAddress(Lib,
+    'vte_terminal_get_adjustment');
 
   // assume all or none
   Loaded := @vte_terminal_new <> nil;
