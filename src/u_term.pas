@@ -81,6 +81,7 @@ type
     fTerm: TTerminal;
     fOpts: TTerminalOptions;
     fLastCheckedDirectory: string;
+    fDisableScrollBarSync: boolean;
     fNeedApplyChanges: boolean;
     procedure checkDirectory(const dir: string);
     procedure updateScrollBar();
@@ -286,15 +287,20 @@ begin
 end;
 
 procedure TTermWidget.checkDirectory(const dir: string);
+var
+  i: TTerminalScrollInfo;
 begin
+  fDisableScrollBarSync := true;
   fLastCheckedDirectory := dir;
   fTerm.SendControlChar(TASCIIControlCharacter.HOME);
   fTerm.SendControlChar(TASCIIControlCharacter.VT);
   fTerm.SendControlChar(TASCIIControlCharacter.LF);
-  fNeedApplyChanges := true;
-  fOpts.applyChanges;
   fTerm.Command('cd ' + dir);
-  updateScrollBar();
+  i := fTerm.getVScrollInfo();
+  ScrollBar1.Max := i.max;
+  ScrollBar1.Position := ScrollBar1.Max;
+  fTerm.setVScrollPosition(ScrollBar1.Max);
+  fDisableScrollBarSync := false;
 end;
 
 procedure TTermWidget.SetVisible(Value: boolean);
@@ -321,7 +327,7 @@ procedure TTermWidget.updateScrollBar();
 var
   i: TTerminalScrollInfo;
 begin
-  if not visible or fTerm.isNil then
+  if fDisableScrollBarSync or not visible or fTerm.isNil then
     exit;
   i := fTerm.getVScrollInfo();
   ScrollBar1.Max := i.max;

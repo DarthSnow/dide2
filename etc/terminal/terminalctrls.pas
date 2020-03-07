@@ -262,7 +262,8 @@ begin
   g_signal_connect(Info.ClientWidget, 'child-exited',    G_CALLBACK(@TerminalExit), nil);
   g_signal_connect(Info.ClientWidget, 'contents-changed',G_CALLBACK(@TerminalRefresh), nil);
   g_signal_connect(Info.ClientWidget, 'scroll-event',    G_CALLBACK(@TerminalTextScrolled), nil);
-  g_signal_connect(Info.ClientWidget, 'commit',          G_CALLBACK(@TerminalCommit), nil);
+  //g_signal_connect(Info.ClientWidget, 'commit',          G_CALLBACK(@TerminalCommit), nil);
+  g_signal_connect(Info.ClientWidget, 'cursor-moved',    G_CALLBACK(@TerminalCommit), nil);
   SetCallbacks(Info.CoreWidget, Info);
   Result := {%H-}TLCLIntfHandle(Info.CoreWidget);
 end;
@@ -333,8 +334,11 @@ begin
   gtk_container_add(GTK_CONTAINER(Info.CoreWidget), Info.ClientWidget);
   g_object_set_data(PGObject(Info.ClientWidget), 'widgetinfo', Info);
   gtk_widget_show_all(Info.CoreWidget);
-  g_signal_connect(Info.ClientWidget, 'child-exited', G_CALLBACK(@TerminalExit), nil);
-  g_signal_connect(Info.ClientWidget, 'contents-changed', G_CALLBACK(@TerminalRefresh), nil);
+  g_signal_connect(Info.ClientWidget, 'child-exited',    G_CALLBACK(@TerminalExit), nil);
+  g_signal_connect(Info.ClientWidget, 'contents-changed',G_CALLBACK(@TerminalRefresh), nil);
+  g_signal_connect(Info.ClientWidget, 'scroll-event',    G_CALLBACK(@TerminalTextScrolled), nil);
+  //g_signal_connect(Info.ClientWidget, 'commit',          G_CALLBACK(@TerminalCommit), nil);
+  g_signal_connect(Info.ClientWidget, 'cursor-moved',    G_CALLBACK(@TerminalCommit), nil);
   {$endif}
 
   {$ifdef Windows}
