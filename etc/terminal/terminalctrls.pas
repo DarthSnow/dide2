@@ -364,7 +364,7 @@ end;
 procedure TTerminal.Command(const data: string);
 begin
   {$ifdef hasgtk2term}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_feed_child) then
+  if assigned(fTerminalHanlde) then
     vte_terminal_feed_child(fTerminalHanlde, PChar(data + #10), data.Length + 1);
   {$endif}
 end;
@@ -375,7 +375,7 @@ var
 begin
   {$ifdef hasgtk2term}
   c := Char(cc);
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_feed_child) then
+  if assigned(fTerminalHanlde) then
     vte_terminal_feed_child(fTerminalHanlde, @c, 1);
   {$endif}
 end;
@@ -383,7 +383,7 @@ end;
 procedure TTerminal.copyToClipboard();
 begin
   {$ifdef hasgtk2term}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_copy_clipboard) then
+  if assigned(fTerminalHanlde) then
     vte_terminal_copy_clipboard(fTerminalHanlde);
   {$endif}
 end;
@@ -391,7 +391,7 @@ end;
 procedure TTerminal.pasteFromClipboard();
 begin
   {$ifdef hasgtk2term}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_paste_clipboard) then
+  if assigned(fTerminalHanlde) then
     vte_terminal_paste_clipboard(fTerminalHanlde);
   {$endif}
 end;
@@ -412,7 +412,7 @@ var
 begin
   result := '';
 {$ifdef hasgtk2term}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_get_text_range) then
+  if assigned(fTerminalHanlde) then
   begin
     c := vte_terminal_get_column_count(fTerminalHanlde);
     result := vte_terminal_get_text_range(fTerminalHanlde, line, 0, line, c, @clbckTrueSel, nil, a);
@@ -431,7 +431,7 @@ var
 begin
   result := '';
 {$ifdef hasgtk2term}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_get_text_range) then
+  if assigned(fTerminalHanlde) then
   begin
     c := vte_terminal_get_column_count(fTerminalHanlde);
     for i:= 0 to high(integer) do
@@ -510,7 +510,7 @@ begin
 {$ifdef hasgtk2term}
   result.x:=0;
   result.y:=0;
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_get_cursor_position) then
+  if assigned(fTerminalHanlde) then
   begin
     vte_terminal_get_cursor_position(fTerminalHanlde, @col, @row);
     result.x:= col;
@@ -575,7 +575,7 @@ var
 begin
   fBackgroundColor:=value;
   {$ifdef hasgtk2term}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_set_color_background) then
+  if assigned(fTerminalHanlde) then
   begin
     c := TColortoTGDKColor(fBackgroundColor);
     vte_terminal_set_color_background(fTerminalHanlde, @c);
@@ -591,8 +591,7 @@ var
 begin
   fForegroundColor:=value;
   {$ifdef hasgtk2term}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_set_color_foreground) and
-    assigned(vte_terminal_set_color_bold) then
+  if assigned(fTerminalHanlde) then
   begin
     c := TColortoTGDKColor(fForegroundColor);
     vte_terminal_set_color_foreground(fTerminalHanlde, @c);
@@ -609,13 +608,10 @@ var
 begin
   fSelectedColor:=value;
   {$ifdef hasgtk2term}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_set_color_highlight)
-    and assigned(vte_terminal_set_color_highlight_foreground) then
+  if assigned(fTerminalHanlde) then
   begin
     c := TColortoTGDKColor(fSelectedColor);
     vte_terminal_set_color_highlight(fTerminalHanlde, @c);
-    c := TColortoTGDKColor(InvertColor(fSelectedColor));
-    vte_terminal_set_color_highlight_foreground(fTerminalHanlde, @c);
   end;
   {$endif}
 end;
@@ -625,11 +621,8 @@ begin
   inherited;
   {$ifdef hasgtk2term}
   {$push}{$Hints off}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_set_font) and
-    (Handle <> INVALID_HANDLE_VALUE) then
-  begin
+  if assigned(fTerminalHanlde) and (Handle <> INVALID_HANDLE_VALUE) then
     vte_terminal_set_font(fTerminalHanlde, PGtkWidget(Handle).style.font_desc);
-  end;
   {$pop}
   {$endif}
 end;
@@ -641,7 +634,7 @@ var
 {$endif}
 begin
 {$ifdef hasgtk2term}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_get_adjustment) then
+  if assigned(fTerminalHanlde) then
   begin
     a            := vte_terminal_get_adjustment(fTerminalHanlde);
     result.max   := round(a^.upper);
@@ -658,7 +651,7 @@ var
 {$endif}
 begin
 {$ifdef hasgtk2term}
-  if assigned(fTerminalHanlde) and assigned(vte_terminal_get_adjustment) then
+  if assigned(fTerminalHanlde) then
   begin
     a := vte_terminal_get_adjustment(fTerminalHanlde);
     gtk_adjustment_set_value(a, i);

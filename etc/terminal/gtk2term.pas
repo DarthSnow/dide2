@@ -49,8 +49,6 @@ const
 type
   TGSpawnChildSetupFunc = procedure(user_data: Pointer); cdecl;
 
-
-
   PVteTerminal = ^TVteTerminal;
   TVteTerminal = record
     widget: PGtkWidget;
@@ -80,9 +78,6 @@ var
   vte_terminal_set_color_highlight: procedure(terminal: PVteTerminal;
     const background: PGdkColor); cdecl;
 
-  vte_terminal_set_color_highlight_foreground: procedure(terminal: PVteTerminal;
-    const background: PGdkColor); cdecl;
-
   vte_terminal_set_font: procedure(terminal: PVteTerminal;
     const font_desc: PPangoFontDescription); cdecl;
 
@@ -110,72 +105,94 @@ var
 
   vte_terminal_get_adjustment: function(terminal: PVteTerminal): PGtkAdjustment; cdecl;
 
-
 function Gtk2TermLoad: Boolean;
 
 implementation
 
 var
-  Initialized: Boolean;
-  Loaded: Boolean;
+  vteInitialized: Boolean;
+  vteLoaded: Boolean;
+
+function bindFunction(var funcPtr: Pointer; const identifier: string; handle: TLibHandle): boolean;
+begin
+  funcPtr := GetProcAddress(handle, identifier);
+  result  := funcPtr <> nil;
+end;
 
 function Gtk2TermLoad: Boolean;
 const
-  vten1 = 'libvte.so';
-  vten2 = 'libvte.so.9';
+  vteSoNames: array[0..1] of string = ('libvte.so', 'libvte.so.9');
 var
-  Lib: TLibHandle;
+  h: TLibHandle;
+  n: string;
 begin
-  if Initialized then
-    Exit(Loaded);
-  Initialized := True;
-  Lib := LoadLibrary(vten2);
-  if Lib = 0 then
-    Lib := LoadLibrary(vten1);
-  if Lib = 0 then
-    Exit(Loaded);
+  if vteInitialized then
+    Exit(vteLoaded);
+  vteInitialized := True;
 
-  @vte_terminal_new := GetProcAddress(Lib,
-    'vte_terminal_new');
-  @vte_terminal_fork_command_full := GetProcAddress(Lib,
-    'vte_terminal_fork_command_full');
-  @vte_terminal_set_color_background := GetProcAddress(Lib,
-    'vte_terminal_set_color_background');
-  @vte_terminal_set_color_foreground := GetProcAddress(Lib,
-    'vte_terminal_set_color_foreground');
-  @vte_terminal_set_color_bold := GetProcAddress(Lib,
-    'vte_terminal_set_color_bold');
-  @vte_terminal_set_color_highlight := GetProcAddress(Lib,
-    'vte_terminal_set_color_highlight');
-  @vte_terminal_set_color_highlight_foreground := GetProcAddress(Lib,
-    'vte_terminal_set_color_highlight_foreground');
-  @vte_terminal_set_font := GetProcAddress(Lib,
-    'vte_terminal_set_font');
-  @vte_terminal_feed := GetProcAddress(Lib,
-    'vte_terminal_feed');
-  @vte_terminal_feed_child := GetProcAddress(Lib,
-    'vte_terminal_feed_child');
-  @vte_terminal_copy_clipboard := GetProcAddress(Lib,
-    'vte_terminal_copy_clipboard');
-  @vte_terminal_paste_clipboard := GetProcAddress(Lib,
-    'vte_terminal_paste_clipboard');
-  @vte_get_user_shell := GetProcAddress(Lib,
-    'vte_get_user_shell');
-  @vte_terminal_get_row_count := GetProcAddress(Lib,
-    'vte_terminal_get_row_count');
-  @vte_terminal_get_column_count:= GetProcAddress(Lib,
-    'vte_terminal_get_column_count');
-  @vte_terminal_get_cursor_position:= GetProcAddress(Lib,
-    'vte_terminal_get_cursor_position');
-  @vte_terminal_get_text_range:= GetProcAddress(Lib,
-    'vte_terminal_get_text_range');
-  @vte_terminal_get_adjustment:= GetProcAddress(Lib,
-    'vte_terminal_get_adjustment');
+  for n in vteSoNames do
+  begin
+    h := LoadLibrary(n);
+    if h <> 0 then
+      break;
+  end;
+  if h = 0 then
+    exit(false);
 
-  // assume all or none
-  Loaded := @vte_terminal_new <> nil;
+  if not bindFunction(@vte_terminal_new,
+    'vte_terminal_new', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_fork_command_full,
+    'vte_terminal_fork_command_full', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_set_color_background,
+    'vte_terminal_set_color_background', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_set_color_foreground,
+    'vte_terminal_set_color_foreground', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_set_color_bold,
+    'vte_terminal_set_color_bold', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_set_color_highlight,
+    'vte_terminal_set_color_highlight', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_set_font,
+    'vte_terminal_set_font', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_feed,
+    'vte_terminal_feed', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_feed_child,
+    'vte_terminal_feed_child', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_copy_clipboard,
+    'vte_terminal_copy_clipboard', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_paste_clipboard,
+    'vte_terminal_paste_clipboard', h) then
+      exit(false);
+  if not bindFunction(@vte_get_user_shell,
+    'vte_get_user_shell', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_get_row_count,
+    'vte_terminal_get_row_count', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_get_column_count,
+    'vte_terminal_get_column_count', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_get_cursor_position,
+    'vte_terminal_get_cursor_position', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_get_text_range,
+    'vte_terminal_get_text_range', h) then
+      exit(false);
+  if not bindFunction(@vte_terminal_get_adjustment,
+    'vte_terminal_get_adjustment', h) then
+      exit(false);
 
-  Result := Loaded;
+  vteLoaded := true;
+  result := vteLoaded;
 end;
 {$else}
 implementation
