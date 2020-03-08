@@ -148,24 +148,22 @@ type
   TEditorOptions = class(TEditorOptionsBase, IEditableOptions, IDocumentObserver, IEditableShortCut)
   private
     fBackup: TEditorOptionsBase;
-    fShortcutCount: Integer;
-    //
+
     function optionedWantCategory(): string;
     function optionedWantEditorKind: TOptionEditorKind;
     function optionedWantContainer: TPersistent;
     procedure optionedEvent(event: TOptionEditorEvent);
     function optionedOptionsModified: boolean;
-    //
+
     procedure docNew(document: TDexedMemo);
     procedure docFocused(document: TDexedMemo);
     procedure docChanged(document: TDexedMemo);
     procedure docClosing(document: TDexedMemo);
-    //
-    function scedWantFirst: boolean;
-    function scedWantNext(out category, identifier: string; out aShortcut: TShortcut): boolean;
-    procedure scedSendItem(const category, identifier: string; aShortcut: TShortcut);
-    procedure scedSendDone;
-    //
+
+    function  scedCount: integer;
+    function  scedGetItem(const index: integer): TEditableShortcut;
+    procedure scedSetItem(const index: integer; constref item: TEditableShortcut);
+
     procedure applyChangeToEditor(anEditor: TDexedMemo);
   protected
     procedure afterLoad; override;
@@ -571,56 +569,31 @@ end;
 {$ENDREGION}
 
 {$REGION IEditableShortCut ---------------------------------------------------}
-function TEditorOptions.scedWantFirst: boolean;
+function TEditorOptions.scedCount: integer;
 begin
-  result := fShortCuts.Count > 0;
-  fShortcutCount := 0;
+  result := fShortCuts.Count;
 end;
 
-function TEditorOptions.scedWantNext(out category, identifier: string; out aShortcut: TShortcut): boolean;
+function TEditorOptions.scedGetItem(const index: integer): TEditableShortcut;
 var
-  shrct: TPersistentShortcut;
+  s: TPersistentShortcut;
 begin
-  shrct     := TPersistentShortcut(fShortCuts.Items[fShortcutCount]);
-  category  := 'Code editor';
-  identifier:= shrct.actionName;
+  s                 := TPersistentShortcut(fShortCuts.Items[index]);
+  result.category   := 'Code editor';
+  result.identifier := s.actionName;
+  result.shortcut   := s.shortcut;
   // SynEdit shortcuts start with 'ec'
-  if identifier.length > 2 then
-    identifier := identifier[3..identifier.length];
-  aShortcut := shrct.shortcut;
-
-  fShortcutCount += 1;
-  result := fShortcutCount < fShortCuts.Count;
+  if result.identifier.length > 2 then
+    result.identifier := result.identifier[3..result.identifier.length];
 end;
 
-procedure TEditorOptions.scedSendItem(const category, identifier: string; aShortcut: TShortcut);
+procedure TEditorOptions.scedSetItem(const index: integer; constref item: TEditableShortcut);
 var
-  i: Integer;
-  shc: TPersistentShortcut;
+  s: TPersistentShortcut;
 begin
-  if category <> 'Code editor' then
-    exit;
-  for i:= 0 to fShortCuts.Count-1 do
-  begin
-    shc := TPersistentShortcut(fShortCuts.Items[i]);
-    if shc.actionName.length > 2 then
-    begin
-      if shc.actionName[3..shc.actionName.length] <> identifier then
-        continue;
-    end else if shc.actionName <> identifier then
-      continue;
-    shc.shortcut:= aShortcut;
-    break;
-  end;
-  // note: shortcut modifications are not reversible,
-  // they are sent from another option editor.
+  s           := TPersistentShortcut(fShortCuts.Items[index]);
+  s.shortcut  := item.shortcut;
 end;
-
-procedure TEditorOptions.scedSendDone;
-begin
-  applyChangesFromSelf;
-end;
-
 {$ENDREGION}
 
 {$REGION IEditableOptions ----------------------------------------------------}

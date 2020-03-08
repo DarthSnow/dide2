@@ -400,7 +400,6 @@ type
     fFirstTimeRun: boolean;
     fMultidoc: IMultiDocHandler;
     fProcInputHandler: IProcInputHandler;
-    fScCollectCount: Integer;
     fUpdateCount: NativeInt;
     fProject: ICommonProject;
     fFreeProj: ICommonProject;
@@ -471,10 +470,9 @@ type
     procedure projCompiled(project: ICommonProject; success: boolean);
 
     // IEditableShortCut
-    function scedWantFirst: boolean;
-    function scedWantNext(out category, identifier: string; out aShortcut: TShortcut): boolean;
-    procedure scedSendItem(const category, identifier: string; aShortcut: TShortcut);
-    procedure scedSendDone;
+    function  scedCount: integer;
+    function  scedGetItem(const index: integer): TEditableShortcut;
+    procedure scedSetItem(const index: integer; constref item: TEditableShortcut);
 
     //Init - Fina
     procedure InitImages;
@@ -2524,39 +2522,27 @@ end;
 {$ENDREGION}
 
 {$REGION IEditableShortCut ---------------------------------------------------}
-function TMainForm.scedWantFirst: boolean;
+function TMainForm.scedCount: integer;
 begin
-  fScCollectCount := 0;
-  result := true;
+  result := actions.ActionCount;
 end;
 
-function TMainForm.scedWantNext(out category, identifier: string; out aShortcut: TShortcut): boolean;
+function TMainForm.scedGetItem(const index: integer): TEditableShortcut;
 var
-  act: TCustomAction;
+  a: TCustomAction;
 begin
-  act := TCustomAction(Actions.Actions[fScCollectCount]);
-  category := act.Category;
-  identifier := act.Caption;
-  aShortcut := act.ShortCut;
-  fScCollectCount += 1;
-  result := fScCollectCount < actions.ActionCount;
+  a                 := TCustomAction(Actions.Actions[index]);
+  result.category   := a.Category;
+  result.identifier := a.Caption;
+  result.shortcut   := a.ShortCut;
 end;
 
-procedure TMainForm.scedSendItem(const category, identifier: string; aShortcut: TShortcut);
+procedure TMainForm.scedSetItem(const index: integer; constref item: TEditableShortcut);
 var
-  act: TCustomAction;
-  i: integer;
+  a: TCustomAction;
 begin
-  for i:= 0 to Actions.ActionCount-1 do
-  begin
-    act := TCustomAction(Actions.Actions[i]);
-    if (act.Category = category) and (act.Caption = identifier) then
-      act.ShortCut := aShortcut;
-  end;
-end;
-
-procedure TMainForm.scedSendDone;
-begin
+  a         := TCustomAction(Actions.Actions[index]);
+  a.ShortCut:= item.shortcut;
 end;
 {$ENDREGION}
 

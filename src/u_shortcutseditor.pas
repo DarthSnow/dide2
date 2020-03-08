@@ -13,17 +13,19 @@ uses
 type
 
   TShortcutItem = class(TCollectionItem)
-  private
+  strict private
     fIdentifier: string;
     fData: TShortcut;
     fDeclarator: IEditableShortCut;
-    property declarator: IEditableShortCut read fDeclarator write fDeclarator;
+    fIndexInDecl: integer;
   published
     property identifier: string read fIdentifier write fIdentifier;
     property data: TShortcut read fData write fData;
   public
     function combination: string;
     procedure assign(source: TPersistent); override;
+    property declarator: IEditableShortCut read fDeclarator write fDeclarator;
+    property indexInDecl: integer read fIndexInDecl write fIndexInDecl;
   end;
 
   TShortCutCollection = class(TWritableLfmTextComponent)
@@ -77,14 +79,14 @@ type
     fHasChanged: boolean;
     propvalue: TEditableShortcut;
     fHasScaled: boolean;
-    //
+
     procedure updateScaling;
     function optionedWantCategory(): string;
     function optionedWantEditorKind: TOptionEditorKind;
     function optionedWantContainer: TPersistent;
     procedure optionedEvent(event: TOptionEditorEvent);
     function optionedOptionsModified: boolean;
-    //
+
     function findCategory(const aName: string; aData: Pointer): TTreeNode;
     function findCategory(const aShortcutItem: TShortcutItem): string;
     function sortCategories(Cat1, Cat2: TTreeNode): integer;
@@ -92,6 +94,7 @@ type
     procedure updateEditCtrls;
     procedure sendShortcuts;
     function anItemIsSelected: boolean;
+
   public
     constructor create(TheOwner: TComponent); override;
     destructor destroy; override;
@@ -453,49 +456,43 @@ end;
 
 procedure TShortcutEditor.receiveShortcuts;
 var
-  i: Integer;
-  obs: IEditableShortCut;
-  cat: string;
-  sht: word;
-  idt: string;
-  itm: TShortcutItem;
+  i: integer;
+  j: integer;
+  o: IEditableShortCut;
+  s: TShortcutItem;
 
-  procedure addItem();
+  procedure addItem(constref item: u_interfaces.TEditableShortcut; const index: integer);
   var
     prt: TTreeNode;
   begin
     // root category
-    if cat.isEmpty or idt.isEmpty then
+    if item.category.isEmpty or item.identifier.isEmpty then
       exit;
-    prt := findCategory(cat, obs);
+    prt := findCategory(item.category, o);
     if prt.isNil then
-      prt := tree.Items.AddObject(nil, cat, obs);
+      prt := tree.Items.AddObject(nil, item.category, o);
     // item as child
-    itm := TShortcutItem(fShortcuts.items.Add);
-    itm.identifier := idt;
-    itm.data:= sht;
-    itm.declarator := obs;
-    tree.Items.AddChildObject(prt, idt, itm);
-    cat := '';
-    idt := '';
+    s             := TShortcutItem(fShortcuts.items.Add);
+    s.identifier  := item.identifier;
+    s.data        := item.shortcut;
+    s.declarator  := o;
+    s.indexInDecl := index;
+
+    tree.Items.AddChildObject(prt, item.identifier, s);
   end;
 
 begin
   tree.Items.Clear;
   fShortcuts.items.Clear;
   fBackup.items.Clear;
-  cat := '';
-  idt := '';
+
   for i:= 0 to fObservers.observersCount-1 do
   begin
-    obs := fObservers.observers[i] as IEditableShortCut;
-    if obs.scedWantFirst then
-    begin
-      while obs.scedWantNext(cat, idt, sht) do
-        addItem();
-      addItem();
-    end;
+    o := fObservers.observers[i] as IEditableShortCut;
+    for j:= 0 to o.scedCount-1 do
+      addItem(o.scedGetItem(j), j);
   end;
+
   tree.Items.SortTopLevelNodes(@sortCategories);
   fBackup.Assign(fShortcuts);
 end;
@@ -503,25 +500,22 @@ end;
 procedure TShortcutEditor.sendShortcuts;
 var
   i: integer;
-  shc: TShortcutItem;
-  decl: IEditableShortCut = nil;
-  cat: string;
+  s: TShortcutItem;
+  d: IEditableShortCut = nil;
+  c: string;
+  n: u_interfaces.TEditableShortcut;
 begin
   for i := 0 to fShortcuts.count-1 do
   begin
-    shc := fShortcuts[i];
-    decl:= shc.declarator;
-    if decl = nil then
+    s := fShortcuts[i];
+    d := s.declarator;
+    c := findCategory(s);
+    if not assigned(d) or c.isEmpty() then
       continue;
-    cat := findCategory(shc);
-    if cat.isEmpty then
-      continue;
-    decl.scedSendItem(cat, shc.identifier, shc.data);
-    if i = fShortcuts.count-1 then
-      decl.scedSendDone
-    // fShortcuts is always sorted by declarator, cf. receiveShortcuts()
-    else if decl <> fShortcuts[i+1].declarator then
-      decl.scedSendDone;
+    n.identifier:= s.identifier;
+    n.category  := c;
+    n.shortcut  := s.data;
+    d.scedSetItem(s.indexInDecl, n);
   end;
 end;
 {$ENDREGION}

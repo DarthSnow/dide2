@@ -166,20 +166,26 @@ type
   TProjectSubject = specialize TCustomSubject<IProjectObserver>;
 
 
+  (**
+   * Record used during communication between an IEditableShortCut and a TEditableShortCutSubject.
+   *)
+  TEditableShortcut = record
+    category:   string;
+    identifier: string;
+    shortcut:   TShortcut;
+  end;
 
   (**
    * An implementer can expose customizable shortcuts to be edited in a dedicated widget.
    *)
   IEditableShortCut = interface(IObserverType)
   ['IEditableShortCut']
-    // a TEditableShortCutSubject will start to collect shortcuts if result.
-    function scedWantFirst: boolean;
-    // a TEditableShortCutSubject collects the information on the shortcuts while result.
-    function scedWantNext(out category, identifier: string; out aShortcut: TShortcut): boolean;
-    // a TEditableShortCutSubject sends the possibly modified shortcut.
-    procedure scedSendItem(const category, identifier: string; aShortcut: TShortcut);
-    // a TEditableShortCutSubject has finished to send the shortcuts.
-    procedure scedSendDone;
+    // a TEditableShortCutSubject requires the count of editable shortcuts.
+    function  scedCount: integer;
+    // a TEditableShortCutSubject requires the nth editable shortcut.
+    function  scedGetItem(const index: integer): TEditableShortcut;
+    // a TEditableShortCutSubject send the shortcut with a new key binding.
+    procedure scedSetItem(const index: integer; constref item: TEditableShortcut);
   end;
   (**
    * An implementer manages its observers shortcuts.

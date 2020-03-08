@@ -25,17 +25,17 @@ type
     fNextPage: TShortCut;
     fPrevPage: TShortCut;
     fDetectModuleName: boolean;
-    fShCount: integer;
+
     function optionedWantCategory(): string;
     function optionedWantEditorKind: TOptionEditorKind;
     function optionedWantContainer: TPersistent;
     procedure optionedEvent(event: TOptionEditorEvent);
     function optionedOptionsModified: boolean;
-    //
-    function scedWantFirst: boolean;
-    function scedWantNext(out category, identifier: string; out aShortcut: TShortcut): boolean;
-    procedure scedSendItem(const category, identifier: string; aShortcut: TShortcut);
-    procedure scedSendDone;
+
+    function  scedCount: integer;
+    function  scedGetItem(const index: integer): TEditableShortcut;
+    procedure scedSetItem(const index: integer; constref item: TEditableShortcut);
+
   published
     property pageButtons: TPageControlButtons read fPageButtons write fPageButtons;
     property pageOptions: TPageControlOptions read fPageOptions write fPageOptions;
@@ -280,38 +280,35 @@ begin
   exit(false);
 end;
 
-function TPagesOptions.scedWantFirst: boolean;
+function TPagesOptions.scedCount: integer;
 begin
-  fShCount := 0;
-  exit(true);
+  result := 4;
 end;
 
-function TPagesOptions.scedWantNext(out category, identifier: string; out aShortcut: TShortcut): boolean;
+function TPagesOptions.scedGetItem(const index: integer): TEditableShortcut;
 begin
-  category := 'Editor pages';
-  case fShCount of
-    0: begin identifier := 'Select next page'; aShortcut:= fNextPage; end;
-    1: begin identifier := 'Select previous page'; aShortcut:= fPrevPage; end;
-    2: begin identifier := 'Move page left'; aShortcut:= fMoveLeft; end;
-    3: begin identifier := 'Move page right'; aShortcut:= fMoveRight; end;
-  end;
-  fShCount += 1;
-  result := fShCount <> 4;
-end;
-
-procedure TPagesOptions.scedSendItem(const category, identifier: string; aShortcut: TShortcut);
-begin
-  case identifier of
-    'Select next page': fNextPage := aShortcut;
-    'Select previous page': fPrevPage := aShortcut;
-    'Move page left': fMoveLeft := aShortcut;
-    'Move page right': fMoveRight:= aShortcut;
+  result.category := 'Editor pages';
+  with result do
+  case index of
+    0: begin identifier := 'Select next page';      shortcut:= fNextPage;   end;
+    1: begin identifier := 'Select previous page';  shortcut:=  fPrevPage;  end;
+    2: begin identifier := 'Move page left';        shortcut:= fMoveLeft;   end;
+    3: begin identifier := 'Move page right';       shortcut:= fMoveRight;  end;
+    else raise Exception.CreateFmt(
+      'unexpected TPagesOptions editable shortcut index: %d', [index]);
   end;
 end;
 
-procedure TPagesOptions.scedSendDone;
+procedure TPagesOptions.scedSetItem(const index: integer; constref item: TEditableShortcut);
 begin
-  fShCount := 0;
+  case index of
+    0: fNextPage := item.shortcut;
+    1: fPrevPage := item.shortcut;
+    2: fMoveLeft := item.shortcut;
+    3: fMoveRight:= item.shortcut;
+    else raise Exception.CreateFmt(
+      'unexpected TPagesOptions editable shortcut index: %d', [index]);
+  end;
 end;
 {$ENDREGION}
 

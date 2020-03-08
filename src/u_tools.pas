@@ -108,10 +108,10 @@ type
     procedure projCompiling(project: ICommonProject);
     procedure projCompiled(project: ICommonProject; success: boolean);
 
-    function scedWantFirst: boolean;
-    function scedWantNext(out category, identifier: string; out aShortcut: TShortcut): boolean;
-    procedure scedSendItem(const category, identifier: string; aShortcut: TShortcut);
-    procedure scedSendDone;
+    function  scedCount: integer;
+    function  scedGetItem(const index: integer): TEditableShortcut;
+    procedure scedSetItem(const index: integer; constref item: TEditableShortcut);
+
   published
     property tools: TToolItems read fTools write setTools;
     property readOnly: boolean read fReadOnly write fReadOnly;
@@ -375,37 +375,21 @@ end;
 {$ENDREGION}
 
 {$REGION IEditableShortCut -----------------------------------------------------}
-function TTools.scedWantFirst: boolean;
+function TTools.scedCount: integer;
 begin
-  result := fTools.Count > 0;
-  fShctCount := 0;
+  result := fTools.Count;
 end;
 
-function TTools.scedWantNext(out category, identifier: string; out aShortcut: TShortcut): boolean;
+function TTools.scedGetItem(const index: integer): TEditableShortcut;
 begin
-  category  := 'Tools';
-  identifier:= tool[fShctCount].toolAlias;
-  aShortcut := tool[fShctCount].shortcut;
-
-  fShctCount += 1;
-  result := fShctCount < fTools.Count;
+  result.category   := 'Tools';
+  result.identifier := tool[index].toolAlias;
+  result.shortcut   := tool[index].shortcut;
 end;
 
-procedure TTools.scedSendItem(const category, identifier: string; aShortcut: TShortcut);
-var
-  i: Integer;
+procedure TTools.scedSetItem(const index: integer; constref item: TEditableShortcut);
 begin
- if category <> 'Tools' then
-  exit;
- for i := 0 to tools.Count-1 do if tool[i].toolAlias = identifier then
- begin
-   tool[i].shortcut := aShortcut;
-   break;
- end;
-end;
-
-procedure TTools.scedSendDone;
-begin
+  tool[index].shortcut := item.shortcut;
 end;
 {$ENDREGION}
 
