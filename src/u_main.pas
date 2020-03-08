@@ -401,7 +401,7 @@ type
     fMultidoc: IMultiDocHandler;
     fProcInputHandler: IProcInputHandler;
     fUpdateCount: NativeInt;
-    fProject: ICommonProject;
+    fProj: ICommonProject;
     fFreeProj: ICommonProject;
     fProjBeforeGroup: ICommonProject;
     fDubProject: TDubProject;
@@ -581,7 +581,7 @@ type
   TLastDocsAndProjs = class(TWritableLfmTextComponent)
   private
     fDocuments: TStringList;
-    fProject: string;
+    fProjName: string;
     fDocIndex: integer;
     fProjectGroup: string;
     fProjectIndex: integer;
@@ -592,7 +592,7 @@ type
   published
     property documentIndex: integer read fDocIndex write fDocIndex;
     property documents: TStringList read fDocuments write setDocuments;
-    property project: string read fProject write fProject;
+    property project: string read fProjName write fProjName;
     property projectGroup: string read fProjectGroup write fProjectGroup;
     property projectIndex: integer read fProjectIndex write fProjectIndex;
   public
@@ -1051,9 +1051,9 @@ begin
     pix := grp.reloadedProjectIndex;
     prj := MainForm.fFreeProj;
     if assigned(prj) then
-      fProject := prj.filename;
+      fProjName := prj.filename;
     fProjectGroup := getProjectGroup.groupFilename;
-    if prj = MainForm.fProject then
+    if prj = MainForm.fProj then
       fProjectIndex :=- 1
     else
       fProjectIndex := pix;
@@ -1074,16 +1074,16 @@ begin
     if dst.fProjFromCommandLine then
       exit;
 
-    if fProject.isNotEmpty and fProject.fileExists then
+    if fProjName.isNotEmpty and fProjName.fileExists then
     begin
-      dst.openProj(fProject);
-      if not assigned(dst.fProject) then
+      dst.openProj(fProjName);
+      if not assigned(dst.fProj) then
         exit;
       hdl := getMultiDocHandler;
       if assigned(hdl) then
-        mem := hdl.findDocument(dst.fProject.filename);
+        mem := hdl.findDocument(dst.fProj.filename);
       if mem.isNotNil then
-        if dst.fProject.getFormat = pfDEXED then
+        if dst.fProj.getFormat = pfDEXED then
           mem.Highlighter := LfmSyn
         else
           mem.Highlighter := JsSyn;
@@ -2059,7 +2059,7 @@ begin
   // see: http://forum.lazarus.freepascal.org/index.php/topic,30616.0.htm
   if fAppliOpts.reloadLastDocuments then
     LoadLastDocsAndProj;
-  if not assigned(fProject) then
+  if not assigned(fProj) then
     newDubProj;
 
   DockMaster.ResetSplitters;
@@ -2253,8 +2253,8 @@ begin
             if d.modified and not d.isTemporary then
               d.save;
           end;
-          if assigned(fProject) and fProject.modified then
-            fProject.saveToFile(fProject.filename);
+          if assigned(fProj) and fProj.modified then
+            fProj.saveToFile(fProj.filename);
           for i := 0 to fProjectGroup.projectCount-1 do
             if fProjectGroup.projectModified(i) then
               fProjectGroup.getProject(i).saveToFile(fProjectGroup.getProject(i).filename);
@@ -2283,7 +2283,7 @@ end;
 
 procedure TMainForm.updateProjectBasedAction(sender: TObject);
 begin
-  TAction(sender).Enabled := assigned(fProject) {and not fProjActionsLock};
+  TAction(sender).Enabled := assigned(fProj) {and not fProjActionsLock};
 end;
 
 procedure TMainForm.updateDocEditBasedAction(sender: TObject);
@@ -2411,12 +2411,12 @@ end;
 {$REGION IProjectObserver ----------------------------------------------------}
 procedure TMainForm.projNew(project: ICommonProject);
 begin
-  fProject := project;
-  case fProject.getFormat of
-    pfDEXED: fNativeProject := TNativeProject(fProject.getProject);
-    pfDUB: fDubProject := TDubProject(fProject.getProject);
+  fProj := project;
+  case fProj.getFormat of
+    pfDEXED: fNativeProject := TNativeProject(fProj.getProject);
+    pfDUB: fDubProject := TDubProject(fProj.getProject);
   end;
-  if not fProject.inGroup then
+  if not fProj.inGroup then
     fFreeProj := project;
 end;
 
@@ -2429,9 +2429,9 @@ procedure TMainForm.projClosing(project: ICommonProject);
 begin
   if project = fFreeProj then
     fFreeProj := nil;
-  if fProject <> project then
+  if fProj <> project then
     exit;
-  fProject := nil;
+  fProj := nil;
   fDubProject := nil;
   fNativeProject := nil;
   showProjTitle;
@@ -2439,17 +2439,17 @@ end;
 
 procedure TMainForm.projFocused(project: ICommonProject);
 begin
-  fProject := project;
-  case fProject.getFormat of
-    pfDEXED: fNativeProject := TNativeProject(fProject.getProject);
-    pfDUB: fDubProject := TDubProject(fProject.getProject);
+  fProj := project;
+  case fProj.getFormat of
+    pfDEXED: fNativeProject := TNativeProject(fProj.getProject);
+    pfDUB: fDubProject := TDubProject(fProj.getProject);
   end;
-  if not fProject.inGroup then
+  if not fProj.inGroup then
     fFreeProj := project
   else if project = fFreeProj then
     fFreeProj := nil;
 
-  if assigned(fProject) then
+  if assigned(fProj) then
     actProjGitBranchesUpdExecute(nil);
 
   showProjTitle;
@@ -2477,7 +2477,7 @@ begin
       fMsgs.message('Build duration: ' + formatTicksAsDuration(GetTickCount64 - fCompStart),
         project, amcProj, amkInf);
     end;
-    if fRunProjAfterCompile and assigned(fProject) then
+    if fRunProjAfterCompile and assigned(fProj) then
     begin
       if not success then
         runprev := dlgYesNo('last build failed, continue and run ?') = mrYes;
@@ -2486,7 +2486,7 @@ begin
         if fRunProjAfterCompArg and
           not InputQuery('Execution arguments', '', runargs) then
             runargs := '';
-        fProject.run(runargs);
+        fProj.run(runargs);
       end;
     end;
     fRunProjAfterCompile := false;
@@ -2642,9 +2642,9 @@ end;
 
 procedure TMainForm.actProjOpenContFoldExecute(Sender: TObject);
 begin
-  if not assigned(fProject) or not fProject.filename.fileExists then
+  if not assigned(fProj) or not fProj.filename.fileExists then
     exit;
-  getExplorer.browse(fProject.filename.extractFilePath);
+  getExplorer.browse(fProj.filename.extractFilePath);
   fExplWidg.showWidget;
 end;
 
@@ -2709,12 +2709,12 @@ end;
 
 procedure TMainForm.actFileAddToProjExecute(Sender: TObject);
 begin
-  if fDoc.isNil or not assigned(fProject) then
+  if fDoc.isNil or not assigned(fProj) then
     exit;
-  if fProject.filename = fDoc.fileName then
+  if fProj.filename = fDoc.fileName then
     exit;
 
-  if fProject.getFormat = pfDEXED then
+  if fProj.getFormat = pfDEXED then
   begin
     if fDoc.fileName.fileExists and not fDoc.isTemporary then
       fNativeProject.addSource(fDoc.fileName)
@@ -2898,16 +2898,16 @@ begin
       if fDoc.isTemporary then
         result := of_yes;
     end
-    else if assigned(fProject) then
+    else if assigned(fProj) then
     begin
       if ifInProject in fRunnablesOptions.outputFolderConditions then
       begin
-        if fProject.isSource(fDoc.fileName) then
+        if fProj.isSource(fDoc.fileName) then
           result := of_yes;
       end
       else if ifSaved in fRunnablesOptions.outputFolderConditions then
       begin
-        if not fProject.isSource(fDoc.fileName) and not fDoc.isTemporary then
+        if not fProj.isSource(fDoc.fileName) and not fDoc.isTemporary then
           result := of_yes;
       end;
     end
@@ -3503,16 +3503,16 @@ end;
 procedure TMainForm.actProjCompileExecute(Sender: TObject);
 begin
   if fAppliOpts.autoSaveProjectFiles then
-    saveModifiedProjectFiles(fProject);
-  fProject.compile;
+    saveModifiedProjectFiles(fProj);
+  fProj.compile;
 end;
 
 procedure TMainForm.actProjCompileAndRunExecute(Sender: TObject);
 begin
   fRunProjAfterCompile := true;
   if fAppliOpts.autoSaveProjectFiles then
-    saveModifiedProjectFiles(fProject);
-  fProject.compile;
+    saveModifiedProjectFiles(fProj);
+  fProj.compile;
 end;
 
 procedure TMainForm.actProjCompAndRunWithArgsExecute(Sender: TObject);
@@ -3520,25 +3520,25 @@ begin
   fRunProjAfterCompile := true;
   fRunProjAfterCompArg := true;
   if fAppliOpts.autoSaveProjectFiles then
-    saveModifiedProjectFiles(fProject);
-  fProject.compile;
+    saveModifiedProjectFiles(fProj);
+  fProj.compile;
 end;
 
 procedure TMainForm.actProjRunExecute(Sender: TObject);
 begin
-  if fProject.binaryKind <> executable then
+  if fProj.binaryKind <> executable then
     dlgOkInfo('Non executable projects cant be run')
   else
   begin
-    if not fProject.targetUpToDate and
+    if not fProj.targetUpToDate and
       (dlgYesNo('The project output is not up-to-date, rebuild ?') = mrYes) then
       begin
         if fAppliOpts.autoSaveProjectFiles then
-          saveModifiedProjectFiles(fProject);
-        fProject.compile;
+          saveModifiedProjectFiles(fProj);
+        fProj.compile;
       end;
-    if fProject.outputFilename.fileExists or (fProject.getFormat = pfDUB) then
-      fProject.run;
+    if fProj.outputFilename.fileExists or (fProj.getFormat = pfDUB) then
+      fProj.run;
   end;
 end;
 
@@ -3547,7 +3547,7 @@ var
   runargs: string = '';
 begin
   if InputQuery('Execution arguments', '', runargs) then
-    fProject.run(runargs);
+    fProj.run(runargs);
 end;
 {$ENDREGION}
 
@@ -3743,8 +3743,8 @@ end;
 
 procedure TMainForm.showProjTitle;
 begin
-  if assigned(fProject) and fProject.filename.fileExists then
-    caption := format('dexed - %s', [shortenPath(fProject.filename, 30)])
+  if assigned(fProj) and fProj.filename.fileExists then
+    caption := format('dexed - %s', [shortenPath(fProj.filename, 30)])
   else
     caption := 'dexed';
 end;
@@ -3753,29 +3753,29 @@ procedure TMainForm.saveProjSource(const document: TDexedMemo);
 var
   fname: string;
 begin
-  if not assigned(fProject) or checkProjectLock or
-    (fProject.filename <> document.fileName) then
+  if not assigned(fProj) or checkProjectLock or
+    (fProj.filename <> document.fileName) then
       exit;
 
-  fname := fProject.filename;
+  fname := fProj.filename;
   document.saveToFile(fname);
-  fProject.reload;
+  fProj.reload;
 end;
 
 function TMainForm.closeProj: boolean;
 begin
-  if not assigned(fProject) then
+  if not assigned(fProj) then
     exit(true);
 
   result := false;
-  if fProject = fFreeProj then
+  if fProj = fFreeProj then
   begin
     if checkProjectLock then
       exit;
-    fProject.getProject.Free;
+    fProj.getProject.Free;
     fFreeProj := nil;
   end;
-  fProject := nil;
+  fProj := nil;
   fNativeProject := nil;
   fDubProject := nil;
   showProjTitle;
@@ -3786,8 +3786,8 @@ procedure TMainForm.actProjNewDialogExecute(Sender: TObject);
 var
   r: TModalResult;
 begin
-  if assigned(fProject) and not fProject.inGroup and fProject.modified and
-    (dlgFileChangeClose(fProject.filename, UnsavedProj) = mrCancel) then
+  if assigned(fProj) and not fProj.inGroup and fProj.modified and
+    (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   if not closeProj then
     exit;
@@ -3803,8 +3803,8 @@ end;
 
 procedure TMainForm.actProjNewDubJsonExecute(Sender: TObject);
 begin
-  if assigned(fProject) and not fProject.inGroup and fProject.modified and
-    (dlgFileChangeClose(fProject.filename, UnsavedProj) = mrCancel) then
+  if assigned(fProj) and not fProj.inGroup and fProj.modified and
+    (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   if not closeProj then
     exit;
@@ -3813,8 +3813,8 @@ end;
 
 procedure TMainForm.actProjNewNativeExecute(Sender: TObject);
 begin
-  if assigned(fProject) and not fProject.inGroup and fProject.modified and
-    (dlgFileChangeClose(fProject.filename, UnsavedProj) = mrCancel) then
+  if assigned(fProj) and not fProj.inGroup and fProj.modified and
+    (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   if not closeProj then
     exit;
@@ -3825,25 +3825,25 @@ procedure TMainForm.newNativeProj;
 begin
   fNativeProject := TNativeProject.Create(nil);
   fNativeProject.Name := 'CurrentProject';
-  fProject := fNativeProject as ICommonProject;
+  fProj := fNativeProject as ICommonProject;
   showProjTitle;
 end;
 
 procedure TMainForm.newDubProj;
 begin
   fDubProject := TDubProject.create(nil);
-  fProject := fDubProject as ICommonProject;
+  fProj := fDubProject as ICommonProject;
   showProjTitle;
 end;
 
 procedure TMainForm.saveProj;
 begin
-  fProject.saveToFile(fProject.filename);
+  fProj.saveToFile(fProj.filename);
 end;
 
 procedure TMainForm.saveProjAs(const fname: string);
 begin
-  fProject.saveToFile(fname);
+  fProj.saveToFile(fname);
   showProjTitle;
 end;
 
@@ -3864,17 +3864,17 @@ begin
     exit;
   end;
 
-  fProject.loadFromFile(fname);
+  fProj.loadFromFile(fname);
   showProjTitle;
-  fProject.activate;
+  fProj.activate;
 end;
 
 procedure TMainForm.mruProjItemClick(Sender: TObject);
 begin
   if checkProjectLock then
     exit;
-  if assigned(fProject) and not fProject.inGroup and fProject.modified and
-    (dlgFileChangeClose(fProject.filename, UnsavedProj) = mrCancel) then
+  if assigned(fProj) and not fProj.inGroup and fProj.modified and
+    (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   openProj(TMenuItem(Sender).Hint);
 end;
@@ -3888,14 +3888,14 @@ begin
       exit;
   fProjectGroup.closeGroup;
   fProjectGroup.openGroup(TMenuItem(Sender).Hint);
-  if (fProject = nil) and (fProjectGroup.getProjectIndex < fProjectGroup.projectCount) then
+  if (fProj = nil) and (fProjectGroup.getProjectIndex < fProjectGroup.projectCount) then
     fProjectGroup.getProject(fProjectGroup.getProjectIndex).activate();
 end;
 
 procedure TMainForm.actProjCloseExecute(Sender: TObject);
 begin
-  if assigned(fProject) and not fProject.inGroup and fProject.modified and
-    (dlgFileChangeClose(fProject.filename, UnsavedProj) = mrCancel) then
+  if assigned(fProj) and not fProj.inGroup and fProj.modified and
+    (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   closeProj;
 end;
@@ -3904,16 +3904,16 @@ procedure TMainForm.actProjSaveAsExecute(Sender: TObject);
 begin
   if checkProjectLock then
     exit;
-  if (fProject.getFormat = pfDUB) and TDubProject(fProject.getProject).isSDL then
+  if (fProj.getFormat = pfDUB) and TDubProject(fProj.getProject).isSDL then
   begin
-    fMsgs.message(DubSdlWarning, fProject, amcProj, amkWarn);
+    fMsgs.message(DubSdlWarning, fProj, amcProj, amkWarn);
     exit;
   end;
   with TSaveDialog.Create(nil) do
   try
     Filter := 'DUB json|*.json|DUB sdl|*.sdl|Dexed project|*.dprj';
-    if fProject.filename.fileExists then
-      InitialDir := fproject.filename.extractFileDir;
+    if fProj.filename.fileExists then
+      InitialDir := fProj.filename.extractFileDir;
     if execute then
       saveProjAs(filename.normalizePath);
   finally
@@ -3923,16 +3923,16 @@ end;
 
 procedure TMainForm.actProjSaveExecute(Sender: TObject);
 begin
-  if not assigned(fProject) then
+  if not assigned(fProj) then
     exit;
-  if (fProject.getFormat = pfDUB) and TDubProject(fProject.getProject).isSDL then
+  if (fProj.getFormat = pfDUB) and TDubProject(fProj.getProject).isSDL then
   begin
-    fMsgs.message(DubSdlWarning, fProject, amcProj, amkWarn);
+    fMsgs.message(DubSdlWarning, fProj, amcProj, amkWarn);
     exit;
   end;
   if checkProjectLock then
     exit;
-  if fProject.filename.isNotEmpty then
+  if fProj.filename.isNotEmpty then
     saveProj
   else
     actProjSaveAs.Execute;
@@ -3942,8 +3942,8 @@ procedure TMainForm.actProjOpenExecute(Sender: TObject);
 begin
   if checkProjectLock then
       exit;
-  if assigned(fProject) and fProject.modified and
-    (dlgFileChangeClose(fProject.filename, UnsavedProj) = mrCancel) then
+  if assigned(fProj) and fProj.modified and
+    (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   with TOpenDialog.Create(nil) do
   try
@@ -3959,8 +3959,8 @@ procedure TMainForm.actProjEditorExecute(Sender: TObject);
 var
   win: TControl = nil;
 begin
-  if assigned(fProject) then
-    case fProject.getFormat of
+  if assigned(fProj) then
+    case fProj.getFormat of
       pfDUB: win := DockMaster.GetAnchorSite(fDubProjWidg);
       pfDEXED: win := DockMaster.GetAnchorSite(fPrjCfWidg);
     end
@@ -3974,18 +3974,18 @@ end;
 
 procedure TMainForm.actProjSourceExecute(Sender: TObject);
 begin
-  if not assigned(fProject) or not fProject.filename.fileExists then
+  if not assigned(fProj) or not fProj.filename.fileExists then
     exit;
 
-  if (fProject.getFormat = pfDUB) and TDubProject(fProject.getProject).isSDL then
+  if (fProj.getFormat = pfDUB) and TDubProject(fProj.getProject).isSDL then
   begin
-    fMsgs.message(DubSdlWarning, fProject, amcProj, amkWarn);
+    fMsgs.message(DubSdlWarning, fProj, amcProj, amkWarn);
     exit;
   end;
 
-  openFile(fProject.filename);
+  openFile(fProj.filename);
   fDoc.isProjectDescription := true;
-  if fProject.getFormat = pfDEXED then
+  if fProj.getFormat = pfDEXED then
     fDoc.Highlighter := LfmSyn
   else
     fDoc.Highlighter := JsSyn;
@@ -3993,25 +3993,25 @@ end;
 
 procedure TMainForm.actProjOptViewExecute(Sender: TObject);
 begin
-  if not assigned(fProject) then
+  if not assigned(fProj) then
     exit;
-  dlgOkInfo(fProject.getCommandLine, 'Compilation command line');
+  dlgOkInfo(fProj.getCommandLine, 'Compilation command line');
 end;
 
 procedure TMainForm.actProjTestExecute(Sender: TObject);
 begin
-  if not assigned(fProject) then
+  if not assigned(fProj) then
     exit;
   if checkProjectLock then
       exit;
-  fProject.test;
+  fProj.test;
 end;
 
 procedure TMainForm.actProjStopCompExecute(Sender: TObject);
 begin
-  if fProject = nil then
+  if fProj = nil then
     exit;
-  fProject.stopCompilation();
+  fProj.stopCompilation();
 end;
 
 procedure TMainForm.actProjDscanExecute(Sender: TObject);
@@ -4024,7 +4024,7 @@ var
   s1: string;
   s2: string;
 begin
-  if fProject = nil then
+  if fProj = nil then
     exit;
 
   pth := exeFullName('dscanner' + exeExt);
@@ -4037,21 +4037,21 @@ begin
     prc.Options := [poUsePipes, poStderrToOutPut {$IFDEF WINDOWS}, poNewConsole{$ENDIF}];
     prc.ShowWindow:= swoHIDE;
     prc.Parameters.Add('-S');
-    s1 := fProject.basePath + 'dscanner.ini';
-    s2 := fProject.basePath + '.dscanner.ini';
+    s1 := fProj.basePath + 'dscanner.ini';
+    s2 := fProj.basePath + '.dscanner.ini';
     if s1.fileExists then
       prc.Parameters.Add('--config='+s1)
     else if s2.fileExists then
       prc.Parameters.Add('--config='+s2)
     else if not fDscanUnittests then
       prc.Parameters.Add('--skipTests');
-    for i := 0 to fProject.sourcesCount-1 do
-      prc.Parameters.Add(fProject.sourceAbsolute(i));
+    for i := 0 to fProj.sourcesCount-1 do
+      prc.Parameters.Add(fProj.sourceAbsolute(i));
     prc.Execute;
     processOutputToStrings(prc, lst);
     while prc.Running do;
     for msg in lst do
-      fMsgs.message(msg, fProject, amcProj, amkWarn);
+      fMsgs.message(msg, fProj, amcProj, amkWarn);
   finally
     prc.Free;
     lst.Free;
@@ -4073,11 +4073,11 @@ begin
       p.Options := [poUsePipes, poNoConsole, poStderrToOutPut];
       p.ShowWindow:= swoHIDE;
       p.Parameters.Add('pull');
-      p.CurrentDirectory:= fProject.basePath;
+      p.CurrentDirectory:= fProj.basePath;
       p.Execute;
       processOutputToStrings(p,r);
       for i := 0 to r.Count-1 do
-        fMsgs.message(r[i], fProject, amcProj, amkAuto);
+        fMsgs.message(r[i], fProj, amcProj, amkAuto);
       while p.Running do ;
       p.Parameters.Clear;
       p.Parameters.Add('submodule');
@@ -4088,7 +4088,7 @@ begin
       processOutputToStrings(p,r);
       while p.Running do ;
       for i := 0 to r.Count-1 do
-        fMsgs.message(r[i], fProject, amcProj, amkAuto);
+        fMsgs.message(r[i], fProj, amcProj, amkAuto);
     end;
   finally;
     actProjGitBranchesUpd.Execute;
@@ -4104,7 +4104,7 @@ var
   i: integer;
   b: string;
 begin
-  if not assigned(fProject) then
+  if not assigned(fProj) then
     exit;
   p := TProcess.Create(nil);
   r := TStringList.Create;
@@ -4117,12 +4117,12 @@ begin
       p.ShowWindow:= swoHIDE;
       p.Parameters.Add('checkout');
       p.Parameters.Add(b);
-      p.CurrentDirectory:= fProject.basePath;
+      p.CurrentDirectory:= fProj.basePath;
       p.Execute;
       processOutputToStrings(p,r);
       while p.Running do ;
       for i := 0 to r.Count-1 do
-        fMsgs.message(r[i], fProject, amcProj, amkAuto);
+        fMsgs.message(r[i], fProj, amcProj, amkAuto);
     end;
   finally;
     actProjGitBranchesUpd.Execute;
@@ -4139,13 +4139,13 @@ var
   m: TMenuItem;
   a: boolean;
 begin
-  if not assigned(fProject) then
+  if not assigned(fProj) then
     exit;
   a := mnuGitBranch.Count >= 2;
   if a then
     while mnuGitBranch.Count <> 2 do
       mnuGitBranch.delete(mnuGitBranch.Count-1);
-  if not DirectoryExistsUTF8(fProject.basePath + DirectorySeparator + '.git') then
+  if not DirectoryExistsUTF8(fProj.basePath + DirectorySeparator + '.git') then
     exit;
   p := TProcess.Create(nil);
   r := TStringList.Create;
@@ -4157,7 +4157,7 @@ begin
       p.ShowWindow:= swoHIDE;
       p.Parameters.Add('branch');
       p.Parameters.Add('--list');
-      p.CurrentDirectory:= fProject.basePath;
+      p.CurrentDirectory:= fProj.basePath;
       p.Execute;
       processOutputToStrings(p,r);
       while p.Running do ;
@@ -4186,7 +4186,7 @@ begin
       r.Clear;
       r.LoadFromStream(p.Stderr);
       for i := 0 to r.Count-1 do
-        fMsgs.message(r[i], fProject, amcProj, amkAuto);
+        fMsgs.message(r[i], fProj, amcProj, amkAuto);
     end;
   finally
     p.Free;
@@ -4214,7 +4214,7 @@ begin
   finally
     free;
   end;
-  if (fProject = nil) and (fProjectGroup.getProjectIndex < fProjectGroup.projectCount) then
+  if (fProj = nil) and (fProjectGroup.getProjectIndex < fProjectGroup.projectCount) then
     fProjectGroup.getProject(fProjectGroup.getProjectIndex).activate();
 end;
 
@@ -4252,9 +4252,9 @@ var
   e: TStrings;
   s: string;
 begin
-  if not assigned(fProject) or (fProject.getFormat <> pfDUB) then
+  if not assigned(fProj) or (fProj.getFormat <> pfDUB) then
     exit;
-  p := TDubProject(fProject.getProject);
+  p := TDubProject(fProj.getProject);
   e := p.getPersistentEnvironment;
   s := e.strictText;
   if InputQuery('Persistent project environment', 'values (key=value;key=value;...)', s) then
@@ -4291,7 +4291,7 @@ begin
     exit;
   if fProjectGroup.projectCount = 0 then
     exit;
-  fProjBeforeGroup := fProject;
+  fProjBeforeGroup := fProj;
   fGroupCompilationCnt := 0;
   fIsCompilingGroup := true;
   fMsgs.message('start compiling a project group...', nil, amcAll, amkInf);
@@ -4314,13 +4314,13 @@ begin
         break;
       end;
     end;
-    fProject.compile;
+    fProj.compile;
     // sequential
     if (async = awNo) then
     begin
       while fProjActionsLock do
         Application.ProcessMessages;
-      if not fProject.compiled then
+      if not fProj.compiled then
       begin
         fMsgs.message('group compilation has stopped because of a failure',
           nil, amcAll, amkErr);

@@ -51,7 +51,7 @@ type
     fActOpenFile: TAction;
     fActSelConf: TAction;
     fActBuildConf: TAction;
-    fProject: ICommonProject;
+    fProj: ICommonProject;
     fFileNode, fConfNode: TTreeNode;
     fLastFileOrFolder: string;
     fSymStringExpander: ISymStringExpander;
@@ -238,10 +238,10 @@ end;
 
 procedure TProjectInspectWidget.actBuildExecute(sender: TObject);
 begin
-  if fProject <> nil then
+  if fProj <> nil then
   begin
     actOpenFileExecute(sender);
-    fProject.compile;
+    fProj.compile;
   end;
 end;
 {$ENDREGION}
@@ -271,7 +271,7 @@ end;
 procedure TProjectInspectWidget.projNew(project: ICommonProject);
 begin
   fLastFileOrFolder := '';
-  fProject := project;
+  fProj := project;
   if Visible then
     updateImperative;
   updateButtons;
@@ -279,11 +279,11 @@ end;
 
 procedure TProjectInspectWidget.projClosing(project: ICommonProject);
 begin
-  if not assigned(fProject)  then
+  if not assigned(fProj)  then
     exit;
-  if project <> fProject then
+  if project <> fProj then
     exit;
-  fProject := nil;
+  fProj := nil;
   fLastFileOrFolder := '';
   updateImperative;
 end;
@@ -291,7 +291,7 @@ end;
 procedure TProjectInspectWidget.projFocused(project: ICommonProject);
 begin
   fLastFileOrFolder := '';
-  fProject := project;
+  fProj := project;
   TreeFilterEdit1.Text:= '';
   DetectNewDubSources(nil);
   updateButtons;
@@ -301,9 +301,9 @@ end;
 
 procedure TProjectInspectWidget.projChanged(project: ICommonProject);
 begin
-  if not assigned(fProject)  then
+  if not assigned(fProj)  then
     exit;
-  if fProject <> project then
+  if fProj <> project then
     exit;
   if Visible then
     beginDelayedUpdate;
@@ -322,7 +322,7 @@ var
   ce: boolean;
   sp: integer;
 begin
-  ce := fProject.getFormat = pfDEXED;
+  ce := fProj.getFormat = pfDEXED;
 
   btnRemFold.Visible:= ce;
   btnAddFold.Visible:= ce;
@@ -386,10 +386,10 @@ end;
 procedure TProjectInspectWidget.TreeSelectionChanged(Sender: TObject);
 begin
   actUpdate(sender);
-  if not assigned(fProject) or Tree.Selected.isNil then
+  if not assigned(fProj) or Tree.Selected.isNil then
     exit;
   if (Tree.Selected.Parent = fFileNode) then
-    fLastFileOrFolder := expandFilenameEx(fProject.basePath,tree.Selected.Text)
+    fLastFileOrFolder := expandFilenameEx(fProj.basePath,tree.Selected.Text)
   else
     fLastFileOrFolder := tree.Selected.Text;
 end;
@@ -399,7 +399,7 @@ var
   fname: string;
   i: integer;
 begin
-  if not assigned(fProject) or Tree.Selected.isNil then
+  if not assigned(fProj) or Tree.Selected.isNil then
     exit;
 
   if Tree.Selected.Parent <> fConfNode then
@@ -414,7 +414,7 @@ begin
   else
   begin
     i := Tree.Selected.Index;
-    fProject.setActiveConfigurationIndex(i);
+    fProj.setActiveConfigurationIndex(i);
     beginDelayedUpdate;
   end;
 end;
@@ -434,14 +434,14 @@ end;
 procedure TProjectInspectWidget.DetectNewDubSources(const document: TDexedMemo
   );
 begin
-  if not assigned(fProject) or (fProject.getFormat <> pfDUB) then
+  if not assigned(fProj) or (fProj.getFormat <> pfDUB) then
     exit;
   if document.isNotNil then
   begin
-    if document.fileName.contains(fProject.basePath) then
-      TDubProject(fProject.getProject).updateSourcesList;
+    if document.fileName.contains(fProj.basePath) then
+      TDubProject(fProj.getProject).updateSourcesList;
   end
-  else TDubProject(fProject.getProject).updateSourcesList;
+  else TDubProject(fProj.getProject).updateSourcesList;
   //updateImperative;
 end;
 
@@ -450,10 +450,10 @@ var
   fname: string;
   proj: TNativeProject;
 begin
-  if not assigned(fProject) or (fProject.getFormat = pfDUB) then
+  if not assigned(fProj) or (fProj.getFormat = pfDUB) then
     exit;
 
-  proj := TNativeProject(fProject.getProject);
+  proj := TNativeProject(fProj.getProject);
   with TOpenDialog.Create(nil) do
   try
     options := options + [ofAllowMultiSelect];
@@ -481,17 +481,17 @@ var
   proj: TNativeProject;
   i: integer;
 begin
-  if not assigned(fProject) or (fProject.getFormat = pfDUB) then
+  if not assigned(fProj) or (fProj.getFormat = pfDUB) then
     exit;
 
   dir := '';
-  proj := TNativeProject(fProject.getProject);
+  proj := TNativeProject(fProj.getProject);
   if fLastFileOrFolder.fileExists then
     dir := fLastFileOrFolder.extractFilePath
   else if fLastFileOrFolder.dirExists then
     dir := fLastFileOrFolder
-  else if fProject.fileName.fileExists then
-    dir := fProject.fileName.extractFilePath;
+  else if fProj.fileName.fileExists then
+    dir := fProj.fileName.extractFilePath;
   if selectDirectory('sources', dir, dir, true, 0) then
   begin
     proj.beginUpdate;
@@ -517,16 +517,16 @@ var
   proj: TNativeProject;
   i: Integer;
 begin
-  if not assigned(fProject) or (fProject.getFormat = pfDUB)
+  if not assigned(fProj) or (fProj.getFormat = pfDUB)
   or Tree.Selected.isNil or (Tree.Selected.Parent <> fFileNode) then
     exit;
 
-  proj := TNativeProject(fProject.getProject);
+  proj := TNativeProject(fProj.getProject);
   fname := Tree.Selected.Text;
   i := proj.Sources.IndexOf(fname);
   if i = -1 then
     exit;
-  fname := fProject.sourceAbsolute(i);
+  fname := fProj.sourceAbsolute(i);
   dir := fname.extractFilePath;
   if not dir.dirExists then
     exit;
@@ -547,15 +547,15 @@ procedure TProjectInspectWidget.btnReloadClick(Sender: TObject);
 var
   f: string;
 begin
-  if assigned(fProject) then
+  if assigned(fProj) then
   begin
-    f := fProject.filename;
+    f := fProj.filename;
     if not f.fileExists then
       exit;
-    if fProject.modified and
+    if fProj.modified and
       (dlgYesNo('The project seems to be modified, save before reloading') = mrYes) then
-        fProject.saveToFile(f);
-    fProject.loadFromFile(f);
+        fProj.saveToFile(f);
+    fProj.loadFromFile(f);
   end;
 end;
 
@@ -565,11 +565,11 @@ var
   proj: TNativeProject;
   i, j: integer;
 begin
-  if not assigned(fProject) or (fProject.getFormat = pfDUB)
+  if not assigned(fProj) or (fProj.getFormat = pfDUB)
   or Tree.Selected.isNil or (Tree.Selected.Parent <> fFileNode) then
     exit;
 
-  proj := TNativeProject(fProject.getProject);
+  proj := TNativeProject(fProj.getProject);
   proj.beginUpdate;
   for j:= 0 to Tree.SelectionCount-1 do
   begin
@@ -612,10 +612,10 @@ begin
     getMultiDocHandler.openDocument(value);
 end;
 begin
-  if not assigned(fProject) or (fProject.getFormat = pfDUB) then
+  if not assigned(fProj) or (fProj.getFormat = pfDUB) then
     exit;
 
-  proj := TNativeProject(fProject.getProject);
+  proj := TNativeProject(fProj.getProject);
   lst := TStringList.Create;
   proj.beginUpdate;
   try for fname in fnames do
@@ -659,26 +659,26 @@ begin
   fConfNode.DeleteChildren;
   fFileNode.DeleteChildren;
 
-  if not assigned(fProject) then
+  if not assigned(fProj) then
     exit;
 
   Tree.BeginUpdate;
 
   if not fFileListAsTree then
-    for i := 0 to fProject.sourcesCount-1 do
+    for i := 0 to fProj.sourcesCount-1 do
   begin
-    itm := Tree.Items.AddChild(fFileNode, fProject.sourceRelative(i));
-    itm.Data:= NewStr(fProject.sourceAbsolute(i));
+    itm := Tree.Items.AddChild(fFileNode, fProj.sourceRelative(i));
+    itm.Data:= NewStr(fProj.sourceAbsolute(i));
     itm.ImageIndex := 2;
     itm.SelectedIndex := 2;
   end
   else
   // first pass only creates the folders so that they're shown on top
   for j := 0 to 1 do
-    for i := 0 to fProject.sourcesCount-1 do
+    for i := 0 to fProj.sourcesCount-1 do
   begin
     fld := '';
-    rng.init(fProject.sourceRelative(i));
+    rng.init(fProj.sourceRelative(i));
     itm := fFileNode;
     while not rng.empty do
     begin
@@ -692,7 +692,7 @@ begin
       // reached fname
       if rng.empty and (j = 1) then
       begin
-        itm.Data:= NewStr(fProject.sourceAbsolute(i));
+        itm.Data:= NewStr(fProj.sourceAbsolute(i));
         itm.ImageIndex := 2;
         itm.SelectedIndex := 2;
       end
@@ -707,10 +707,10 @@ begin
   end;
 
 
-  j := fProject.getActiveConfigurationIndex;
-  for i := 0 to fProject.configurationCount-1 do
+  j := fProj.getActiveConfigurationIndex;
+  for i := 0 to fProj.configurationCount-1 do
   begin
-    conf := fProject.configurationName(i);
+    conf := fProj.configurationName(i);
     if i = j then
       conf += ' (active)';
     itm := Tree.Items.AddChild(fConfNode, conf);
