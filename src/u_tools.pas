@@ -390,6 +390,7 @@ end;
 procedure TTools.scedSetItem(const index: integer; constref item: TEditableShortcut);
 begin
   tool[index].shortcut := item.shortcut;
+  updateMenu();
 end;
 {$ENDREGION}
 
