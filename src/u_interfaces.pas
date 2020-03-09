@@ -13,14 +13,11 @@ type
   // describes the project kind. Used as a hint to cast ICommonProject.getProject()
   TProjectFormat = (pfDEXED, pfDUB);
 
-  // describes the binary kind produces when compiling a project
+  // describes the binary kind produced when compiling a project
   TProjectBinaryKind = (executable, staticlib, sharedlib, obj);
 
   (**
    * Common project interface.
-   *
-   * Each project format has its own dedicated editors.
-   * A few common properties allow some generic operations whatever is the format.
    *)
   ICommonProject = interface
   ['ICommonProject']
@@ -35,7 +32,7 @@ type
       procedure activate;
       // indicates the project format
       function getFormat: TProjectFormat;
-      // returns an untyped object that can be casted using getFormat()
+      // returns an object that can be cast using the result of getFormat()
       function getProject: TObject;
       // returns the project filename
       function filename: string;
@@ -43,30 +40,30 @@ type
       procedure loadFromFile(const fname: string);
       // saves project to filename
       procedure saveToFile(const fname: string);
-      // reloads from filename
+      // reloads
       procedure reload;
-      // indicates of the project is modified (should be saved or not)
+      // indicates if the project is modified
       function modified: boolean;
-      // returns the base path used to solve relative locations
+      // returns the base dir used to solve relative paths
       function basePath: string;
-      // returns the name of the file produced when a project is compiled
+      // returns the name of the file that's produced
       function outputFilename: string;
-      // returns the binary kind produced according to the current configuration
+      // returns the kind of binary produced
       function binaryKind: TProjectBinaryKind;
-      // returns what's gonna be executed in background for this config
+      // returns the command line used to compile the project
       function getCommandLine: string;
       // stops compilation
       procedure stopCompilation;
 
     // configs -----------------------------------------------------------------
 
-      // returns the count of configuration
+      // returns the count of configuration (or config count * type count for pfDUB)
       function configurationCount: integer;
       // sets the active configuration
       procedure setActiveConfigurationIndex(index: integer);
-      // returns the name of the index-th configuration
+      // returns the name of the nth configuration
       function configurationName(index: integer): string;
-      // return the index of the active configration index
+      // return the index of the active config
       function getActiveConfigurationIndex: integer;
 
     // project sources ---------------------------------------------------------
@@ -92,7 +89,7 @@ type
       function compiled: boolean;
       // tries to execute the project output.
       procedure run(const runArgs: string = '');
-      // test the project (only for DUB)
+      // test the project (only for pfDUB)
       procedure test;
       // returns true if the target has not to be recompiled
       function targetUpToDate: boolean;
@@ -117,7 +114,7 @@ type
 
 
   (**
-   * An implementer is informed about the current file(s).
+   * An implementer can accurately track the current document
    *)
   IDocumentObserver = interface(IObserverType)
   ['IDocumentObserver']
@@ -131,15 +128,16 @@ type
     procedure docClosing(document: TDexedMemo);
   end;
   (**
-   * An implementer informs the IMultiDocObserver about the current file(s)
+   * An implementer let a IMultiDocObserver tracking the current document
    *)
   TMultiDocSubject = specialize TCustomSubject<IDocumentObserver>;
 
 
 
   (**
-   * An implementer is informed about the current project(s).
-   * Usually observer should keep track of two ICommonProject:
+   * An implementer can accurately track the current project.
+   *
+   * Note that there can be up to 2 different active projects.
    * - the "free standing project" (FSP): the project that's not in a group and
    * that has to be freed manualy in order to be replaced.
    * - the current project, the one that's active) which can be either the FSP
@@ -149,19 +147,19 @@ type
   ['IProjectObserver']
     // a project has been created/opened
     procedure projNew(project: ICommonProject);
-    // a project has been modified: switches, source name, ...
+    // a project has been modified: compiler switches, dependency, etc.
     procedure projChanged(project: ICommonProject);
     // a project is about to be closed.
     procedure projClosing(project: ICommonProject);
     // a project is focused, it can be inGroup or not
     procedure projFocused(project: ICommonProject);
-    // project is about to be compiled, time to lock related actions.
+    // a project is about to be compiled, time to lock related actions.
     procedure projCompiling(project: ICommonProject);
     // project compilation is finsihed, related actions can be unlocked.
     procedure projCompiled(project: ICommonProject; success: boolean);
   end;
   (**
-   * An implementer informs the IProjectObserver about the current project(s)
+   * An implementer informs the IProjectObserver about which is the current project
    *)
   TProjectSubject = specialize TCustomSubject<IProjectObserver>;
 
@@ -193,15 +191,14 @@ type
   TEditableShortCutSubject = specialize TCustomSubject<IEditableShortCut>;
 
   (**
-   * Listen to mini explorer changes. Mostly made to prevent redundant updates
-   * of the symbolic string translater.
+   * An implementer is informed when the mini explorer selected path is changed.
    *)
   IMiniExplorerObserver = interface(IObserverType)
   ['IMiniExplorerObserver']
     procedure mnexDirectoryChanged(const directory: string);
   end;
   (**
-   * Mini-explorer implements this.
+   * A Mini-explorer implements this to inform about its selected path.
    *)
   TMiniExplorerSubject = specialize TCustomSubject<IMiniExplorerObserver>;
 
@@ -226,9 +223,9 @@ type
   ['IEditableOptions']
     // the widget wants the category.
     function optionedWantCategory(): string;
-    // the widget wants to know if the options will use a generic editor or a custom form.
+    // the widget wants to know if the options will be displayed in its generic editor or in a custom form.
     function optionedWantEditorKind: TOptionEditorKind;
-    // the widget wants the custom option editor TCustomForm, TWinControl or the TPersistent containing the options.
+    // the widget wants the custom option editor (TCustomForm, TWinControl) or the TPersistent containing the options.
     function optionedWantContainer: TPersistent;
     // the option editor informs that something has happened.
     procedure optionedEvent(event: TOptionEditorEvent);
@@ -388,7 +385,7 @@ type
   DCompiler = (dmd, gdc, gdmd, ldc, ldmd, user1, user2, global);
 
   (**
-   * Single service provided by the options editor.
+   * Single service provided by the options category "compiler paths".
    *)
   ICompilerSelector = interface(ISingleService)
     // Indicates wether a D compiler is usable.
@@ -399,7 +396,7 @@ type
     procedure getCompilerImports(value: DCompiler; paths: TStrings);
   end;
 
-  // Returns a string indicating the which compiler will be used.
+  // Returns a string indicating which compiler will be used.
   function usingCompilerInfo(value: DCompiler): string;
 
 type
@@ -448,10 +445,9 @@ type
 
 
 {
-  subject primitives:
+  subject primitives.
 
-  A subject cannot necessarly provides all the informations the observers expect.
-  It can compose using the following "primitives".
+  They handle the dispatching to the observer(s).
 }
 
   (**
