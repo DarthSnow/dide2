@@ -1,11 +1,10 @@
 object MainForm: TMainForm
   Left = 383
-  Height = 34
+  Height = 35
   Top = 610
-  Width = 673
+  Width = 687
   AllowDropFiles = True
   Caption = 'Dexed'
-  DesignTimePPI = 94
   Menu = mainMenu
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
@@ -414,7 +413,7 @@ object MainForm: TMainForm
     end
   end
   object Actions: TActionList
-    left = 31
+    left = 32
     top = 1
     object actEdCopy: TAction
       Category = 'Edit'
@@ -858,7 +857,7 @@ object MainForm: TMainForm
   object ApplicationProperties1: TApplicationProperties
     OnActivate = ApplicationProperties1Activate
     OnException = ApplicationProperties1Exception
-    left = 63
+    left = 64
     top = 1
   end
 end
