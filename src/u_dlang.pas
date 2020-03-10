@@ -159,6 +159,17 @@ function getIndexOfTokenLeftTo(tokens: TLexTokenList; caretPos: TPoint): integer
  *)
 function getExpressionAt(tokens: TLexTokenList; caretPos: TPoint): string;
 
+
+(**
+ * Returns the position of the opening paren of a CallExp
+ *)
+function getCallExpLeftParenLoc(tokens: TLexTokenList; caretPos: TPoint): TPoint;
+
+(**
+ * Returns the index of the parameter located at caretPos.
+ *)
+function getCurrentParameterIndex(tokens: TLexTokenList; caretPos: TPoint): integer;
+
 implementation
 
 {$REGION TReaderHead -----------------------------------------------------------}
@@ -1052,6 +1063,65 @@ begin
       result := i;
       break;
     end;
+  end;
+end;
+
+function getCallExpLeftParenLoc(tokens: TLexTokenList; caretPos: TPoint): TPoint;
+var
+  t: PLexToken;
+  i: integer;
+  p: integer = 0;
+  s: integer = 0;
+begin
+  result := Point(0,0);
+  i := getIndexOfTokenAt(tokens, caretPos) + 1;
+  while i > 0 do
+  begin
+    i -= 1;
+    t := tokens[i];
+    if t^.kind <> TLexTokenKind.ltkSymbol then
+      continue;
+    p += byte(t^.Data = ')');
+    p -= byte(t^.Data = '(');
+    if p = -1 then
+    begin
+      result := t^.position;
+      result.x += 2;
+      break;
+    end;
+  end;
+end;
+
+function getCurrentParameterIndex(tokens: TLexTokenList; caretPos: TPoint): integer;
+var
+  t: PLexToken;
+  i: integer;
+  p: integer = 0;
+  s: integer = 0;
+begin
+  result := -1;
+  i := getIndexOfTokenAt(tokens, caretPos) + 1;
+  while i > 0 do
+  begin
+    // skip nested ParenExp
+    i -= 1;
+    t := tokens[i];
+    if t^.kind <> TLexTokenKind.ltkSymbol then
+      continue;
+    p += byte(t^.Data = ')');
+    p -= byte(t^.Data = '(');
+    if p = -1 then
+    begin
+      result += 1;
+      break;
+    end;
+    if p > 0 then
+      continue;
+    // detect IndexExp, SliceExp, etc.
+    s += byte(t^.Data = ']');
+    s -= byte(t^.Data = '[');
+    // add a param if not in opIndex, opSlice, ParenExp
+    result += Byte((t^.Data = ',') and (s = 0) and (p = 0));
   end;
 end;
 

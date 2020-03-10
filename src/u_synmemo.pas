@@ -62,13 +62,17 @@ type
       AData: Pointer): TRect; override;
   end;
 
-  // Specialized to allow displaying call tips, actual param in bold
+  // Specialized to allow displaying call tips
   TEditorCallTipWindow = class(TEditorHintWindow)
   strict private
     fIndexOfExpectedArg: integer;
+    fActivating: boolean;
   public
-    function CalcHintRect(MaxWidth: Integer; const AHint: string;
-      AData: Pointer): TRect; override;
+    // like ActivateHint(string) but
+    // prevent overzealous opimizations that prevent flickering
+    // that become a problem when the hint string is dynamic.
+    procedure ActivateDynamicHint(const AHint: String);
+    function CalcHintRect(MaxWidth: Integer; const AHint: string; AData: Pointer): TRect; override;
     procedure Paint; override;
     property indexOfExpectedArg: integer write fIndexOfExpectedArg;
   end;
@@ -221,7 +225,6 @@ type
     fMatchSelectionOpts: TSynSearchOptions;
     fMatchIdentOpts: TSynSearchOptions;
     fMatchOpts: TIdentifierMatchOptions;
-    fCallTipStrings: TStringList;
     fOverrideColMode: boolean;
     fAutoCloseCurlyBrace: TBraceAutoCloseStyle;
     fSmartDdocNewline: boolean;
@@ -502,6 +505,7 @@ const
     ' (mixin)            '
   );
 
+{$REGION TEditorCallTipWindow --------------------------------------------------}
 function TEditorHintWindow.CalcHintRect(MaxWidth: Integer; const AHint: String; AData: Pointer): TRect;
 begin
   Font.Size:= FontSize;
@@ -510,54 +514,96 @@ end;
 
 function TEditorCallTipWindow.CalcHintRect(MaxWidth: Integer; const AHint: String; AData: Pointer): TRect;
 begin
-  //Font.Style := Font.Style + [fsBold];
+  Font.Size:= FontSize;
   result := inherited CalcHintRect(MaxWidth, AHint, AData);
-  //Font.Style := Font.Style - [fsBold];
+end;
+
+procedure TEditorCallTipWindow.ActivateDynamicHint(const AHint: String);
+begin
+  if fActivating then
+    exit;
+  fActivating := True;
+  try
+    Caption := AHint;
+    Invalidate;
+    ActivateSub;
+  finally
+    fActivating := False;
+  end
 end;
 
 procedure TEditorCallTipWindow.Paint;
-//var
-  //s: string;
-  //a: string;
-  //i: integer = 0;
-  //x: integer = 0;
-  //o: integer = 0;
-  //r: TStringRange = (ptr:nil; pos:0; len: 0);
-  //f: TFontStyles;
+var
+  s: string;
+  a: string;
+  b: string;
+  i: integer = 0;
+  x: integer;
+  y: integer;
+  r: TStringRange = (ptr:nil; pos:0; len: 0);
+  t: TStringRange;
+  u: TStringRange;
+  j: integer = 0;
+
+  procedure writePart(const part: string; var x: integer);
+  begin
+    canvas.TextOut(x, y, part);
+    x += canvas.TextWidth(part);
+  end;
+
 begin
-  //s := caption;
-  //caption := '';
-  inherited Paint;
-  //if s.isEmpty then
-  //  exit;
-  //f := canvas.Font.Style;
-  //r.init(s);
-  //// func decl (TODO skip template params)
-  //a := r.takeUntil('(').yield + '(';
-  //o := x;
-  //x += canvas.TextWidth(a);
-  //canvas.TextOut(o, 0, a);
-  //r.popFront;
-  //// func args
-  //while not r.empty do
-  //begin
-  //  a := r.takeUntil(',').yield;
-  //  if not r.empty then
-  //  begin
-  //    r.popFrontN(2);
-  //    a += ', ';
-  //  end;
-  //  o := x;
-  //  if fIndexOfExpectedArg = i then
-  //    canvas.Font.Style := canvas.Font.Style + [fsBold]
-  //  else
-  //    canvas.Font.Style := canvas.Font.Style - [fsBold];
-  //  x += canvas.TextWidth(a);
-  //  canvas.TextOut(o, 0, a);
-  //  canvas.Font.Style := f;
-  //  i += 1;
-  //end;
+  s := caption;
+  if s.isEmpty then
+    exit;
+  u.init(s);
+  y := ScaleY(3,96);
+  while true do
+  begin
+    i := 0;
+    b := u.nextLine();
+    if b.isEmpty then
+      break;
+    r.init(b);
+    canvas.Brush.Color:= color;
+    x := ScaleX(3,96);
+    // result
+    a := r.takeUntil(' ').takeMore(1).yield();
+    r.popFront;
+    writePart(a, x);
+    // name
+    a := r.takeUntil('(').yield();
+    writePart(a, x);
+    // template params
+    t := r.save.popPair(')')^;
+    if not t.empty() and (t.popFront^.front = '(') then
+    begin
+      a := r.takePair(')').takeMore(1).yield();
+      r.popFront();
+      writePart(a, x);
+    end;
+    // func args
+    while not r.empty do
+    begin
+      a := r.takeUntil([',', ')']).yield;
+      if not r.empty then
+      begin
+        if r.front = ',' then
+          a += ', '
+        else
+          a += ')';
+        r.popFrontN(2);
+      end;
+      if fIndexOfExpectedArg = i then
+        canvas.Brush.Color:= clHighlight
+      else
+        canvas.Brush.Color:= color;
+      writePart(a, x);
+      i += 1;
+    end;
+    y += Font.Size + ScaleY(9,96);
+  end;
 end;
+{$ENDREGION}
 
 {$REGION TSortDialog -----------------------------------------------------------}
 constructor TSortDialog.construct(editor: TDexedMemo);
@@ -1072,7 +1118,6 @@ begin
   fCompletion.ShortCut:=0;
   fCompletion.LinesInWindow:=15;
   fCompletion.Width:= 250;
-  fCallTipStrings:= TStringList.Create;
 
   MouseLinkColor.Style:= [fsUnderline];
   with MouseActions.Add do begin
@@ -1178,7 +1223,6 @@ begin
   fMultiDocSubject.Free;
   fPositions.Free;
   fCompletion.Free;
-  fCallTipStrings.Free;
   fLexToks.Clear;
   fLexToks.Free;
   fSortDialog.Free;
@@ -2648,6 +2692,7 @@ begin
     fCallTipWin := TEditorCallTipWindow.Create(self);
     fCallTipWin.Color := clInfoBk + $01010100;
     fCallTipWin.Font.Color:= clInfoText;
+    fCallTipWin.AutoHide:=false;
   end;
   if fDDocWin.isNil then
   begin
@@ -2659,73 +2704,32 @@ end;
 
 procedure TDexedMemo.showCallTips(findOpenParen: boolean = true);
 var
-  str, lne: string;
-  i, x: integer;
-  j: integer = 0;
-  n: integer = 0;
+  s: string;
+  i: integer = 0;
+  o: TPoint;
+  p: TPoint;
 begin
   if not fIsDSource and not alwaysAdvancedFeatures then
     exit;
-  if not fCallTipWin.Visible then
-    fCallTipStrings.Clear;
-  str := LineText[1..CaretX];
-  x := CaretX;
-  i := min(x, str.length);
-  if findOpenParen then
-    while true do
-  begin
-    if i = 1 then
-      break;
-    if str[i] = ',' then
-      j += 1;
-    if str[i] = ')' then
-      n += 1;
-    if str[i-1] = '(' then
-    begin
-      if n = 0 then
-      begin
-        LogicalCaretXY := Point(i, CaretY);
-        break;
-      end
-      else n -= 1;
-    end;
-    if str[i] = #9 then
-      i -= TabWidth
-    else
-      i -= 1;
-    if i <= 0 then
-      break;
-  end;
 
-  if i > 0 then
-  begin
-    DcdWrapper.getCallTip(str);
-    i := fCallTipStrings.Count;
-    if (fCallTipStrings.Count <> 0) and str.isNotEmpty then
-      fCallTipStrings.Insert(0, '---');
-    fCallTipStrings.Insert(0, str);
-    i := fCallTipStrings.Count - i;
-    // overload count to delete on ')'
-    {$PUSH}{$HINTS OFF}{$WARNINGS OFF}
-    fCallTipStrings.Objects[0] := TObject(pointer(i));
-    {$POP}
-    str := '';
-    for lne in fCallTipStrings do
-      if lne.isNotEmpty then
-        str += lne + LineEnding;
-    if str.isNotEmpty then
-    begin
-      {$IFDEF WINDOWS}
-      str := str[1..str.length-2];
-      {$ELSE}
-      str := str[1..str.length-1];
-      {$ENDIF}
-      showCallTipsString(str, j);
-    end;
-  end;
-
+  o := CaretXY;
   if findOpenParen then
-    CaretX:=x;
+  begin
+    lexWholeText([lxoNoWhites, lxoNoComments]);
+    i := getCurrentParameterIndex(fLexToks, CaretXY);
+    p := getCallExpLeftParenLoc(fLexToks, CaretXY);
+    // otherwise strange behavior of <kbd>SPACE</kbd>.
+    BeginUpdate();
+    CaretXY := p;
+  end;
+  DcdWrapper.getCallTip(s);
+  if s.isNotEmpty then
+    showCallTipsString(s, i);
+  if findOpenParen then
+  begin
+    CaretXY := o;
+    EndUpdate();
+  end;
 end;
 
 procedure TDexedMemo.showCallTipsString(const tips: string; indexOfExpected: integer);
@@ -2740,35 +2744,21 @@ begin
   fCallTipWin.FontSize := Font.Size;
   fCallTipWin.HintRect := fCallTipWin.CalcHintRect(0, tips, nil);
   fCallTipWin.OffsetHintRect(pnt, Font.Size * 2);
-
-  // see procedure THintWindow.ActivateHint(const AHint: String);
-  // caused a regression in call tips stacking
-  fCallTipWin.Caption:= tips;
-
-  fCallTipWin.ActivateHint(tips);
+  fCallTipWin.ActivateDynamicHint(tips);
 end;
 
 procedure TDexedMemo.hideCallTips;
 begin
   if not fCallTipWin.Visible then
     exit;
-  fCallTipStrings.Clear;
   fCallTipWin.Hide;
 end;
 
 procedure TDexedMemo.decCallTipsLvl;
-var
-  i: integer;
 begin
-  {$PUSH}{$HINTS OFF}{$WARNINGS OFF}
-  i := integer(pointer(fCallTipStrings.Objects[0]));
-  {$POP}
-  for i in [0..i-1] do
-    fCallTipStrings.Delete(0);
-  if fCallTipStrings.Count = 0 then
-    hideCallTips
-  else
-    showCallTipsString(fCallTipStrings.Text, 0);
+  if not fCallTipWin.Visible then
+    exit;
+  hideCallTips;
 end;
 
 procedure TDexedMemo.showDDocs;
@@ -3633,6 +3623,8 @@ begin
     fCompletion.Execute(GetWordAtRowCol(LogicalCaretXY),
       ClientToScreen(point(CaretXPix, CaretYPix + LineHeight)));
   end;
+  if (Key = VK_BACK) and fCallTipWin.Visible then
+    showCallTips(true);
 end;
 
 procedure TDexedMemo.UTF8KeyPress(var Key: TUTF8Char);
@@ -3655,6 +3647,15 @@ begin
   end;
 
   inherited;
+
+  if fCallTipWin.Visible then
+  begin
+    //fCallTipStrings.clear;
+    //lexWholeText([lxoNoComments, lxoNoWhites]);
+    //i := getCurrentParameterIndex(fLexToks, CaretXY);
+    //showCallTipsString(fCallTipStrings.Text, i);
+    showCallTips(true);
+  end;
 
   fCanDscan := true;
   case c of

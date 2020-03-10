@@ -51,6 +51,9 @@ type
     // indicates wether the range is consumed.
     function empty: boolean; {$IFNDEF DEBUG}inline;{$ENDIF}
 
+    // when {$DEBUG} is defined this helper assign yield to a local, which can then be inspected
+    function debug(): PStringRange; {$IFNDEF DEBUG}inline;{$ENDIF}
+
     // yields the state of the range to a string.
     function yield: string; {$IFNDEF DEBUG}inline;{$ENDIF}
     // returns a copy.
@@ -59,6 +62,8 @@ type
     function reset: PStringRange; {$IFNDEF DEBUG}inline;{$ENDIF}
 
 
+    // continue taking for N steps, i.e following any of the "take" family of functions
+    function takeMore(value: integer): TStringRange; overload; {$IFNDEF DEBUG}inline;{$ENDIF}
     // advances the range while the front is in value, returns a copy.
     function takeWhile(value: TSysCharSet): TStringRange; overload; {$IFNDEF DEBUG}inline;{$ENDIF}
     // advances the range while the front is equal to value, returns a copy.
@@ -67,6 +72,8 @@ type
     function takeUntil(value: TSysCharSet): TStringRange; overload; {$IFNDEF DEBUG}inline;{$ENDIF}
     // advances the range until the front is equal to value, returns a copy.
     function takeUntil(value: Char): TStringRange; overload; {$IFNDEF DEBUG}inline;{$ENDIF}
+    // advances the range until the count of pair defined by the front() and closer is equal to 0, returns a copy.
+    function takePair(const closer: Char): TStringRange; {$IFNDEF DEBUG}inline;{$ENDIF}
     // advances the range while the front is in value.
     function popWhile(value: TSysCharSet): PStringRange; overload; {$IFNDEF DEBUG}inline;{$ENDIF}
     // advances the range while the front is equal to value.
@@ -75,6 +82,8 @@ type
     function popUntil(value: TSysCharSet): PStringRange; overload; {$IFNDEF DEBUG}inline;{$ENDIF}
     // advances the range until the front is equal to value.
     function popUntil(value: Char): PStringRange; overload; {$IFNDEF DEBUG}inline;{$ENDIF}
+    // advances the range until the count of pair defined by the front() and closer is equal to 0.
+    function popPair(const closer: Char): PStringRange; {$IFNDEF DEBUG}inline;{$ENDIF}
 
     // advances the range until the beginning of the next line.
     function popLine: PStringRange; {$IFNDEF DEBUG}inline;{$ENDIF}
@@ -170,6 +179,18 @@ begin
   result := pos >= len;
 end;
 
+function TStringRange.debug(): PStringRange;
+{$IFDEF DEBUG}
+var
+  s: string;
+{$ENDIF}
+begin
+  result := @self;
+  {$IFDEF DEBUG}
+  s:= yield();
+  {$ENDIF}
+end;
+
 function TStringRange.yield: string;
 begin
   Result := ptr[pos .. len-1];
@@ -186,6 +207,13 @@ function TStringRange.reset: PStringRange;
 begin
   pos := 0;
   Result := @Self;
+end;
+
+function TStringRange.takeMore(value: integer): TStringRange;
+begin
+  Result.ptr := ptr;
+  Result.pos := pos;
+  Result.len := len + value;
 end;
 
 function TStringRange.takeWhile(value: TSysCharSet): TStringRange;
@@ -244,6 +272,28 @@ begin
   end;
 end;
 
+function TStringRange.takePair(const closer: Char): TStringRange;
+var
+  opener: char;
+  c: integer = 0;
+begin
+  Result.ptr := ptr + pos;
+  Result.pos := 0;
+  Result.len := 0;
+  opener := front();
+  while true do
+  begin
+    if empty() then
+      break;
+    c += Byte(front() = opener);
+    c -= Byte(front() = closer);
+    if c = 0 then
+      break;
+    Result.len += 1;
+    popFront();
+  end;
+end;
+
 function TStringRange.popWhile(value: TSysCharSet): PStringRange;
 begin
   while true do
@@ -294,6 +344,25 @@ begin
   if not empty then
     popFront;
   Result := @self;
+end;
+
+function TStringRange.popPair(const closer: Char): PStringRange;
+var
+  opener: char;
+  c: integer = 0;
+begin
+  result := @self;
+  opener := front();
+  while true do
+  begin
+    if result^.empty() then
+      break;
+    c += Byte(result^.front() = opener);
+    c -= Byte(result^.front() = closer );
+    if c = 0 then
+      break;
+    result := result^.popFront();
+  end;
 end;
 
 function TStringRange.nextWord: string;
