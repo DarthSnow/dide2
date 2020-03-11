@@ -540,17 +540,19 @@ var
   i: integer = 0;
   j: integer = 0;
   x: integer;
-  y: integer;
+  y: integer = 1;
   r: TStringRange = (ptr:nil; pos:0; len: 0);
   t: TStringRange;
-  u: TStringRange;
+  u: TStringRange = (ptr:nil; pos:0; len: 0);
+  m: integer = 0;
 label
-  FIXED_AUTO;
+  FIX_AUTO;
 
-  procedure writePart(const part: string; var x: integer);
+  procedure writePart(const part: string; var x: integer; var lineHeigth: integer);
   begin
     canvas.TextOut(x, y, part);
     x += canvas.TextWidth(part);
+    lineHeigth := max(canvas.TextHeight(part), lineHeigth);
   end;
 
 begin
@@ -558,32 +560,32 @@ begin
   if s.isEmpty then
     exit;
   u.init(s);
-  y := ScaleY(3,96);
   while true do
   begin
     i := 0;
+    y += m;
     b := u.nextLine();
     if b.isEmpty then
       break;
-  FIXED_AUTO:
+  FIX_AUTO:
     r.init(b);
     canvas.Brush.Color:= color;
     x := ScaleX(3,96);
-    // result
+    // type of result
     a := r.takeUntil(' ').takeMore(1).yield();
     r.popFront;
     if a <> '%FIX% ' then // the computed HintRect does not permit additional text
-      writePart(a, x);
-    // name
+      writePart(a, x, m);
+    // func ident
     a := r.takeUntil('(').yield();
-    writePart(a, x);
+    writePart(a, x, m);
     // template params
     t := r.save.popPair(')')^;
     if not t.empty() and (t.popFront^.front = '(') then
     begin
       a := r.takePair(')').takeMore(1).yield();
       r.popFront();
-      writePart(a, x);
+      writePart(a, x, m);
     end
     // `auto ident()` is formatted as `ident()` because `auto` in D is not a Type,
     // so fix the formatting and go back.
@@ -593,7 +595,7 @@ begin
         exit;
       b := '%FIX% ' + b;
       j += 1;
-      goto FIXED_AUTO;
+      goto FIX_AUTO;
     end;
     j := 0;
     // func args
@@ -612,10 +614,9 @@ begin
         canvas.Brush.Color:= clHighlight
       else
         canvas.Brush.Color:= color;
-      writePart(a, x);
+      writePart(a, x, m);
       i += 1;
     end;
-    y += Font.Size + ScaleY(9,96);
   end;
 end;
 {$ENDREGION}
