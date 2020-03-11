@@ -614,8 +614,8 @@ begin
   {$ifdef hasgtk2term}
   if assigned(fTerminalHanlde) then
   begin
-    c := TColortoTGDKColor(fSelectedColor);
-    vte_terminal_set_color_highlight(fTerminalHanlde, @c);
+    //c := TColortoTGDKColor(InvertColor(fSelectedColor));
+    //vte_terminal_set_color_highlight(fTerminalHanlde, @c);
   end;
   {$endif}
 end;

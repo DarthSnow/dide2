@@ -45,7 +45,7 @@ type
   published
     property backgroundColor: TColor read fBackgroundColor write fBackgroundColor;
     property foregroundColor: TColor read fForegroundColor write fForegroundColor;
-    property selectedColor: TColor read fSelectedColor write fSelectedColor;
+    property selectedColor: TColor (*read fSelectedColor*) write fSelectedColor stored false;
     property font: TFont read fFont write setFont;
     property followEditors: boolean read fFollowEditors write fFollowEditors;
     property followProjects: boolean read fFollowProjects write fFollowProjects;
@@ -201,7 +201,7 @@ begin
   w := TTermWidget(owner);
   w.fTerm.backgroundColor:= backgroundColor;
   w.fTerm.foregroundColor:= foregroundColor;
-  w.fTerm.selectedColor:= selectedColor;
+  //w.fTerm.selectedColor:= selectedColor;
   w.fTerm.Font.BeginUpdate;
   w.fTerm.Font.Assign(fFont);
   // force the change: assigning does always trigger TTerminal.FontChanged.
