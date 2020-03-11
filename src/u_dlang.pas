@@ -1071,7 +1071,6 @@ var
   t: PLexToken;
   i: integer;
   p: integer = 0;
-  s: integer = 0;
 begin
   result := Point(0,0);
   i := getIndexOfTokenAt(tokens, caretPos) + 1;

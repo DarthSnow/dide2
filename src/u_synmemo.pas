@@ -538,6 +538,7 @@ var
   a: string;
   b: string;
   i: integer = 0;
+  j: integer = 0;
   x: integer;
   y: integer;
   r: TStringRange = (ptr:nil; pos:0; len: 0);
@@ -588,11 +589,13 @@ begin
     // so fix the formatting and go back.
     else if r.empty() then
     begin
-      if i > 128 then
+      if j > 128 then
         exit;
       b := '%FIX% ' + b;
+      j += 1;
       goto FIXED_AUTO;
     end;
+    j := 0;
     // func args
     while not r.empty do
     begin
