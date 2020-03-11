@@ -374,7 +374,7 @@ var
   s: string;
 begin
   s := document.fileName.extractFileDir;
-  if fOpts.followProjects and s.dirExists and not SameText(s, fLastCheckedDirectory) then
+  if fOpts.followEditors and s.dirExists and not SameText(s, fLastCheckedDirectory) then
     checkDirectory(s);
 end;
 
