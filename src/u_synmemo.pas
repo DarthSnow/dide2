@@ -543,7 +543,8 @@ var
   r: TStringRange = (ptr:nil; pos:0; len: 0);
   t: TStringRange;
   u: TStringRange;
-  j: integer = 0;
+label
+  FIXED_AUTO;
 
   procedure writePart(const part: string; var x: integer);
   begin
@@ -563,13 +564,15 @@ begin
     b := u.nextLine();
     if b.isEmpty then
       break;
+  FIXED_AUTO:
     r.init(b);
     canvas.Brush.Color:= color;
     x := ScaleX(3,96);
     // result
     a := r.takeUntil(' ').takeMore(1).yield();
     r.popFront;
-    writePart(a, x);
+    if a <> '%FIX% ' then // the computed HintRect does not permit additional text
+      writePart(a, x);
     // name
     a := r.takeUntil('(').yield();
     writePart(a, x);
@@ -580,6 +583,15 @@ begin
       a := r.takePair(')').takeMore(1).yield();
       r.popFront();
       writePart(a, x);
+    end
+    // `auto ident()` is formatted as `ident()` because `auto` in D is not a Type,
+    // so fix the formatting and go back.
+    else if r.empty() then
+    begin
+      if i > 128 then
+        exit;
+      b := '%FIX% ' + b;
+      goto FIXED_AUTO;
     end;
     // func args
     while not r.empty do
