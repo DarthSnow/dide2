@@ -116,5 +116,5 @@ object CurrentProject: TNativeProject
     'setup.d'
   )
   ConfigurationIndex = 3
-  version = '3.7.10'
+  version = '3.8.0'
 end
