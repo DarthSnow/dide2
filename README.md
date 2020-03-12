@@ -24,28 +24,23 @@ Dexed, the _D Extended EDitor_, is an IDE for the [D programming language](https
 
 ## Project information
 
-- :bookmark: latest release: version 3.7.10, Mon 10 Jun 2019.
+- :bookmark: latest release: version 3.8.0, Tue 12 Mar 2020.
 - :scroll: licensed under the terms of the Boost software license.
 - :dollar: Development can be supported with [Paypal donations](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AQDJVC39PJF7J).
 
-## Download version 3.7.11
+## Download version 3.8.0
 
-***coming soon...***
-
-<!--
 Download the zipped binaries or the zip that contains the setup program for you platform:
 
-- :package: [setup program for Linux 64 bit](https://github.com/Basile-z/dexed/releases/download/v3.7.10/dexed.3.7.10.linux64.setup.zip)
-- :package: [binaries for Linux 64 bit](https://github.com/Basile-z/dexed/releases/download/v3.7.10/dexed.3.7.10.linux64.zip)
-- :package: [setup program for Windows 64 bit](https://github.com/Basile-z/dexed/releases/download/v3.7.10/dexed.3.7.10.win64.setup.zip)
-- :package: [binaries for Windows 64 bit](https://github.com/Basile-z/dexed/releases/download/v3.7.10/dexed.3.7.10.win64.zip)
-- :package: [rpm for Linux 64 bit](https://github.com/Basile-z/dexed/releases/download/v3.7.10/dexed-3.7.10-0.x86_64.rpm)
-- :package: [deb for Linux 64 bit](https://github.com/Basile-z/dexed/releases/download/v3.7.10/dexed-3.7.10.amd64.deb)
+- :package: [setup program for Linux 64 bit]()
+- :package: [binaries for Linux 64 bit]()
+- :package: [rpm for Linux 64 bit]()
+- :package: [deb for Linux 64 bit]()
 
 The _zip_ archives allow to move freely the files.
 The _setup.zip_ archives contain a command line program that installs to predefined locations so that the software can be run without additional intervention.
 The _deb_ and the _rpm_ packages are for those who prefer the official setup system of their linux systems.
-FreeBSD (all archs), Linux (32 bit) and Windows (32 bit) versions must be [built manually](https://basile.b.gitlab.io/dexed/build.html).
+FreeBSD (all archs), Linux (32 bit) and Windows (all archs) versions must be [built manually](https://basile.b.gitlab.io/dexed/build.html).
 
 [**See this page**](https://basile-z.github.io/dexed/setup.html) for more information about the setup.
 -->
