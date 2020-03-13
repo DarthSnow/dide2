@@ -1,6 +1,6 @@
 Dexed, the _D Extended EDitor_, is an IDE for the [D programming language](https://dlang.org), its compilers, tools and libraries.
 
-![](https://basile.b.gitlab.io/dexed/img/coedit_kde4_thumb.png)
+![](https://gitlab.com/basile.b/dexed/-/raw/master/docs/img/coedit_kde4_thumb.png)
 
 ## Overview
 
@@ -43,7 +43,6 @@ The _deb_ and the _rpm_ packages are for those who prefer the official setup sys
 FreeBSD (all archs), Linux (32 bit) and Windows (all archs) versions must be [built manually](https://basile.b.gitlab.io/dexed/build.html).
 
 [**See this page**](https://basile-z.github.io/dexed/setup.html) for more information about the setup.
--->
 
 ## Building
 
