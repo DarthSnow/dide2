@@ -53,4 +53,4 @@ Description: IDE for the D programming language" > control
 cd $HOME
 dpkg-deb --build $name
 rm $HOME/$name -r -f
-mv $HOME/$name.deb $cp_trgt/$name.deb
+mv $name.deb $cp_trgt/$name.deb
