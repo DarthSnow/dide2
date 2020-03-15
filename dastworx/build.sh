@@ -24,7 +24,7 @@ cd src/
 dast=$(find `pwd` -type f -name \*.d)
 cd ../
 
-echo building using $DC...
+echo building dastworx using $DC...
 
 #build
 $DC ${dast[@]} ${dparse[@]} ${iz[@]} ${stdxalloc[@]} \

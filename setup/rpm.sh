@@ -81,5 +81,5 @@ Dexed is an IDE for the DMD D compiler.
 - see https://github.com/Basile-z/dexed/releases/tag/$ver
 ">$specname
 
-rpmbuild -ba $specname
-mv $HOME/rpmbuild/RPMS/$arch/$name_and_ver.rpm $cp_trgt/$name_and_ver.rpm
+rpmbuild -ba $specname --define "_rpmdir /$cp_trgt"
+mv $cp_trgt/$arch/$name_and_ver.rpm $cp_trgt/$name_and_ver.rpm
