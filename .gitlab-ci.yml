@@ -22,9 +22,9 @@ release:
   - apt-get install -y rpm
   - apt-get install -y git
   - apt-get install -y zip
-  - curl ftp://freepascal.dfmk.hu/pub/lazarus/releases/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.0.6/fpc-laz_3.0.4-1_amd64.deb -O && apt install -y ./fpc-laz_3.0.4-1_amd64.deb
-  - curl ftp://freepascal.dfmk.hu/pub/lazarus/releases/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.0.6/fpc-src_3.0.4-2_amd64.deb -O && apt install -y ./fpc-src_3.0.4-2_amd64.deb
-  - curl ftp://freepascal.dfmk.hu/pub/lazarus/releases/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.0.6/lazarus-project_2.0.6-0_amd64.deb -O && apt install -y ./lazarus-project_2.0.6-0_amd64.deb
+  - curl -JLO https://sourceforge.net/projects/lazarus/files/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.0.6/fpc-laz_3.0.4-1_amd64.deb/download && apt install -y ./fpc-laz_3.0.4-1_amd64.deb
+  - curl -JLO https://sourceforge.net/projects/lazarus/files/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.0.6/fpc-src_3.0.4-2_amd64.deb/download && apt install -y ./fpc-src_3.0.4-2_amd64.deb
+  - curl -JLO https://sourceforge.net/projects/lazarus/files/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.0.6/lazarus-project_2.0.6-0_amd64.deb/download && apt install -y ./lazarus-project_2.0.6-0_amd64.deb
   script:
   - bash setup/build-release.sh
   artifacts:

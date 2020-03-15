@@ -24,18 +24,18 @@ Dexed, the _D Extended EDitor_, is an IDE for the [D programming language](https
 
 ## Project information
 
-- :bookmark: latest release: version 3.8.0, Tue 12 Mar 2020.
+- :bookmark: latest release: version 3.8.1, Wed 18 Mar 2020.
 - :scroll: licensed under the terms of the Boost software license.
 - :dollar: Development can be supported with [Paypal donations](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AQDJVC39PJF7J).
 
-## Download version 3.8.0
+## Download version 3.8.1
 
 Download the zipped binaries or the zip that contains the setup program for you platform:
 
-- :package: [setup program for Linux 64 bit](https://gitlab.com/basile.b/dexed/uploads/a2a446e3dab3a286cb7139d96d17fb19/dexed.3.8.0.linux64.setup.zip)
-- :package: [binaries for Linux 64 bit](https://gitlab.com/basile.b/dexed/uploads/597520123ad479642be9aab519fdab9c/dexed.3.8.0.linux64.zip)
-- :package: [rpm for Linux 64 bit](https://gitlab.com/basile.b/dexed/uploads/cacac39d9d5326d3393d0f3b4ff76676/dexed-3.8.0-0.x86_64.rpm)
-- :package: [deb for Linux 64 bit](https://gitlab.com/basile.b/dexed/uploads/6c15bb9b229936b84899637bb535da9f/dexed-3.8.0.amd64.deb)
+- :package: [setup program for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.8.1/downloads/binaries/dexed.3.8.1.linux64.setup.zip)
+- :package: [binaries for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.8.1/downloads/binaries/dexed.3.8.1.linux64.zip)
+- :package: [rpm for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.8.1/downloads/binaries/dexed-3.8.1-0.x86_64.rpm)
+- :package: [deb for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.8.1/downloads/binaries/dexed-3.8.1.amd64.deb)
 
 The _zip_ archives allow to move freely the files.
 The _setup.zip_ archives contain a command line program that installs to predefined locations so that the software can be run without additional intervention.
