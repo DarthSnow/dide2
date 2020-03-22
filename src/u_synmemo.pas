@@ -2739,13 +2739,13 @@ begin
     CaretXY := p;
   end;
   DcdWrapper.getCallTip(s);
-  if s.isNotEmpty then
-    showCallTipsString(s, i);
   if findOpenParen then
   begin
     CaretXY := o;
     EndUpdate();
   end;
+  if s.isNotEmpty then
+    showCallTipsString(s, i);
 end;
 
 procedure TDexedMemo.showCallTipsString(const tips: string; indexOfExpected: integer);
