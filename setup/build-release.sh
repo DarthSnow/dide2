@@ -101,13 +101,17 @@ if [ ! -z "$GITLAB_CI" ]; then
     ZP1_NAME="dexed.$ver.linux64.setup.zip"
     ZP2_NAME="dexed.$ver.linux64.zip"
 
+    # read the log
+    LOG=$(grep -Poz "##[\s\S]*?(?=# v)" ../CHANGELOG.md) # capture all after "##" and until "# v"
+    LOG=$(echo "$LOG" | sed -z 's/\n/\\n/g' | sed -z 's/\"/\\"/g')
+
     ASSET_RPM='{ "name" : "'$RPM_NAME'" , "url" : "'$LNK_BASE$RPM_NAME'" , "filepath" : "/binaries/'$RPM_NAME'" }'
     ASSET_DEB='{ "name" : "'$DEB_NAME'" , "url" : "'$LNK_BASE$DEB_NAME'" , "filepath" : "/binaries/'$DEB_NAME'" }'
     ASSET_ZP1='{ "name" : "'$ZP1_NAME'" , "url" : "'$LNK_BASE$ZP1_NAME'" , "filepath" : "/binaries/'$ZP1_NAME'" }'
     ASSET_ZP2='{ "name" : "'$ZP2_NAME'" , "url" : "'$LNK_BASE$ZP2_NAME'" , "filepath" : "/binaries/'$ZP2_NAME'" }'
 
-    REQ_DATA='{ "name" : "'$semver'", "tag_name": "'$semver'", "description": "changelog coming soon", "assets": { "links": [ '$ASSET_RPM' , '$ASSET_DEB' , '$ASSET_ZP1' , '$ASSET_ZP2'] } }'
-    
+    REQ_DATA='{ "name" : "'$semver'", "tag_name": "'$semver'", "description": "'$LOG'", "assets": { "links": [ '$ASSET_RPM' , '$ASSET_DEB' , '$ASSET_ZP1' , '$ASSET_ZP2'] } }'
+
     # create Gitlab release
     if [ -z "$CI_MERGE_REQUEST_ID" ]; then
         curl -g --header 'Content-Type: application/json' \
