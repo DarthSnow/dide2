@@ -329,9 +329,10 @@ var
 begin
   if fDisableScrollBarSync or not visible or fTerm.isNil then
     exit;
-  i := fTerm.getVScrollInfo();
-  ScrollBar1.Max := i.max;
+  i                   := fTerm.getVScrollInfo();
+  ScrollBar1.Max      := i.max;
   ScrollBar1.Position := i.value;
+  ScrollBar1.PageSize := i.pageSize;
 end;
 
 procedure TTermWidget.FormShortCut(var Msg: TLMKey; var Handled: Boolean);

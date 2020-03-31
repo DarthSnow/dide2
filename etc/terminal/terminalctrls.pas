@@ -18,7 +18,7 @@ uses
 type
 
   TTerminalScrollInfo = record
-    min, max, value: integer;
+    min, max, value, pageSize: integer;
   end;
 
   TTerminalTextScrolled = procedure(sender: TObject; delta: integer) of Object;
@@ -634,16 +634,18 @@ end;
 function TTerminal.getVScrollInfo: TTerminalScrollInfo;
 {$ifdef hasgtk2term}
 var
-  a: PGtkAdjustment = nil;
+  a: PGtkAdjustment;
 {$endif}
 begin
+  FillChar(result, sizeOf(result), 0);
 {$ifdef hasgtk2term}
   if assigned(fTerminalHanlde) then
   begin
-    a            := vte_terminal_get_adjustment(fTerminalHanlde);
-    result.max   := round(a^.upper);
-    result.min   := round(a^.lower);
-    result.value := round(a^.value);
+    a               := vte_terminal_get_adjustment(fTerminalHanlde);
+    result.max      := round(a^.upper);
+    result.min      := round(a^.lower);
+    result.value    := round(a^.value);
+    result.pageSize := round(a^.page_size);
   end;
 {$endif}
 end;
