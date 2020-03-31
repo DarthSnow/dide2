@@ -26,6 +26,7 @@ type
 
   TMessagesOptions = class(TWritableLfmTextComponent)
   private
+    fbackTickHighlight: boolean;
     fFastDisplay: boolean;
     fMaxCount: integer;
     fAutoSelect: boolean;
@@ -35,6 +36,7 @@ type
     fMaxLineLength: integer;
     fFont: TFont;
     fMsgColors: array[TAppMessageKind] of TColor;
+    fHighlightColor: TColor;
     procedure setFont(value: TFont);
   published
     property alwaysFilter: boolean read fAlwaysFilter write fAlwaysFilter;
@@ -50,6 +52,8 @@ type
     property colorHint: TColor read fMsgColors[amkHint] write fMsgColors[amkHint];
     property colorWarning: TColor read fMsgColors[amkWarn] write fMsgColors[amkWarn];
     property colorError: TColor read fMsgColors[amkErr] write fMsgColors[amkErr];
+    property colorHighlight: TColor read fHighlightColor write fHighlightColor;
+    property backticksHighlight: boolean read fbackTickHighlight write fbackTickHighlight default true;
   public
     constructor Create(AOwner: TComponent); override;
     destructor destroy; override;
@@ -260,6 +264,7 @@ begin
   inherited;
   fFont := TFont.Create;
   fFont.Style := [fsBold];
+  fbackTickHighlight := true;
   {$IFDEF WINDOWS}
   fFont.name := 'Consolas';
   {$ENDIF}
@@ -272,6 +277,7 @@ begin
   fMsgColors[amkErr] := $BDBDFF;
   fMsgColors[amkInf] := $FFD0A8;
   fMsgColors[amkHint]:= $C2FFC2;
+  fHighlightColor    := $F7F7F7;
 end;
 
 destructor TMessagesOptions.destroy;
@@ -612,11 +618,18 @@ procedure TMessagesWidget.ListCustomDrawItem(Sender: TCustomTreeView;
 var
   x: integer;
   rc: TRect;
+  r: TStringRange = (ptr:nil; pos:0; len: 0);
+  t: TStringRange = (ptr:nil; pos:0; len: 0);
+  s: string;
+  p: boolean = false;
+  c: array [boolean] of TColor;
 begin
   rc := node.DisplayRect(false);
   x := rc.Left + 2 - TTreeHack(list).ScrolledLeft;
   // warning: the cast may become wrong if the enum is modified.
   Sender.Canvas.Brush.Color := fMsgColors[TAppMessageKind(node.ImageIndex + 1)];
+  c[false] := Sender.Canvas.font.Color;
+  c[true]  := fOptions.colorHighlight;
   if node.Selected then
   begin
     Sender.Canvas.DrawFocusRect(rc);
@@ -626,7 +639,29 @@ begin
   list.Images.Draw(sender.Canvas, x, (rc.Top + rc.Bottom - list.Images.Height) div 2,
     node.ImageIndex, Node.NodeEffect);
   x += list.Images.Width + 5;
-  Sender.Canvas.TextOut(x, rc.Top, node.Text);
+
+  if not fOptions.backticksHighlight then
+    Sender.Canvas.TextOut(x, rc.Top, Node.Text)
+  else if node.Text.isNotEmpty then
+  begin
+    r.init(node.Text);
+    while not r.empty do
+    begin
+      t := r.takeUntil('`');
+      if p then
+        t.takeMore(1);
+      s := t.yield();
+      if p then
+        s := '`' + s + '`';
+      if not r.empty() then
+        r.popFront();
+      Sender.Canvas.font.Color:= c[p];
+      Sender.Canvas.TextOut(x, rc.Top, s);
+      x += sender.Canvas.TextWidth(s);
+      p := not p;
+    end;
+  end;
+
   DefaultDraw := false;
 end;
 {$ENDREGION}

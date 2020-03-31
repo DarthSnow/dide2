@@ -33,6 +33,7 @@ This value and several other options can be changed in the options.
 - **alwaysFilter**: Sets if the custom filter (text filed at the top right) is maintained or if it's reset when new messages are emitted.
 - **autoDemangle**: Automatically filters the new messages with [ddemangle](https://github.com/dlang/tools#d-tools). Note that Dexed uses the tool as a daemon so it's perfectly normal that it remains in the task list when the IDE runs.
 - **autoSelect**: Defines if the widget change dynamically the message categories.
+- **backticksHighligh**: Sets if text between backticks gets painted in a particular color. Highligting is not limited to a particular tool so it is applied to the compiler messages, the results of [find all](widgets_search.html), and any process that has its output streams redirtected to the widget.
 This is a recommended setting because if a run-time error happens, it will be immediately displayed.
 - **colors**: Allows to associate a message kind to a particular color.
 - **fast display**: If set, the new messages are displayed fast but by block. When not set the same amount of message takes longer to be displayed but the operation is smoother.

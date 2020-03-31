@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   Menus, StdCtrls, actnList, Buttons, SynEdit, SynEditSearch, SynEditTypes,
-  u_common, u_mru, u_widget, u_synmemo, u_interfaces, u_observer,
+  u_common, u_mru, u_widget, u_synmemo, u_interfaces, u_observer, strutils,
   u_writableComponent, u_dialogs, u_sharedres, u_dsgncontrols,
   SynEditTextBuffer;
 
@@ -491,7 +491,7 @@ begin
     msgs := getMessageDisplay;
     if (not showNoResult and (result > 0)) or showNoResult then
     begin
-      msg := format('%d result(s) for the pattern <%s> in %s',
+      msg := format('%d result(s) for the pattern `%s` in %s',
         [length(res), fToFind, filename]);
       msgs.message(msg, nil, amcMisc, amkInf);
     end;
@@ -499,6 +499,7 @@ begin
     for i := 0 to high(res) do
     begin
       msg := format(fmt, [res[i].Y, res[i].X, Trim(lines[res[i].Y-1])]);
+      msg := strutils.ReplaceStr(msg, fToFind, '`' + fToFind + '`');
       msgs.message(msg, nil, amcMisc, amkInf);
     end;
   finally

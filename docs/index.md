@@ -5,7 +5,7 @@ header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4
 
 ![](img/coedit_kde4_thumb.png)
 
-This documentation is based on Dexed version 3.7.10.
+This documentation is based on Dexed version 3.8.2.
 Screenshots can be outdated but descriptions are up to date.
 
 ## First steps
