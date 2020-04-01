@@ -619,7 +619,7 @@ var
   x: integer;
   rc: TRect;
   r: TStringRange = (ptr:nil; pos:0; len: 0);
-  t: TStringRange = (ptr:nil; pos:0; len: 0);
+  t: TStringRange;
   s: string;
   p: boolean = false;
   c: array [boolean] of TColor;
@@ -647,18 +647,32 @@ begin
     r.init(node.Text);
     while not r.empty do
     begin
+      p := false;
+
+      // non highlighted part
       t := r.takeUntil('`');
-      if p then
-        t.takeMore(1);
       s := t.yield();
-      if p then
-        s := '`' + s + '`';
-      if not r.empty() then
-        r.popFront();
       Sender.Canvas.font.Color:= c[p];
       Sender.Canvas.TextOut(x, rc.Top, s);
       x += sender.Canvas.TextWidth(s);
-      p := not p;
+
+      // possibly highlighted part
+      if not r.empty() and (r.front = '`') then
+      begin
+        r.popFront();
+        s := '`';
+        t := r.takeUntil('`');
+        p := not r.empty() and (r.front() = '`');
+        if p then
+        begin
+          t := t.takeMore(1);
+          r.popFront();
+        end;
+        s += t.yield();
+        Sender.Canvas.font.Color:= c[p];
+        Sender.Canvas.TextOut(x, rc.Top, s);
+        x += sender.Canvas.TextWidth(s);
+      end;
     end;
   end;
 
