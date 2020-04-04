@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, Menus, Buttons, StdCtrls, u_widget, u_tools, u_sharedres,
-  u_dsgncontrols;
+  ExtCtrls, Menus, Buttons, StdCtrls, Types, LCLType,
+  u_widget, u_tools, u_sharedres, u_dsgncontrols;
 
 type
 
@@ -32,6 +32,8 @@ type
     procedure btnMoveDownClick(Sender: TObject);
     procedure btnRunClick(Sender: TObject);
     procedure lstToolsDblClick(Sender: TObject);
+    procedure lstToolsDrawItem(Control: TWinControl; Index: Integer;
+      ARect: TRect; State: TOwnerDrawState);
     procedure lstToolsSelectionChange(Sender: TObject; User: boolean);
     procedure propsEdModified(Sender: TObject);
   private
@@ -198,6 +200,29 @@ end;
 procedure TToolsEditorWidget.lstToolsDblClick(Sender: TObject);
 begin
   executeSelectedTool;
+end;
+
+procedure TToolsEditorWidget.lstToolsDrawItem(Control: TWinControl;
+  Index: Integer; ARect: TRect; State: TOwnerDrawState);
+var
+  c0: TColor;
+begin
+  c0 := CustomTools.tool[Index].backgroundColor;
+  if odSelected in State then
+  begin
+    if c0 = clDefault then
+      c0 := clHighlight;
+    lstTools.Canvas.Brush.Color := c0;
+    lstTools.Canvas.FillRect(ARect);
+    lstTools.Canvas.Pen.Color := clHighlightText;
+    lstTools.Canvas.Rectangle(Arect);
+  end
+  else
+  begin
+    lstTools.Canvas.Brush.Color := c0;
+    lstTools.Canvas.FillRect(ARect);
+  end;
+  lstTools.Canvas.TextOut(Arect.Left+1, ARect.Top+1, CustomTools.tool[Index].toolAlias);
 end;
 
 end.

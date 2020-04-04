@@ -5,9 +5,9 @@ unit u_tools;
 interface
 
 uses
-  Classes, SysUtils, LazFileUtils, process, menus, u_processes, controls,
+  Classes, SysUtils, LazFileUtils, process, menus, controls, graphics,
   u_common, u_writableComponent, u_interfaces, u_observer, u_inspectors,
-  u_synmemo, u_dialogs;
+  u_synmemo, u_dialogs, u_processes;
 
 type
 
@@ -51,6 +51,7 @@ type
     fPipeInputKind: TPipeInputKind;
     fAskConfirmation: boolean;
     fAutoExecuteEvents: TAutoExecuteEvents;
+    fBackColor: TColor;
     procedure setParameters(value: TStringList);
     procedure processOutput(sender: TObject);
     procedure setToolAlias(value: string);
@@ -69,6 +70,7 @@ type
     property pipeInputKind: TPipeInputKind read fPipeInputKind write fPipeInputKind;
     property askConfirmation: boolean read fAskConfirmation write fAskConfirmation;
     property autoExecuteEvents: TAutoExecuteEvents read fAutoExecuteEvents write fAutoExecuteEvents;
+    property backgroundColor: TColor read fBackColor write fBackColor default clBackground;
   public
     constructor create(ACollection: TCollection); override;
     destructor destroy; override;
@@ -158,6 +160,7 @@ begin
   fToolItems  := TToolItems(ACollection);
   fToolAlias  := format('<tool %d>', [ID]);
   fParameters := TStringList.create;
+  fBackColor  := clBackground;
 end;
 
 destructor TToolItem.destroy;

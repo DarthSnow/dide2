@@ -30,6 +30,7 @@ A tool can be selected from the left side of the widget. If selected, a property
 
 - **askConfirmation**: Asks for a confirmation before executing the tool.
 - **autoExecuteEvents**: Defines the events for which the tool is automatically executed.
+- **backGroundColor**: The color used to draw the item.
 - **clearMessages**: If the tool standard output is redirected to the [messages widget](widgets_messages.html) then the previous messages are cleared before the execution. The output is redirected to the messages when **popUsePipes** is set and if **nextToolAlias** is empty.
 - **editorToInput**: Deprecated, see **pipeInputKind**.
 - **executable**: The tool file name. If the system cannot find its path in the environment variables then it must be included. The field can include [symbolic strings](features_symbolic_strings.html).

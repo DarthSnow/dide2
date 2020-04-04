@@ -37,8 +37,10 @@ inherited ToolsEditorWidget: TToolsEditorWidget
           Align = alLeft
           ItemHeight = 0
           OnDblClick = lstToolsDblClick
+          OnDrawItem = lstToolsDrawItem
           OnSelectionChange = lstToolsSelectionChange
           ScrollWidth = 158
+          Style = lbOwnerDrawFixed
           TabOrder = 0
           TopIndex = -1
         end
@@ -81,7 +83,7 @@ inherited ToolsEditorWidget: TToolsEditorWidget
       end
       object button1: TDexedToolButton[1]
         Left = 169
-        Height = 5
+        Height = 28
         Top = 0
         AutoSize = True
         Caption = 'button1'
