@@ -17,6 +17,8 @@
 
 # v3.8.1
 
+- dummy release
+
 # v3.8.0
 
 ## Enhancements

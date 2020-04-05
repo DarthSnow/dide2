@@ -70,7 +70,7 @@ type
     property pipeInputKind: TPipeInputKind read fPipeInputKind write fPipeInputKind;
     property askConfirmation: boolean read fAskConfirmation write fAskConfirmation;
     property autoExecuteEvents: TAutoExecuteEvents read fAutoExecuteEvents write fAutoExecuteEvents;
-    property backgroundColor: TColor read fBackColor write fBackColor default clBackground;
+    property backgroundColor: TColor read fBackColor write fBackColor default clDefault;
   public
     constructor create(ACollection: TCollection); override;
     destructor destroy; override;
@@ -160,7 +160,7 @@ begin
   fToolItems  := TToolItems(ACollection);
   fToolAlias  := format('<tool %d>', [ID]);
   fParameters := TStringList.create;
-  fBackColor  := clBackground;
+  fBackColor  := clDefault;
 end;
 
 destructor TToolItem.destroy;
