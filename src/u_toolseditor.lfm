@@ -150,6 +150,16 @@ inherited ToolsEditorWidget: TToolsEditorWidget
         resourceName = 'APPLICATION_EDIT'
         scaledSeparator = False
       end
+      object btnKill: TDexedToolButton[8]
+        Left = 202
+        Hint = 'if running, kills the process matching to the selected tool'
+        Top = 0
+        AutoSize = True
+        Caption = 'btnKill'
+        OnClick = btnKillClick
+        resourceName = 'CANCEL'
+        scaledSeparator = False
+      end
     end
   end
   inherited contextMenu: TPopupMenu

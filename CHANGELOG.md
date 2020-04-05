@@ -2,6 +2,8 @@
 
 ## Enhancements
 
+- Custom tools: A new property allows to set the background color of the item. (#16)
+- Custom tools: A new Toolbar button has for effect to terminate the process associated to a tool. (#15)
 - Messages, added an option, enabled by default, allowing to highlight the blocks enclosed by backticks. This works for the "find all" action, the compiler output, the custom tools output, etc. (#13)
 
 ## Bugs fixed

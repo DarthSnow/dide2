@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, RTTIGrids, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, Menus, Buttons, StdCtrls, Types, LCLType,
-  u_widget, u_tools, u_sharedres, u_dsgncontrols;
+  u_widget, u_tools, u_sharedres, u_dsgncontrols, u_common, u_processes;
 
 type
 
@@ -16,6 +16,7 @@ type
     btnAddTool: TDexedToolButton;
     btnClone: TDexedToolButton;
     btnEdit: TDexedToolButton;
+    btnKill: TDexedToolButton;
     btnMoveDown: TDexedToolButton;
     btnMoveUp: TDexedToolButton;
     btnRemTool: TDexedToolButton;
@@ -27,6 +28,7 @@ type
     procedure BtnAddToolClick(Sender: TObject);
     procedure btnCloneClick(Sender: TObject);
     procedure btnEditClick(Sender: TObject);
+    procedure btnKillClick(Sender: TObject);
     procedure btnRemToolClick(Sender: TObject);
     procedure btnMoveUpClick(Sender: TObject);
     procedure btnMoveDownClick(Sender: TObject);
@@ -151,6 +153,18 @@ end;
 procedure TToolsEditorWidget.btnEditClick(Sender: TObject);
 begin
   setReadOnly(not CustomTools.readOnly);
+end;
+
+procedure TToolsEditorWidget.btnKillClick(Sender: TObject);
+var
+  p: TDexedProcess;
+begin
+  if lstTools.ItemIndex = -1 then
+    exit;
+
+  p := CustomTools.tool[lstTools.ItemIndex].process;
+  if p.isNotNil and p.Running then
+    p.Terminate(1);
 end;
 
 procedure TToolsEditorWidget.btnRemToolClick(Sender: TObject);

@@ -23,8 +23,10 @@ Toolbar:
 - ![](icons/window/application_add.png): Adds a new tool.
 - ![](icons/window/application_delete.png): Removes selected tool.
 - ![](icons/arrow/arrow_up.png) **/** ![](icons/arrow/arrow_down.png): Changes the position of the selected tool.
-- ![](icons/window/application_flash.png): Executes the tool that's selected, according to the options it's associated to. This also works by double-clicking the tool aliases.
 - ![](icons/window/application_double.png): Clones the tool that's selected.
+- ![](icons/window/application_flash.png): Executes the tool that's selected, according to the options it's associated to. This also works by double-clicking the tool aliases.
+- ![](icons/other/cancel.png): Terminates the process create for the tool.
+
 
 A tool can be selected from the left side of the widget. If selected, a property inspector displays the options that can be edited:
 
