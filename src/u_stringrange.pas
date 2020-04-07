@@ -18,11 +18,6 @@ type
    * Most of the operations can be chained because the functions
    * return either a pointer to a TStringRange (in this case this is always
    * the "Self") or a new TStringRange (in this case this is always a copy).
-   *
-   * This is based on a more generic work which tries to implement some kind
-   * of "D" ranges in Object Pascal (see https://github.com/Basile-z/ArrayOps).
-   * Even if Object Pascal doesn't provide the expressivness required to mimic
-   * D ranges, a few good stuff are still possible.
    *)
   TStringRange = record
   private

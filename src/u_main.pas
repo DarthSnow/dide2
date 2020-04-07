@@ -3125,9 +3125,7 @@ begin
     end
     else
     begin
-      // back compat, see https://github.com/Basile-z/dexed/issues/276
       dmdproc.Parameters.Add('-version=runnable_module');
-
       dmdproc.Parameters.Add('-version=run_single_module');
     end;
 
