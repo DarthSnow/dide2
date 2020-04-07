@@ -126,6 +126,7 @@ type
     fPaths: TCompilersPaths;
     fPathsBackup: TCompilersPaths;
     fProj: ICommonProject;
+    procedure tryLdcImportFromLdcExeName();
     procedure editedExe(sender: TObject);
     procedure editedRt(sender: TObject);
     procedure editedStd(sender: TObject);
@@ -719,6 +720,23 @@ begin
   end;
 end;
 
+procedure TCompilersPathsEditor.tryLdcImportFromLdcExeName();
+var
+  d: string;
+  i: string;
+begin
+  if not fPaths.LdcExeName.fileExists then
+    exit;
+  d := fPaths.LdcExeName.extractFileDir.extractFileDir;
+  i := d + DirectorySeparator + 'import';
+  if (i + DirectorySeparator + 'object.d').fileExists and
+    selLDCrt.Directory.isEmpty then
+  begin
+    selLDCrt.Directory := i;
+    fPaths.LdcRuntimePath := i;
+  end;
+end;
+
 procedure TCompilersPathsEditor.selectedExe(sender: TObject; var value: string);
 var
   ctrl: TWinControl;
@@ -746,7 +764,10 @@ begin
   else if ctrl.Parent = grpGDC then
     fPaths.GDCExeName:=selGDCexe.FileName
   else if ctrl.Parent = grpLDC then
-    fPaths.LdcExeName:=selLDCexe.FileName
+  begin
+    fPaths.LdcExeName:=selLDCexe.FileName;
+    tryLdcImportFromLdcExeName;
+  end
   else if ctrl.Parent = grpUSER1 then
     fPaths.User1ExeName:=selUSER1exe.FileName
   else if ctrl.Parent = grpUSER2 then
