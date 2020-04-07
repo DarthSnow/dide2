@@ -1107,6 +1107,7 @@ var
   rargs: TStringList;
   i: integer;
   e: string;
+  d: string;
 begin
   if fDubProc.isNotNil and fDubProc.Active then
   begin
@@ -1163,7 +1164,16 @@ begin
     if (fConfigs.Count <> 1) and (fConfigs[0] <> DubDefaultConfigName) then
       fDubProc.Parameters.Add('--config=' + fConfigs[fConfigIx]);
   end;
-  fDubProc.Parameters.Add('--compiler=' + fCompilerSelector.getCompilerPath(DubCompiler));
+  d := fCompilerSelector.getCompilerPath(DubCompiler);
+  if not d.fileExists then
+  begin
+    fMsgs.message(format('error, the compiler path for `%s` does not seem valid',
+      [DCompiler2String[DubCompiler]]), fAsProjectItf, amcProj, amkErr);
+    fMsgs.message('check menu `Options`, `Compilers Paths`', fAsProjectItf, amcProj, amkHint);
+    subjProjCompiled(fProjectSubject, fAsProjectItf, false);
+    exit;
+  end;
+  fDubProc.Parameters.Add('--compiler=' + d);
   dubBuildOptions.getOpts(fDubProc.Parameters);
   if (command <> dcBuild) and runArgs.isNotEmpty then
   begin
@@ -1891,13 +1901,13 @@ begin
 end;
 
 procedure setDubCompiler(value: DCompiler);
-var
-  sel: ICompilerSelector;
+//var
+  //sel: ICompilerSelector;
 begin
-  sel := getCompilerSelector;
+  //sel := getCompilerSelector;
   DubCompiler := value;
-  if not sel.isCompilerValid(DubCompiler) then
-    DubCompiler := dmd;
+  //if not sel.isCompilerValid(DubCompiler) then
+  //  DubCompiler := dmd;
 end;
 {$ENDREGION}
 

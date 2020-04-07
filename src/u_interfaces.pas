@@ -490,6 +490,10 @@ type
   function getCodeFormatting: ICodeFormatting; inline;
   function getLifeTimeManager: ILifetimeManager; inline;
 
+  const
+    DCompiler2String: array[DCompiler] of string = ('dmd', 'gdc', 'gdmd', 'ldc', 'ldmd',
+      'user1', 'user2', 'global');
+
 implementation
 
 {$REGION TMultiDocSubject ----------------------------------------------------}
@@ -665,12 +669,9 @@ end;
 {$ENDREGION}
 
 function usingCompilerInfo(value: DCompiler): string;
-const
-  c2id: array[DCompiler] of string = ('dmd', 'gdc', 'gdmd', 'ldc', 'ldmd',
-    'user1', 'user2', 'global');
 begin
   result := format('using %s (%s)',
-    [getCompilerSelector.getCompilerPath(value), c2id[value]]);
+    [getCompilerSelector.getCompilerPath(value), DCompiler2String[value]]);
 end;
 
 end.

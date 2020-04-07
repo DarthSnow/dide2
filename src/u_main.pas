@@ -3068,6 +3068,13 @@ begin
       ldc, ldmd: dmdProc.Executable := fCompilerSelector.getCompilerPath(ldmd);
       else dmdProc.Executable       := fCompilerSelector.getCompilerPath(fRunnablesOptions.compiler);
     end;
+    if not dmdProc.Executable.fileExists then
+    begin
+      fMsgs.message(format('error, the compiler path for `%s` does not seem valid',
+        [DCompiler2String[fRunnablesOptions.compiler]]), fDoc, amcEdit, amkErr);
+      fMsgs.message('check menu `Options`, `Compilers Paths`', fDoc, amcEdit, amkHint);
+      exit;
+    end;
     dmdproc.Parameters.Add(fDoc.fileName);
     if not asObj then
       dmdproc.Parameters.Add('-of' + fname + exeExt)
@@ -3416,6 +3423,8 @@ begin
 end;
 
 procedure TMainForm.dubFile(outside: boolean);
+var
+  d: string;
 begin
   if fDoc.isNil then
     exit;
@@ -3442,9 +3451,15 @@ begin
     {$ENDIF}
     fRunProc.XTermProgram:=consoleProgram;
   end;
-  if fRunnablesOptions.compiler <> dmd then
-    fRunProc.Parameters.add('--compiler=' +
-      fCompilerSelector.getCompilerPath(fRunnablesOptions.compiler));
+  d := fCompilerSelector.getCompilerPath(fRunnablesOptions.compiler);
+  if not d.fileExists then
+  begin
+    fMsgs.message(format('error, the compiler path for `%s` does not seem valid',
+      [DCompiler2String[fRunnablesOptions.compiler]]), fDoc, amcEdit, amkErr);
+    fMsgs.message('check menu `Options`, `Compilers Paths`', fDoc, amcEdit, amkHint);
+    exit;
+  end;
+  fRunProc.Parameters.add('--compiler=' + d);
   fRunProc.Parameters.Add(fDoc.fileName);
   fRunProc.execute;
 end;

@@ -872,6 +872,14 @@ begin
   fMsgs.message(usingCompilerInfo(CEProjectCompiler), fAsProjectItf, amcProj, amkInf);
   fCompilProc.CurrentDirectory := prjpath;
   fCompilProc.Executable := fCompilerSelector.getCompilerPath(CEProjectCompiler);
+  if not fCompilProc.Executable.fileExists then
+  begin
+    fMsgs.message(format('error, the compiler path for `%s` does not seem valid',
+      [DCompiler2String[CEProjectCompiler]]), fAsProjectItf, amcProj, amkErr);
+    fMsgs.message('check menu `Options`, `Compilers Paths`', fAsProjectItf, amcProj, amkHint);
+    subjProjCompiled(fProjectSubject, fAsProjectItf, false);
+    exit;
+  end;
   fCompilProc.Options := fCompilProc.Options + [poStderrToOutPut, poUsePipes];
   fCompilProc.ShowWindow := swoHIDE;
   fCompilProc.OnReadData:= @compProcOutput;
@@ -1144,8 +1152,8 @@ begin
   else if value = ldc then
     value := ldmd;
   CEProjectCompiler := value;
-  if not sel.isCompilerValid(CEProjectCompiler) then
-    CEProjectCompiler := dmd;
+  //if not sel.isCompilerValid(CEProjectCompiler) then
+  //  CEProjectCompiler := dmd;
 end;
 
 initialization
