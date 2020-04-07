@@ -6,6 +6,9 @@ pages:
   - cd docs
   - bash generate.sh
   artifacts:
+    # prevent storage increase
+    # in period of inactivity a weekly CRON regenerate the site
+    expire_in: 1 week
     paths:
     - public
   only:
