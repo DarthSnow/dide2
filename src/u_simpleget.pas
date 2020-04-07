@@ -5,10 +5,14 @@ unit u_simpleget;
 interface
 
 uses
-  classes, {$ifdef posix}libcurl,{$else} fphttpclient,{$endif} fpjson, jsonparser, jsonscanner;
+  classes, {$ifdef UNIX}libcurl,{$else} fphttpclient,{$endif} fpjson, jsonparser, jsonscanner;
 
 type
   PStream = ^TStream;
+
+{$ifdef VER3_2_0}
+  {$Warning 'workarounds to avoid SSL context errors may be unecessary starting from FCL 3.2.0'}
+{$endif}
 
 // Get the content of 'url' in the string 'data'
 function simpleGet(url: string; var data: string): boolean; overload;
@@ -25,7 +29,7 @@ const
 
 implementation
 
-{$ifdef posix}
+{$ifdef UNIX}
 var
   fCurlHandle: CURL = nil;
 
@@ -62,13 +66,13 @@ end;
 {$endif}
 
 function simpleGet(url: string; var data: string): boolean; overload;
-{$ifdef posix}
+{$ifdef UNIX}
 var
   c: CURLcode;
   h: CURL;
 {$endif}
 begin
-  {$ifdef posix}
+  {$ifdef UNIX}
   h := curlHandle();
   if not assigned(h) then
     exit(false);
@@ -103,13 +107,13 @@ begin
 end;
 
 function simpleGet(url: string; data: TStream): boolean; overload;
-{$ifdef posix}
+{$ifdef UNIX}
 var
   c: CURLcode;
   h: CURL;
 {$endif}
 begin
-  {$ifdef posix}
+  {$ifdef UNIX}
   h := curlHandle();
   if not assigned(h) then
     exit(false);
@@ -163,7 +167,7 @@ begin
 end;
 
 finalization
-  {$ifdef posix}
+  {$ifdef UNIX}
   if assigned(fCurlHandle) then
     curl_easy_cleanup(fCurlHandle);
   {$endif}

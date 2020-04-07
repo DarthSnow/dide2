@@ -2007,11 +2007,12 @@ end;
 
 function checkForUpdate: string;
 const
-  updURL = 'https://api.github.com/repos/Basile-z/dexed/releases/latest';
+  updURL = 'https://gitlab.com/api/v4/projects/15908229/repository/tags';
 var
+  arr: TJSONArray = nil;
   dat: TJSONData = nil;
   tgg: TJSONData = nil;
-  url: TJSONData = nil;
+  url: string;
   str: string = '';
   lst: TStringList = nil;
   res: TResourceStream = nil;
@@ -2019,13 +2020,18 @@ var
   sva: TSemVer;
 begin
   result := '';
-  if simpleGet(updURL, dat) then
+  if simpleGet(updURL, dat) and (dat.JSONType = jtArray) then
   begin
     try
-      url := dat.FindPath('html_url');
-      tgg := dat.FindPath('tag_name');
-      if url.isNotNil and tgg.isNotNil then
+      arr := TJSONArray(dat);
+      if (arr.Count > 0) and (arr.Items[0].JSONType = jtObject) then
       begin
+        dat := arr.Objects[0];
+        tgg := dat.FindPath('name');
+      end;
+      if tgg.isNotNil then
+      begin
+        url := 'https://gitlab.com/basile.b/dexed/-/releases/' + tgg.AsString;
         res:= TResourceStream.Create(HINSTANCE, 'VERSION', RT_RCDATA);
         lst := TstringList.Create;
         lst.LoadFromStream(res);
@@ -2034,7 +2040,7 @@ begin
         str := tgg.AsString;
         svo.init(str, false);
         if svo.valid and sva.valid and (svo > sva) then
-          result := url.AsString
+          result := url
         else
           dlgOkInfo('No new release available');
       end;
