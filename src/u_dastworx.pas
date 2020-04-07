@@ -5,7 +5,7 @@ interface
 
 uses
   Classes, SysUtils, process, jsonscanner, fpjson, jsonparser,
-  u_common, u_dialogs;
+  u_common;
 
 (**
  * Gets the module name and the imports of the source code located in

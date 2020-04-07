@@ -606,8 +606,8 @@ end;
 
 procedure TTerminal.setSelectedColor(value: TColor);
 {$ifdef hasgtk2term}
-var
-  c: TGDKColor;
+//var
+  //c: TGDKColor;
 {$endif}
 begin
   fSelectedColor:=value;

@@ -87,7 +87,6 @@ type
   TTools = class(TWritableLfmTextComponent, IEditableShortCut, IDocumentObserver, IProjectObserver, IFPObserver)
   private
     fTools: TToolItems;
-    fShctCount: Integer;
     fDoc: TDexedMemo;
     fMenu: TMenuItem;
     fReadOnly: boolean;
