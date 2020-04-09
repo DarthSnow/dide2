@@ -102,7 +102,8 @@ if [ ! -z "$GITLAB_CI" ]; then
     ZP2_NAME="dexed.$ver.linux64.zip"
 
     # read the log
-    LOG=$(grep -Poz "##[\s\S]*?(?=# v)" ../CHANGELOG.md) # capture all starting from "##" and until "# v"
+    ldc2 extract_last_changelog_part.d
+    LOG=$(./extract_last_changelog_part)
     LOG=$(echo "$LOG" | sed -z 's/\n/\\n/g' | sed -z 's/\"/\\"/g')
 
     ASSET_RPM='{ "name" : "'$RPM_NAME'" , "url" : "'$LNK_BASE$RPM_NAME'" , "filepath" : "/binaries/'$RPM_NAME'" }'
