@@ -3706,13 +3706,7 @@ const
 begin
   for widg in fWidgList do if widg.Parent.isNotNil and
     widg.Parent.Parent.isNil and widg.isDockable then
-  begin
-    TForm(widg.Parent).FormStyle := fstyle[onTop];
-    //TODO-cbugfix: floating widg on top from true to false, widg remains on top
-    // OK on linux (LCL 1.6.0), initially observed on win & LCL 1.4.2
-    if TForm(widg.Parent).Visible and not onTop then
-      TForm(widg.Parent).SendToBack;
-  end;
+      TForm(widg.Parent).FormStyle := fstyle[onTop];
 end;
 
 procedure TMainForm.snapTopSplitterToMenu;
