@@ -1,3 +1,15 @@
+# v3.8.3
+
+## Enhancements
+
+- Compiler paths: when selecting the ldc2 compiler file the matching library path is added if it's "../import". (#20)
+- Compiler paths: better messages when trying to use a compiler that's not defined. (#18)
+
+## Bugs fixed
+
+- Widgets, option: problem with the option "floating widgets on top". (#3)
+- Misc: update checker was not updated to work with gitlab. (#21)
+
 # v3.8.2
 
 ## Enhancements
