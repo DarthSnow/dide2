@@ -35,10 +35,6 @@ var
   demangler: TDDemangler;
 
 constructor TDDemangler.create;
-var
-  s: string = '.0.';
-  r: TStringRange;
-  v: integer;
 begin
   fList := TStringList.Create;
   fOut  := TStringList.Create;
@@ -46,46 +42,19 @@ begin
   fProc.Options:= [poUsePipes];
   fProc.OnTerminate:=@procTerminate;
   fProc.ShowWindow:= swoHIDE;
-
-  // Arch Linux users can have the tool setup w/o DMD
-  {$IFDEF POSIX}
-  fProc.Executable := exeFullName('dtools-ddemangle');
-  if fProc.Executable.fileExists then
-  begin
-    fProc.execute;
-    fActive := true;
-    exit;
-  end;
-  {$ENDIF}
-
-  // up to version 2.071 ddemangle cannot be daemon-ized
-  with TProcess.Create(nil) do
-  try
-    Executable := exeFullName('dmd' + exeExt);
-    if Executable.fileExists then
-    begin
-      setLength(s, 128);
-      Parameters.Text:= '--version';
-      Options:= [poUsePipes];
-      ShowWindow:= swoHIDE;
-      execute;
-      output.Read(s[1], 128);
-      while Running do
-        sleep(1);
-    end;
-  finally
-    free;
-  end;
-  r := r.create(s);
-  v := r.popUntil('.')^.popFront^.takeUntil('.').yield.toInt;
-
   fProc.Executable := exeFullName('ddemangle' + exeExt);
-  if  (v >= 72) and fProc.Executable.fileExists then
+  {$IFDEF POSIX}
+  // Arch Linux users can have the tool setup w/o DMD
+  if fProc.Executable.isEmpty then
+    fProc.Executable := exeFullName('dtools-ddemangle');
+  {$ENDIF}
+  if fProc.Executable.isNotEmpty and
+    fProc.Executable.fileExists then
   begin
     fProc.execute;
     fActive := true;
-  end
-  else fActive := false;
+  end;
+  fActive := fProc.Running;
 end;
 
 destructor TDDemangler.destroy;
