@@ -409,6 +409,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <Libraries Value="..\bin"/>
             <OtherUnitFiles Value="..\src;..\etc\terminal"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -443,6 +444,9 @@
               <Define0 Value="RELEASE"/>
               <Define1 Value="GTK_REMOVE_CLIPBOARD_NULL"/>
             </OtherDefines>
+            <ExecuteBefore>
+              <Command Value="bash dside.sh DEBUG"/>
+            </ExecuteBefore>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -455,6 +459,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <Libraries Value="..\bin"/>
             <OtherUnitFiles Value="..\src;..\etc\terminal"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -487,6 +492,9 @@
           </Linking>
           <Other>
             <CustomOptions Value="-dDEBUG"/>
+            <ExecuteBefore>
+              <Command Value="bash dside.sh"/>
+            </ExecuteBefore>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -495,9 +503,20 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
+      <environment>
+        <UserOverrides Count="1">
+          <Variable0 Name="LD_LIBRARY_PATH" Value="./"/>
+        </UserOverrides>
+      </environment>
       <FormatVersion Value="2"/>
       <Modes Count="1">
-        <Mode0 Name="default"/>
+        <Mode0 Name="default">
+          <environment>
+            <UserOverrides Count="1">
+              <Variable0 Name="LD_LIBRARY_PATH" Value="./"/>
+            </UserOverrides>
+          </environment>
+        </Mode0>
       </Modes>
     </RunParams>
     <RequiredPackages Count="8">
@@ -526,7 +545,7 @@
         <PackageName Value="LCL"/>
       </Item8>
     </RequiredPackages>
-    <Units Count="61">
+    <Units Count="60">
       <Unit0>
         <Filename Value="dexed.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -789,63 +808,59 @@
         <IsPartOfProject Value="True"/>
       </Unit49>
       <Unit50>
-        <Filename Value="..\src\u_dastworx.pas"/>
+        <Filename Value="..\src\u_dbgitf.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit50>
       <Unit51>
-        <Filename Value="..\src\u_dbgitf.pas"/>
+        <Filename Value="..\src\u_ddemangle.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit51>
       <Unit52>
-        <Filename Value="..\src\u_ddemangle.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit52>
-      <Unit53>
         <Filename Value="..\src\u_compilers.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CompilersPathsEditor"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit53>
-      <Unit54>
+      </Unit52>
+      <Unit53>
         <Filename Value="..\src\u_halstead.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit54>
-      <Unit55>
+      </Unit53>
+      <Unit54>
         <Filename Value="..\src\u_diff.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DiffViewer"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit55>
-      <Unit56>
+      </Unit54>
+      <Unit55>
         <Filename Value="..\src\u_profileviewer.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ProfileViewerWidget"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit56>
-      <Unit57>
+      </Unit55>
+      <Unit56>
         <Filename Value="..\src\u_semver.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit57>
-      <Unit58>
+      </Unit56>
+      <Unit57>
         <Filename Value="..\src\u_term.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="TermWidget"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit58>
-      <Unit59>
+      </Unit57>
+      <Unit58>
         <Filename Value="..\src\u_newdubproj.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CeNewDubProject"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit59>
-      <Unit60>
+      </Unit58>
+      <Unit59>
         <Filename Value="..\src\u_simpleget.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit60>
+      </Unit59>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -856,6 +871,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <Libraries Value="..\bin"/>
       <OtherUnitFiles Value="..\src;..\etc\terminal"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
@@ -880,13 +896,20 @@
       <Verbosity>
         <ShowHints Value="False"/>
       </Verbosity>
+      <ConfigFile>
+        <StopAfterErrCount Value="10"/>
+      </ConfigFile>
       <CompilerMessages>
         <IgnoredMessages idx5024="True"/>
       </CompilerMessages>
       <CustomOptions Value="-dRELEASE"/>
-      <OtherDefines Count="1">
+      <OtherDefines Count="2">
         <Define0 Value="RELEASE"/>
+        <Define1 Value="GTK_REMOVE_CLIPBOARD_NULL"/>
       </OtherDefines>
+      <ExecuteBefore>
+        <Command Value="bash dside.sh RELEASE"/>
+      </ExecuteBefore>
     </Other>
   </CompilerOptions>
   <Debugging>

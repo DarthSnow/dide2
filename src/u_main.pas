@@ -15,7 +15,7 @@ uses
   u_search, u_miniexplorer, u_libman, u_libmaneditor, u_todolist, u_observer,
   u_toolseditor, u_procinput, u_optionseditor, u_symlist, u_mru, u_processes,
   u_infos, u_dubproject, u_dialogs, u_dubprojeditor,{$IFDEF UNIX} u_gdb,{$ENDIF}
-  u_dfmt, u_lcldragdrop, u_projgroup, u_projutils, u_stringrange, u_dastworx,
+  u_dfmt, u_lcldragdrop, u_projgroup, u_projutils, u_stringrange,
   u_halstead, u_profileviewer, u_semver, u_dsgncontrols, u_term, u_newdubproj;
 
 type

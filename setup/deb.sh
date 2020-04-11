@@ -25,7 +25,6 @@ mkdir -p $pixdir
 mkdir -p $shcdir
 
 cp nux64/dexed $bindir
-cp nux64/dastworx $bindir
 cp nux64/dexed.png $pixdir
 
 echo "[Desktop Entry]

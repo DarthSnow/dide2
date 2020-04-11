@@ -6,7 +6,7 @@ cp * $fld/
 zip -9 \
 ../output/dexed.${ver:1:100}.linux64.zip \
 $fld/dcd.license.txt $fld/dexed.license.txt \
-$fld/dexed $fld/dastworx \
+$fld/dexed \
 $fld/dexed.ico $fld/dexed.png \
 $fld/dcd-server $fld/dcd-client $fld/dscanner
 rm -rf dexed-x86_64

@@ -44,7 +44,6 @@ mkdir -p $pixdir
 mkdir -p $shcdir
 
 cp nux64/dexed $bindir
-cp nux64/dastworx $bindir
 cp nux64/dexed.png $pixdir
 
 echo "[Desktop Entry]
@@ -71,7 +70,6 @@ Requires: gtk2, glibc, cairo, libX11, vte
 Dexed is an IDE for the DMD D compiler.
 
 %files
-/usr/bin/dastworx
 /usr/bin/dexed
 /usr/share/applications/dexed.desktop
 /usr/share/pixmaps/dexed.png

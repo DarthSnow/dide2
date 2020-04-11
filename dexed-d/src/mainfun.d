@@ -5,33 +5,40 @@ import
 import
     iz.memory, iz.sugar;
 import
-    dparse.lexer, dparse.ast, dparse.parser;
+    core.stdc.string;
+import
+    dparse.lexer, dparse.parser, dparse.ast, dparse.rollback_allocator;
 import
     common;
 
 /**
- * Detects wether a main function is declared in a module.
- *
- * Writes "1" if a main is found otherwise "0". The detection is not accurate,
- * if the main is injected by a mixin template or by a string it is not detected,
- * if the main is deactivated by a static condition neither.
- *
- * The result is used to determine if the "-main" switch has to be passed to
- * the compiler when a runnable module is executed or a module tested.
+ * Params:
+ *      src = The source code for the module, as a null terminated string.
+ * Returns:
+ *      wether a module contains the main function.
  */
-void detectMainFun(const(Module) mod)
+extern(C) bool hasMainFun(const(char)* src)
 {
-    mixin(logCall);
+    LexerConfig config;
+    RollbackAllocator rba;
+    StringCache sCache = StringCache(StringCache.defaultBucketCount);
+
+    scope mod = src[0 .. src.strlen]
+                .getTokensForParser(config, &sCache)
+                .parseModule("", &rba, &ignoreErrors);
+
     MainFunctionDetector mfd = construct!(MainFunctionDetector);
+    scope (exit) destruct(mfd);
+
     mfd.visit(mod);
-    write(mfd.hasMain);
+    return mfd.hasMain;
 }
 
 private final class MainFunctionDetector: ASTVisitor
 {
     alias visit = ASTVisitor.visit;
 
-    ubyte hasMain;
+    bool hasMain;
 
     override void visit(const ConditionalDeclaration decl)
     {

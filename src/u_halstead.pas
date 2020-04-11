@@ -5,8 +5,8 @@ unit u_halstead;
 interface
 
 uses
-  Classes, SysUtils, fpjson, math,
-  u_common, u_observer, u_interfaces, u_dastworx, u_writableComponent,
+  Classes, SysUtils, fpjson, math, jsonscanner, jsonparser,
+  u_common, u_observer, u_interfaces, u_dexed_d, u_writableComponent,
   u_synmemo;
 
 type
@@ -63,6 +63,24 @@ begin
   if fMetrics.isNil then
     fMetrics := THalsteadMetrics.create(nil);
   result := fMetrics;
+end;
+
+procedure getHalsteadMetrics(source: TStrings; out jsn: TJSONObject);
+var
+  prs: TJSONParser;
+  jps: TJSONData;
+  str: string;
+begin
+  str := halsteadMetrics(PChar(source.Text));
+  prs := TJSONParser.Create(str, [joIgnoreTrailingComma, joUTF8]);
+  try
+    jps := prs.Parse();
+    if jps.isNotNil and (jps.JSONType = jtObject) then
+      jsn := TJSONObject(jps.Clone);
+    jps.Free;
+  finally
+    prs.Free;
+  end;
 end;
 
 constructor THalsteadMetricsBase.create(aOwner: TComponent);

@@ -8,10 +8,18 @@ dcd_ver=""
 dscanner_ver=""
 echo "building dexed release" $ver
 
-# dastworx
-cd dastworx
-bash build.sh
-cd ..
+# libdexed-d shared objects
+if [ ! -d "./bin" ]; then
+    mkdir "./bin"
+fi
+LDC_SHARED10=$(find "/dlang/" -iname "libdruntime-ldc-shared.so.*" 2>/dev/null | grep -m 1 "lib/libdruntime-ldc-shared")
+LDC_SHARED11=$(find "/dlang/" -iname "libdruntime-ldc-shared.so" 2>/dev/null | grep -m 1 "lib/libdruntime-ldc-shared")
+LDC_SHARED20=$(find "/dlang/" -iname "libphobos2-ldc-shared.so.*" 2>/dev/null | grep -m 1 "lib/libphobos2-ldc-shared")
+LDC_SHARED21=$(find "/dlang/" -iname "libphobos2-ldc-shared.so" 2>/dev/null | grep -m 1 "lib/libphobos2-ldc-shared")
+cp "$LDC_SHARED10" "./bin"
+cp "$LDC_SHARED11" "./bin"
+cp "$LDC_SHARED20" "./bin"
+cp "$LDC_SHARED21" "./bin"
 
 # dexed
 echo "building dexed..."
@@ -30,12 +38,12 @@ else
     cd dcd
     git pull
 fi
-git submodule update --init --recursive
 git fetch --tags
 if [ ! -z "$dcd_ver" ]; then
     git checkout $dcd_ver
 fi
-make ldc
+dub build --build=release --config=client --compiler=$DC
+dub build --build=release --config=server --compiler=$DC
 echo "...done"
 cd ..
 
@@ -48,12 +56,11 @@ else
     cd d-scanner
     git pull
 fi
-git submodule update --init --recursive
 git fetch --tags
 if [ ! -z "$dscanner_ver" ]; then
     git checkout $dscanner_ver
 fi
-make ldc
+dub build --build=release --compiler=$DC
 echo "...done"
 cd ..
 
@@ -83,7 +90,11 @@ bash deb.sh
 echo "...done"
 SETUP_APP_NAME="dexed.$ver.linux64.setup"
 echo "building the custom setup program..."
-ldmd2 setup.d -O -release -Jnux64 -J./ -of"output/"$SETUP_APP_NAME
+SETUP_DC=$DC
+if [ "$SETUP_DC" = ldc2 ]; then
+    SETUP_DC=ldmd
+fi
+$SETUP_DC setup.d -O -release -Jnux64 -J./ -of"output/"$SETUP_APP_NAME
 bash zip-nux64.sh
 bash setupzip-nux-noarch.sh $SETUP_APP_NAME
 echo "...done"
@@ -102,7 +113,7 @@ if [ ! -z "$GITLAB_CI" ]; then
     ZP2_NAME="dexed.$ver.linux64.zip"
 
     # read the log
-    ldc2 extract_last_changelog_part.d
+    $DC extract_last_changelog_part.d
     LOG=$(./extract_last_changelog_part)
     LOG=$(echo "$LOG" | sed -z 's/\n/\\n/g' | sed -z 's/\"/\\"/g')
 

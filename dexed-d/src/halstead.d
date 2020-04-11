@@ -1,6 +1,8 @@
 module halstead;
 
 import
+    core.stdc.string;
+import
     std.algorithm, std.conv, std.json, std.meta;
 import
     std.stdio, std.ascii, std.digest.crc, std.range: iota;
@@ -13,14 +15,36 @@ version(unittest){} else import
 
 /**
  * Retrieves the count and unique count of the operands and operators of
- * each function (inc. methods) of a module. After the call the results are
- * serialized as JSON in te standard output.
+ * each function (inc. member functions) of a module, allowing the compute
+ * the halstead complexity of the functions.
+ *
+ * Params:
+ *      src = The source code of the module to analyze, as a C string.
+ *
+ * Returns: a string representing a JSON array named "functions".
+ * Each array item is a JSON object containing
+ * - a function name, named "name" (as JSONString)
+ * - a line number, named "line" (as JSONNumber)
+ * - the count of operators, named "n1count" (as JSONNumber)
+ * - the sum of operators, named "n1sum" (as JSONNumber)
+ * - the count of operands, named "n2count" (as JSONNumber)
+ * - the sum of operands, named "n2sum" (as JSONNumber)
  */
-void performHalsteadMetrics(const(Module) mod)
+extern(C) const(char)* halsteadMetrics(const(char)* src)
 {
+    LexerConfig config;
+    RollbackAllocator rba;
+    StringCache sCache = StringCache(StringCache.defaultBucketCount);
+
+    scope mod = src[0 .. src.strlen]
+                .getTokensForParser(config, &sCache)
+                .parseModule("", &rba, &ignoreErrors);
+
     HalsteadMetric hm = construct!(HalsteadMetric);
+    scope (exit) destruct(hm);
+
     hm.visit(mod);
-    hm.serialize;
+    return hm.serialize();
 }
 
 private struct Function
@@ -57,11 +81,6 @@ private final class HalsteadMetric: ASTVisitor
 
     void processCallChain()
     {
-        version(none)
-        {
-            import std.array : join;
-            writeln("chain: ", chain.map!(a => a.identifier.text).join("."));
-        }
         if (chain.length)
         {
             static Token getIdent(const(IdentifierOrTemplateInstance) i)
@@ -115,11 +134,11 @@ private final class HalsteadMetric: ASTVisitor
         inFunctionCallChain.length++;
     }
 
-    void serialize()
+    const(char)* serialize()
     {
         JSONValue js;
         js["functions"] = fs;
-        js.toString.write;
+        return js.toString.ptr;
     }
 
     override void visit(const(PragmaExpression)){}

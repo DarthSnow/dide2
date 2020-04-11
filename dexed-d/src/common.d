@@ -1,7 +1,9 @@
 module common;
 
 import
-    std.array, std.traits, std.meta, std.conv;
+    core.stdc.string;
+import
+    std.array, std.traits, std.meta, std.conv, std.algorithm, std.file, std.path;
 import
     dparse.lexer, dparse.ast, dparse.parser, dparse.rollback_allocator;
 import
@@ -385,7 +387,7 @@ unittest
  * This function is used to handle the content of a MixinExpression in an
  * ASTVisitor.
  */
-T parseAndVisit(T : ASTVisitor)(const(char)[] source)
+T parseAndVisit(T : ASTVisitor, A...)(const(char)[] source, A a)
 {
     import std.functional;
 
@@ -394,7 +396,7 @@ T parseAndVisit(T : ASTVisitor)(const(char)[] source)
     StringCache cache = StringCache(StringCache.defaultBucketCount);
     const(Token)[] tokens = getTokensForParser(cast(ubyte[]) source, config, &cache);
     Module mod = parseModule(tokens, "", &allocator, toDelegate(&ignoreErrors));
-    T result = construct!(T);
+    T result = construct!(T)(a);
     result.visit(mod);
     return result;
 }
@@ -406,3 +408,38 @@ T parseAndVisit(T : ASTVisitor)(const(char)[] source)
 void ignoreErrors(string, size_t, size_t, string, bool) @system
 {}
 
+/**
+ * Iterator used to pass an array of strings from Freepascal to D.
+ */
+struct PPCharRange(C)
+{
+private:
+    C ppChars;
+    C base;
+    int count;
+public:
+    this(C ppChars, int count)
+    {
+        this.ppChars= ppChars;
+        this.count  = count;
+        base        = ppChars;
+    }
+    void popFront()             { ppChars += size_t.sizeof; }
+    typeof(**ppChars)[] front() { return (*ppChars)[0 .. (*ppChars).strlen]; }
+    bool empty()                { return ((ppChars - base) / size_t.sizeof) >= count; }
+}
+
+PPCharRange!C ppcharRange(C)(C ppChars, int count)
+{
+    return PPCharRange!C(ppChars, count);
+}
+
+/**
+ * Split a C string representing a list of filenames into an array of strings.
+ * The filenames are separated with the system path separator.
+ */
+alias joinedFilesToFiles = (const char* a) => a[0 .. a.strlen]
+    .splitter(pathSeparator)
+    .filter!exists
+    .filter!(b => b != "")
+    .array;

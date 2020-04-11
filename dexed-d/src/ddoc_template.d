@@ -1,20 +1,47 @@
 module ddoc_template;
 
 import
-    std.stdio;
+    core.stdc.string;
+import
+    std.array, std.conv;
 import
     iz.memory, iz.sugar;
 import
     dparse.ast, dparse.lexer, dparse.parser, dparse.rollback_allocator;
+import
+    common;
 
 /**
  * Finds the declaration at caretLine and write its ddoc template
- * in the standard output.
+ * and returns its DDOC template as a C string.
+ *
+ * Params:
+ *      src = the module source code, as a C string.
+ *      caretLine = the line where the declaration is located.
+ *      plusComment = indicates if the template use the "*" or the "+" decoration.
  */
-void getDdocTemplate(const(Module) mod, int caretLine, bool plusComment)
+extern(C) const(char)* ddocTemplate(const(char)* src, int caretLine, bool plusComment)
 {
+    LexerConfig config;
+    RollbackAllocator rba;
+    StringCache sCache = StringCache(StringCache.defaultBucketCount);
+
+    scope mod = src[0 .. src.strlen]
+                .getTokensForParser(config, &sCache)
+                .parseModule("", &rba, &ignoreErrors);
+
     DDocTemplateGenerator dtg = construct!DDocTemplateGenerator(caretLine, plusComment);
+    scope(exit) destruct(dtg);
     dtg.visit(mod);
+
+    return dtg.result;
+}
+
+private void putLine(T...)(ref Appender!string a, T t)
+{
+    static foreach (i; 0 .. T.length)
+        a.put(t[i].to!string);
+    a.put("\n");
 }
 
 final class DDocTemplateGenerator: ASTVisitor
@@ -26,6 +53,7 @@ private:
     immutable int _caretline;
     immutable char c1;
     immutable char[2] c2;
+    Appender!string app;
     bool _throws;
 
 public:
@@ -36,6 +64,8 @@ public:
         c1 = plusComment ? '+' : '*';
         c2 = plusComment ? "++" : "**";
     }
+
+    const(char)* result() { return app.data.ptr; }
 
     override void visit(const(ThrowStatement) ts)
     {
@@ -53,26 +83,26 @@ public:
         if (decl.name.line == _caretline)
         {
             decl.accept(this);
-            writeln("/", c2, "\n ", c1, " <short description> \n ", c1, " \n ", c1, " <detailed description>", c1);
+            app.putLine("/", c2, "\n ", c1, " <short description> \n ", c1, " \n ", c1, " <detailed description>", c1);
 
             const TemplateParameterList tpl = safeAccess(decl).templateParameters.templateParameterList;
             if ((tpl && tpl.items.length) ||
                 (decl.parameters && decl.parameters.parameters.length))
             {
-                writeln(" ", c1, " \n ", c1, " Params:");
+                app.putLine(" ", c1, " \n ", c1, " Params:");
 
                 if (tpl)
                 {
                     foreach(const TemplateParameter p;  tpl.items)
                     {
                         if (p.templateAliasParameter)
-                            writeln(" ", c1, "     ", p.templateAliasParameter.identifier.text, " = <description>");
+                            app.putLine(" ", c1, "     ", p.templateAliasParameter.identifier.text, " = <description>");
                         else if (p.templateTupleParameter)
-                            writeln(" ", c1, "     ", p.templateTupleParameter.identifier.text, " = <description>");
+                            app.putLine(" ", c1, "     ", p.templateTupleParameter.identifier.text, " = <description>");
                         else if (p.templateTypeParameter)
-                            writeln(" ", c1, "     ", p.templateTypeParameter.identifier.text, " = <description>");
+                            app.putLine(" ", c1, "     ", p.templateTypeParameter.identifier.text, " = <description>");
                         else if (p.templateValueParameter)
-                            writeln(" ", c1, "     ", p.templateValueParameter.identifier.text, " = <description>");
+                            app.putLine(" ", c1, "     ", p.templateValueParameter.identifier.text, " = <description>");
                     }
                 }
                 if (decl.parameters)
@@ -80,9 +110,9 @@ public:
                     foreach(i, const Parameter p; decl.parameters.parameters)
                     {
                         if (p.name.text != "")
-                            writeln(" ", c1, "     ", p.name.text, " = <description>");
+                            app.putLine(" ", c1, "     ", p.name.text, " = <description>");
                         else
-                            writeln(" ", c1, "     __param", i, " = <description>");
+                            app.putLine(" ", c1, "     __param", i, " = <description>");
                     }
                 }
             }
@@ -90,15 +120,15 @@ public:
             if (const Type2 tp2 = safeAccess(decl).returnType.type2)
             {
                 if (tp2.builtinType != tok!"void")
-                    writeln(" ", c1, " \n ", c1, " Returns: <return description>");
+                    app.putLine(" ", c1, " \n ", c1, " Returns: <return description>");
             }
 
             if (_throws)
             {
-                writeln(" ", c1, " \n ", c1, " Throws: <exception type as hint for catch>");
+                app.putLine(" ", c1, " \n ", c1, " Throws: <exception type as hint for catch>");
             }
 
-            writeln(" ", c1, "/");
+            app.putLine(" ", c1, "/");
 
         }
         else if (decl.name.line > _caretline)
@@ -141,89 +171,31 @@ public:
 
         if (_caretline == line)
         {
-            writeln("/", c2, "\n ", c1, " <short description> \n ", c1, " \n ", c1, " <detailed description>", c1);
+            app.putLine("/", c2, "\n ", c1, " <short description> \n ", c1, " \n ", c1, " <detailed description>", c1);
 
             const TemplateParameterList tpl = safeAccess(decl).templateParameters.templateParameterList;
             if (tpl && tpl.items.length)
             {
-                writeln(" ", c1, " \n ", c1, " Params:");
+                app.putLine(" ", c1, " \n ", c1, " Params:");
 
                 foreach(const TemplateParameter p;  tpl.items)
                 {
                     if (p.templateAliasParameter)
-                        writeln(" ", c1, "     ", p.templateAliasParameter.identifier.text, " = <description>");
+                        app.putLine(" ", c1, "     ", p.templateAliasParameter.identifier.text, " = <description>");
                     else if (p.templateTupleParameter)
-                        writeln(" ", c1, "     ", p.templateTupleParameter.identifier.text, " = <description>");
+                        app.putLine(" ", c1, "     ", p.templateTupleParameter.identifier.text, " = <description>");
                     else if (p.templateTypeParameter)
-                        writeln(" ", c1, "     ", p.templateTypeParameter.identifier.text, " = <description>");
+                        app.putLine(" ", c1, "     ", p.templateTypeParameter.identifier.text, " = <description>");
                     else if (p.templateValueParameter)
-                        writeln(" ", c1, "     ", p.templateValueParameter.identifier.text, " = <description>");
+                        app.putLine(" ", c1, "     ", p.templateValueParameter.identifier.text, " = <description>");
                 }
             }
-            writeln(" ", c1, "/");
+            app.putLine(" ", c1, "/");
 
         }
         else if (line > _caretline)
             return;
         decl.accept(this);
     }
-}
-
-version(unittest)
-{
-    DDocTemplateGenerator parseAndVisit(const(char)[] source, int caretLine, bool p = false)
-    {
-        writeln;
-        RollbackAllocator allocator;
-        LexerConfig config = LexerConfig("", StringBehavior.source, WhitespaceBehavior.skip);
-        StringCache cache = StringCache(StringCache.defaultBucketCount);
-        const(Token)[] tokens = getTokensForParser(cast(ubyte[]) source, config, &cache);
-        Module mod = parseModule(tokens, "", &allocator);
-        DDocTemplateGenerator result = construct!(DDocTemplateGenerator)(caretLine, p);
-        result.visit(mod);
-        return result;
-    }
-}
-
-unittest
-{
-    q{ module a;
-       void foo(A...)(A a){}
-    }.parseAndVisit(2, true);
-}
-
-unittest
-{
-    q{ module a;
-       void foo()(){}
-    }.parseAndVisit(2);
-}
-
-unittest
-{
-    q{ module a;
-       int foo(int){}
-    }.parseAndVisit(2, true);
-}
-
-unittest
-{
-    q{ module a;
-       class Foo(T, A...){}
-    }.parseAndVisit(2);
-}
-
-unittest
-{
-    q{ module a;
-       struct Foo(alias Fun, A...){}
-    }.parseAndVisit(2);
-}
-
-unittest
-{
-    q{ module a;
-       enum trait(alias Variable) = whatever;
-    }.parseAndVisit(2);
 }
 

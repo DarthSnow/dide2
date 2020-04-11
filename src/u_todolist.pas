@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, ListFilterEdit, Forms, Controls,
   strutils, Graphics, Dialogs, ExtCtrls, Menus, Buttons, ComCtrls,
   u_widget, process, u_common, u_interfaces, u_synmemo, u_processes,
-  u_writableComponent, u_observer, u_sharedres,
+  u_writableComponent, u_observer, u_sharedres, u_dexed_d,
   u_dsgncontrols;
 
 type
@@ -90,7 +90,6 @@ type
     fColumns: TTodoColumns;
     fProj: ICommonProject;
     fDoc: TDexedMemo;
-    fToolProc: TDexedProcess;
     fTodos: TTodoItems;
     fMsgs: IMessagesDisplay;
     fOptions: TTodoOptions;
@@ -114,10 +113,7 @@ type
     function optionedOptionsModified: boolean;
     // TODOlist things
     function getContext: TTodoContext;
-    procedure killToolProcess;
     procedure callToolProcess;
-    procedure toolTerminated(Sender: TObject);
-    procedure procOutputDbg(Sender: TObject);
     procedure clearTodoList;
     procedure fillTodoList;
     procedure lstItemsColumnClick(Sender: TObject; Column: TListColumn);
@@ -243,7 +239,6 @@ end;
 destructor TTodoListWidget.Destroy;
 begin
   fOptions.saveToFile(getDocPath + OptFname);
-  killToolProcess;
   inherited;
 end;
 
@@ -348,7 +343,6 @@ begin
   fDoc := nil;
   if Visible and fAutoRefresh then
     clearTodoList;
-  killToolProcess();
 end;
 {$ENDREGION}
 
@@ -407,27 +401,15 @@ begin
     exit(tcFile);
 end;
 
-procedure TTodoListWidget.killToolProcess;
-begin
-  if fToolProc.isNil then
-    exit;
-
-  fToolProc.Terminate(0);
-  fToolProc.Free;
-  fToolProc := nil;
-end;
-
 procedure TTodoListWidget.callToolProcess;
 var
   ctxt: TTodoContext;
   i,j: integer;
   nme: string;
   str: string = '';
+  txt: TMemoryStream;
 begin
   clearTodoList;
-  if not exeInSysPath(ToolExeName) then
-    exit;
-  killToolProcess;
 
   ctxt := getContext;
   case ctxt of
@@ -438,12 +420,6 @@ begin
       exit;
   end;
 
-  fToolProc := TDexedProcess.Create(nil);
-  fToolProc.Executable := exeFullName(ToolExeName);
-  fToolProc.Options := [poUsePipes];
-  fToolProc.ShowWindow := swoHIDE;
-  fToolProc.CurrentDirectory := Application.ExeName.extractFileDir;
-  fToolProc.OnTerminate := @toolTerminated;
   // files passed to the tool argument
   if (ctxt = tcProject) then
   begin
@@ -460,46 +436,19 @@ begin
     end;
   end
   else str := fDoc.fileName;
-  fToolProc.Parameters.Add('-f' + str);
-  fToolProc.Parameters.Add('-t');
 
-  fToolProc.Execute;
-  fToolProc.CloseInput;
-end;
-
-procedure TTodoListWidget.procOutputDbg(Sender: TObject);
-var
-  str: TStringList;
-  msg: string;
-  ctxt: TTodoContext;
-begin
-  getMessageDisplay(fMsgs);
-  str := TStringList.Create;
-  try
-    processOutputToStrings(fToolProc, str);
-    ctxt := getContext;
-    for msg in str do
-      case ctxt of
-        tcNone: fMsgs.message(msg, nil, amcMisc, amkAuto);
-        tcFile: fMsgs.message(msg, fDoc, amcEdit, amkAuto);
-        tcProject: fMsgs.message(msg, fProj, amcProj, amkAuto);
-      end;
-  finally
-    str.Free;
-  end;
-end;
-
-procedure TTodoListWidget.toolTerminated(Sender: TObject);
-begin
-  fToolProc.StdoutEx.Position := 0;
-  try
-    fTodos.loadFromTxtStream(fToolProc.StdoutEx);
-  except
-    fToolProc.OnTerminate := nil;
+  str := todoItems(PChar(str));
+  if str.length < 10 then
     exit;
+  txt := TMemoryStream.create;
+  try
+    txt.Write(str[1], str.length);
+    txt.Position:=0;
+    fTodos.loadFromTxtStream(txt);
+    fillTodoList;
+  finally
+    txt.free;
   end;
-  fillTodoList;
-  fToolProc.OnTerminate := nil;
 end;
 
 procedure TTodoListWidget.clearTodoList;

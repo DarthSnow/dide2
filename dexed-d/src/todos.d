@@ -8,27 +8,27 @@ import
 import
     common;
 
-private __gshared Appender!string stream;
-
-void getTodos(string[] files)
+extern(C) const(char)* todoItems(const(char)* joinedFiles)
 {
-    mixin(logCall);
-    stream.reserve(32 + 256 * files.length);
+    scope Appender!string stream;
+    stream.reserve(32);
     stream.put("object TTodoItems\ritems=<");
-    foreach(fname; files)
+    foreach(fname; joinedFilesToFiles(joinedFiles))
     {
-        StringCache cache = StringCache(StringCache.defaultBucketCount);
-        LexerConfig config = LexerConfig(fname, StringBehavior.source);
+        stream.reserve(256);
+        scope StringCache cache = StringCache(StringCache.defaultBucketCount);
+        scope LexerConfig config = LexerConfig("", StringBehavior.source);
         ubyte[] source = cast(ubyte[]) std.file.read(fname);
-        foreach(ref token; DLexer(source, config, &cache).array
+        foreach(ref token; DLexer(source, config, &cache)
+            .array
             .filter!((a) => a.type == tok!"comment"))
-                analyze(token, fname);
+                analyze(token, fname, stream);
     }
     stream.put(">end");
-    writeln(stream.data);
+    return stream.data.ptr;
 }
 
-private void analyze(const(Token) token, string fname)
+private void analyze(const(Token) token, const(char)[] fname, ref Appender!string stream)
 {
     string text = token.text.strip.patchPascalString;
     string identifier;

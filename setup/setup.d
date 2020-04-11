@@ -35,8 +35,7 @@ struct Resource
 
 immutable Resource[] ceResources =
 [
-    Resource(cast(ImpType) import("dexed" ~ exeExt), "dexed" ~ exeExt, Kind.exe),
-    Resource(cast(ImpType) import("dastworx" ~ exeExt), "dastworx" ~ exeExt, Kind.exe),
+    Resource(cast(ImpType) import("dexed" ~ exeExt), "dexed" ~ exeExt, Kind.exe),    
     Resource(cast(ImpType) import("dexed.ico"), "dexed.ico", Kind.dat),
     Resource(cast(ImpType) import("dexed.png"), "dexed.png", Kind.dat),
     Resource(cast(ImpType) import("dexed.license.txt"), "dexed.license.txt", Kind.doc)
@@ -54,6 +53,7 @@ immutable Resource[] oldResources =
 [
     Resource(cast(ImpType) [], "cesyms" ~ exeExt, Kind.exe),
     Resource(cast(ImpType) [], "cetodo" ~ exeExt, Kind.exe),
+    Resource(cast(ImpType) [], "dastworx" ~ exeExt, Kind.exe),    
 ];
 
 version(Windows)
