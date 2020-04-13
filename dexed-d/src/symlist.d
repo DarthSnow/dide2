@@ -4,7 +4,7 @@ import
     core.stdc.string;
 import
     std.array, std.traits, std.conv, std.json, std.format,
-    std.algorithm;
+    std.algorithm, std.string;
 import
     iz.memory: construct, destruct;
 import
@@ -157,16 +157,16 @@ final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
         static if (Fmt == ListFmt.Pas)
         {
             pasStream.put(">\rend");
-            return pasStream.data.ptr;
+            return pasStream.data.toStringz;
         }
         else
         {
             JSONValue result = parseJSON("{}");
             result["items"] = json;
             version (assert)
-                return result.toPrettyString.ptr;
+                return result.toPrettyString.toStringz;
             else
-                return result.toString.ptr;
+                return result.toString.toStringz;
         }
     }
 

@@ -3,7 +3,7 @@ module ddoc_template;
 import
     core.stdc.string;
 import
-    std.array, std.conv;
+    std.array, std.conv, std.string;
 import
     iz.memory, iz.sugar;
 import
@@ -65,7 +65,7 @@ public:
         c2 = plusComment ? "++" : "**";
     }
 
-    const(char)* result() { return app.data.ptr; }
+    const(char)* result() { return app.data.toStringz(); }
 
     override void visit(const(ThrowStatement) ts)
     {

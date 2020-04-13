@@ -3,7 +3,7 @@ module halstead;
 import
     core.stdc.string;
 import
-    std.algorithm, std.conv, std.json, std.meta;
+    std.algorithm, std.conv, std.json, std.meta, std.string;
 import
     std.stdio, std.ascii, std.digest.crc, std.range: iota;
 import
@@ -138,7 +138,7 @@ private final class HalsteadMetric: ASTVisitor
     {
         JSONValue js;
         js["functions"] = fs;
-        return js.toString.ptr;
+        return js.toString.toStringz();
     }
 
     override void visit(const(PragmaExpression)){}

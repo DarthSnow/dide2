@@ -3,6 +3,7 @@ module ddemangle;
 import core.demangle    : demangle;
 import std.regex        : replaceAll, Captures, regex, Regex;
 import core.stdc.string : strlen;
+import std.string       : toStringz;
 
 extern(C):
 
@@ -15,7 +16,7 @@ const(char)* ddemangle(const(char)* line)
         reInit = true;
         reDemangle = regex(r"\b_?_D[0-9a-zA-Z_]+\b");
     }
-    return replaceAll!(demangleMatch)(line[0 .. line.strlen], reDemangle).ptr;
+    return replaceAll!(demangleMatch)(line[0 .. line.strlen], reDemangle).toStringz;
 }
 
 extern(D): private:

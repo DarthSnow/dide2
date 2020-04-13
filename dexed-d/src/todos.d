@@ -25,7 +25,7 @@ extern(C) const(char)* todoItems(const(char)* joinedFiles)
                 analyze(token, fname, stream);
     }
     stream.put(">end");
-    return stream.data.ptr;
+    return stream.data.toStringz();
 }
 
 private void analyze(const(Token) token, const(char)[] fname, ref Appender!string stream)
