@@ -405,34 +405,7 @@ T parseAndVisit(T : ASTVisitor, A...)(const(char)[] source, A a)
  * By default libdparse outputs errors and warnings to the standard streams.
  * This function prevents that.
  */
-void ignoreErrors(string, size_t, size_t, string, bool) @system
-{}
-
-/**
- * Iterator used to pass an array of strings from Freepascal to D.
- */
-struct PPCharRange(C)
-{
-private:
-    C ppChars;
-    C base;
-    int count;
-public:
-    this(C ppChars, int count)
-    {
-        this.ppChars= ppChars;
-        this.count  = count;
-        base        = ppChars;
-    }
-    void popFront()             { ppChars += size_t.sizeof; }
-    typeof(**ppChars)[] front() { return (*ppChars)[0 .. (*ppChars).strlen]; }
-    bool empty()                { return ((ppChars - base) / size_t.sizeof) >= count; }
-}
-
-PPCharRange!C ppcharRange(C)(C ppChars, int count)
-{
-    return PPCharRange!C(ppChars, count);
-}
+void ignoreErrors(string, size_t, size_t, string, bool) @system {}
 
 /**
  * Split a C string representing a list of filenames into an array of strings.
