@@ -434,6 +434,9 @@
             <Debugging>
               <UseHeaptrc Value="True"/>
             </Debugging>
+            <Options>
+              <LinkerOptions Value="-L..\bin --verbose"/>
+            </Options>
           </Linking>
           <Other>
             <CompilerMessages>
@@ -485,6 +488,7 @@
               <UseHeaptrc Value="True"/>
             </Debugging>
             <Options>
+              <LinkerOptions Value="-L..\bin --verbose"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
@@ -887,6 +891,7 @@
       </Debugging>
       <LinkSmart Value="True"/>
       <Options>
+        <LinkerOptions Value="-L..\bin --verbose"/>
         <Win32>
           <GraphicApplication Value="True"/>
         </Win32>

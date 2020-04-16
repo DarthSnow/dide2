@@ -37,14 +37,17 @@ buildroot=$HOME/rpmbuild/BUILDROOT/$name_and_ver
 bindir=$buildroot/usr/bin
 pixdir=$buildroot/usr/share/pixmaps
 shcdir=$buildroot/usr/share/applications
+libdir=$buildroot/usr/lib64
 
 mkdir -p $buildroot
 mkdir -p $bindir
 mkdir -p $pixdir
 mkdir -p $shcdir
+mkdir -p $libdir
 
 cp nux64/dexed $bindir
 cp nux64/dexed.png $pixdir
+cp nux64/libdexed-d.so $libdir
 
 echo "[Desktop Entry]
 Categories=Application;IDE;Development;
@@ -71,6 +74,7 @@ Dexed is an IDE for the DMD D compiler.
 
 %files
 /usr/bin/dexed
+/usr/lib64/libdexed-d.so
 /usr/share/applications/dexed.desktop
 /usr/share/pixmaps/dexed.png
 

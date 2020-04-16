@@ -9,5 +9,8 @@
     "iz" : {
       "path" : "../etc/iz"
     }
-  }
+  },
+  "dflags" : [
+    "-link-defaultlib-shared=false"
+  ]
 }

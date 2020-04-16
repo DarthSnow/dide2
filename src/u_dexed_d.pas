@@ -39,11 +39,10 @@ type
   // Give a view on D `char[][]`
   TDStrings = specialize TDArray<TDString>;
 
-{$LINKLIB libphobos2-ldc-shared}
 // Necessary to start the GC, run the static constructors, etc
-procedure rt_init(); cdecl; external 'libdruntime-ldc-shared';
+procedure rt_init(); cdecl; external 'libdexed-d';
 // Cleanup
-procedure rt_term(); cdecl; external 'libdruntime-ldc-shared';
+procedure rt_term(); cdecl; external 'libdexed-d';
 // Demangle a line possibly containing a D mangled name.
 function ddemangle(const text: PChar): PChar; cdecl; external 'libdexed-d';
 // Detects wether the source code for the module `src` contains the main() function.

@@ -12,14 +12,22 @@ echo "building dexed release" $ver
 if [ ! -d "./bin" ]; then
     mkdir "./bin"
 fi
-LDC_SHARED10=$(find "/dlang/" -iname "libdruntime-ldc-shared.so.*" 2>/dev/null | grep -m 1 "lib/libdruntime-ldc-shared")
-LDC_SHARED11=$(find "/dlang/" -iname "libdruntime-ldc-shared.so" 2>/dev/null | grep -m 1 "lib/libdruntime-ldc-shared")
-LDC_SHARED20=$(find "/dlang/" -iname "libphobos2-ldc-shared.so.*" 2>/dev/null | grep -m 1 "lib/libphobos2-ldc-shared")
-LDC_SHARED21=$(find "/dlang/" -iname "libphobos2-ldc-shared.so" 2>/dev/null | grep -m 1 "lib/libphobos2-ldc-shared")
-cp "$LDC_SHARED10" "./bin"
-cp "$LDC_SHARED11" "./bin"
-cp "$LDC_SHARED20" "./bin"
-cp "$LDC_SHARED21" "./bin"
+DEXED_BIN_PATH=$(readlink --canonicalize "./bin")
+SEARCH_PATH_LDC=$(find "/" -iname "libdruntime-ldc.a" 2>/dev/null | grep -m 1 "libdruntime")
+SEARCH_PATH_LDC=$(dirname $SEARCH_PATH_LDC)
+export LIBRARY_PATH="$LIBRARY_PATH":"$SEARCH_PATH_LDC":"$DEXED_BIN_PATH"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH":"$SEARCH_PATH_LDC":"$DEXED_BIN_PATH"
+
+# libdexed-d
+cd dexed-d
+dub build --build=release --compiler=ldc2
+if [ ! -f "../bin/libdexed-d.so" ]; then
+    echo "this explains linking issues..."
+    exit 1
+fi
+cp "../bin/libdexed-d.so" "/lib64/libdexed-d.so"
+cp "../bin/libdexed-d.so" "/lib/libdexed-d.so"
+cd ..
 
 # dexed
 echo "building dexed..."
@@ -69,7 +77,7 @@ echo "moving files and binaries..."
 if [ ! -d setup/nux64 ]; then
     mkdir setup/nux64
 fi
-mv bin/dastworx setup/nux64/
+mv bin/libdexed-d.so setup/nux64/
 mv bin/dexed setup/nux64/
 mv dcd/bin/dcd-server setup/nux64/
 mv dcd/bin/dcd-client setup/nux64/
@@ -92,7 +100,7 @@ SETUP_APP_NAME="dexed.$ver.linux64.setup"
 echo "building the custom setup program..."
 SETUP_DC=$DC
 if [ "$SETUP_DC" = ldc2 ]; then
-    SETUP_DC=ldmd
+    SETUP_DC=ldmd2
 fi
 $SETUP_DC setup.d -O -release -Jnux64 -J./ -of"output/"$SETUP_APP_NAME
 bash zip-nux64.sh
