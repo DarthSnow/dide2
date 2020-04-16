@@ -226,7 +226,7 @@ procedure THalsteadMetrics.Measure(document: TDexedMemo);
 
     if fShowAllResults or not result then
     begin
-      fMsgs.message(format('%s(%d): metrics for "%s"',
+      fMsgs.message(format('%s:%d: metrics for "%s"',
         [document.fileName, line, val.AsString]), document, amcEdit, amkInf);
 
       fMsgs.message(format('    Vocabulary: %d', [voc]), document, amcEdit, amkInf);
