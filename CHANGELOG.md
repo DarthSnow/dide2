@@ -1,3 +1,13 @@
+# v3.8.4
+
+## Bugs fixed
+
+- Editor, calltips: problem when the function parameter included type constructors. (#26)
+
+## Other
+
+- Project CI: extraction of the changelog didn't work properly.
+
 # v3.8.3
 
 ## Enhancements
