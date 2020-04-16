@@ -598,10 +598,10 @@ begin
       goto FIX_AUTO;
     end;
     j := 0;
-    // func args
+    // func params
     while not r.empty do
     begin
-      a := r.takeUntil([',', ')']).yield;
+      a := r.takeUntil([',', #0]).yield;
       if not r.empty then
       begin
         if r.front = ',' then
