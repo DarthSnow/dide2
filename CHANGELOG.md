@@ -1,3 +1,12 @@
+# v3.9.0-dev
+
+## Other
+
+- Toolchain: removed he background tool _dastworx_ and replaced it with a library called _libdexed-d_. Although this will not change the user experience:
+    - Thousands of system calls to create the process and read its streams are saved.
+    - ddemangle not required anymore.
+    - crash in the new library will be fatal, i.e the IDE will have to be relaunched, while previously the tool was launched again, without significant impact on the IDE.
+
 # v3.8.4
 
 ## Bugs fixed
