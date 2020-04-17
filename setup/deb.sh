@@ -17,16 +17,18 @@ cfgdir=$basdir/DEBIAN
 bindir=$basdir/usr/bin
 pixdir=$basdir/usr/share/pixmaps
 shcdir=$basdir/usr/share/applications
+libdir=$basdir/usr/lib64
 
 mkdir -p $basdir
 mkdir -p $cfgdir
 mkdir -p $bindir
 mkdir -p $pixdir
 mkdir -p $shcdir
+mkdir -p $libdir
 
 cp nux64/dexed $bindir
-cp nux64/dastworx $bindir
 cp nux64/dexed.png $pixdir
+cp nux64/libdexed-d.so $libdir
 
 echo "[Desktop Entry]
 Categories=Application;IDE;Development;

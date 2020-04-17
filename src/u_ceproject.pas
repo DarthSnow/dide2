@@ -13,7 +13,7 @@ uses
   {$ENDIF}
   Classes, SysUtils, process, strUtils, RegExpr,
   u_common, u_writableComponent, u_dmdwrap, u_observer, u_interfaces,
-  u_processes, LazFileUtils, u_dastworx;
+  u_processes, LazFileUtils, u_dexed_d;
 
 type
 

@@ -1,7 +1,9 @@
 module common;
 
 import
-    std.array, std.traits, std.meta, std.conv;
+    core.stdc.string;
+import
+    std.array, std.traits, std.meta, std.conv, std.algorithm, std.file, std.path;
 import
     dparse.lexer, dparse.ast, dparse.parser, dparse.rollback_allocator;
 import
@@ -385,7 +387,7 @@ unittest
  * This function is used to handle the content of a MixinExpression in an
  * ASTVisitor.
  */
-T parseAndVisit(T : ASTVisitor)(const(char)[] source)
+T parseAndVisit(T : ASTVisitor, A...)(const(char)[] source, A a)
 {
     import std.functional;
 
@@ -394,7 +396,7 @@ T parseAndVisit(T : ASTVisitor)(const(char)[] source)
     StringCache cache = StringCache(StringCache.defaultBucketCount);
     const(Token)[] tokens = getTokensForParser(cast(ubyte[]) source, config, &cache);
     Module mod = parseModule(tokens, "", &allocator, toDelegate(&ignoreErrors));
-    T result = construct!(T);
+    T result = construct!(T)(a);
     result.visit(mod);
     return result;
 }
@@ -403,6 +405,14 @@ T parseAndVisit(T : ASTVisitor)(const(char)[] source)
  * By default libdparse outputs errors and warnings to the standard streams.
  * This function prevents that.
  */
-void ignoreErrors(string, size_t, size_t, string, bool) @system
-{}
+void ignoreErrors(string, size_t, size_t, string, bool) @system {}
 
+/**
+ * Split a C string representing a list of filenames into an array of strings.
+ * The filenames are separated with the system path separator.
+ */
+alias joinedFilesToFiles = (const char* a) => a[0 .. a.strlen]
+    .splitter(pathSeparator)
+    .filter!exists
+    .filter!(b => b != "")
+    .array;

@@ -5,12 +5,14 @@ This folder contains the files necessary to manually build dexed and its toolcha
 ### Building
 
 - git
+- Freepascal 3.0.4
+- Lazarus 2.0.8
 - ldc2
 
-### Releaseing
+### Releasing
 
-- git
-- ldc2
+Same tools as to build plus:
+
 - rpm
 - dpkg
 - zip

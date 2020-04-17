@@ -1,0 +1,17 @@
+﻿{
+  "name" : "dexed-d",
+  "targetType" : "dynamicLibrary",
+  "targetPath" : "../bin",
+  "targetName" : "dexed-d",
+  "dependencies" : {
+    "libdparse" : {
+      "path" : "../etc/libdparse"
+    },
+    "iz" : {
+      "path" : "../etc/iz"
+    }
+  },
+  "dflags" : [
+    "-link-defaultlib-shared=false"
+  ]
+}

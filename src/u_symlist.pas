@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, TreeFilterEdit, Forms, Controls, Graphics, ExtCtrls, Menus,
   ComCtrls, u_widget, jsonparser, process, actnlist, Buttons, Clipbrd, LCLProc,
   u_common, u_observer, u_synmemo, u_interfaces, u_writableComponent,
-  u_processes, u_sharedres, u_dsgncontrols;
+  u_processes, u_sharedres, u_dsgncontrols, u_dexed_d;
 
 type
 
@@ -70,7 +70,7 @@ type
   public
     constructor create(aOwner: TCOmponent); override;
     destructor destroy; override;
-    procedure LoadFromTool(str: TStream);
+    procedure LoadFromString(const s: string);
   end;
 
   TSymbolListOptions = class(TWritableLfmTextComponent)
@@ -122,7 +122,6 @@ type
     fOptions: TSymbolListOptions;
     fSyms: TSymbolList;
     fMsgs: IMessagesDisplay;
-    fToolProc: TDexedProcess;
     fActCopyIdent: TAction;
     fActRefresh: TAction;
     fActRefreshOnChange: TAction;
@@ -154,7 +153,6 @@ type
 
     procedure checkIfHasToolExe;
     procedure callToolProc;
-    procedure toolTerminated(sender: TObject);
 
     procedure docNew(document: TDexedMemo);
     procedure docClosing(document: TDexedMemo);
@@ -236,15 +234,18 @@ begin
   fSymbols.Assign(value);
 end;
 
-procedure TSymbolList.LoadFromTool(str: TStream);
+procedure TSymbolList.LoadFromString(const s: string);
 var
+  txt: TmemoryStream;
   bin: TMemoryStream;
 begin
+  txt := TMemoryStream.Create;
   bin := TMemoryStream.Create;
   try
-    str.Position:=0;
+    txt.Write(s[1], s.length);
+    txt.Position:=0;
     try
-      ObjectTextToBinary(str, bin);
+      ObjectTextToBinary(txt, bin);
     except
       exit;
     end;
@@ -252,6 +253,7 @@ begin
     bin.ReadComponent(self);
   finally
     bin.Free;
+    txt.Free;
   end;
 end;
 {$ENDREGION}
@@ -449,13 +451,9 @@ end;
 destructor TSymbolListWidget.destroy;
 begin
   EntitiesConnector.removeObserver(self);
-
-  killProcess(fToolProc);
   fSyms.Free;
-
   fOptions.saveToFile(getDocPath + OptsFname);
   fOptions.Free;
-
   inherited;
 end;
 
@@ -573,8 +571,6 @@ procedure TSymbolListWidget.docClosing(document: TDexedMemo);
 begin
   if fDoc <> document then
     exit;
-  if fToolProc.Running then
-    fToolProc.Terminate(0);
   fDoc := nil;
   clearTree;
   updateVisibleCat;
@@ -745,36 +741,6 @@ begin
 end;
 
 procedure TSymbolListWidget.callToolProc;
-var
-  str: string;
-begin
-  if not fHasToolExe or fDoc.isNil then
-    exit;
-
-  if (fDoc.Lines.Count = 0) or not fDoc.isDSource then
-  begin
-    clearTree;
-    updateVisibleCat;
-    exit;
-  end;
-
-  killProcess(fToolProc);
-  fToolProc := TDexedProcess.Create(nil);
-  fToolProc.ShowWindow := swoHIDE;
-  fToolProc.Options := [poUsePipes];
-  fToolProc.Executable := fToolExeName;
-  fToolProc.OnTerminate := @toolTerminated;
-  fToolProc.CurrentDirectory := Application.ExeName.extractFileDir;
-  if fDeep then
-    fToolProc.Parameters.Add('-o');
-  fToolProc.Parameters.Add('-s');
-  fToolProc.Execute;
-  str := fDoc.Text;
-  fToolProc.Input.Write(str[1], str.length);
-  fToolProc.CloseInput;
-end;
-
-procedure TSymbolListWidget.toolTerminated(sender: TObject);
 
   function getCatNode(node: TTreeNode; stype: TSymbolType ): TTreeNode;
     function newCat(const aCat: string): TTreeNode;
@@ -856,24 +822,29 @@ procedure TSymbolListWidget.toolTerminated(sender: TObject);
   end;
 
 var
+  s: string;
   i: Integer;
   f: string;
   n: TTreeNode;
 begin
-  if ndAlias.isNil then
-    exit;
-  clearTree;
-  updateVisibleCat;
   if fDoc.isNil then
     exit;
 
-  fToolProc.OnTerminate := nil;
-  fToolProc.OnReadData  := nil;
-  fToolProc.StdoutEx.Position:=0;
-  if fToolProc.StdoutEx.Size = 0 then
+  if (fDoc.Lines.Count = 0) or not fDoc.isDSource then
+  begin
+    clearTree;
+    updateVisibleCat;
     exit;
-  fSyms.LoadFromTool(fToolProc.StdoutEx);
+  end;
+  s := fDoc.Lines.Text;
+  s := listSymbols(PChar(s), fDeep);
 
+  if s.isEmpty or ndAlias.isNil then
+    exit;
+
+  clearTree;
+  updateVisibleCat;
+  fSyms.LoadFromString(s);
   f := TreeFilterEdit1.Filter;
   TreeFilterEdit1.Text := '';
   tree.BeginUpdate;

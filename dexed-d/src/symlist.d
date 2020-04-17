@@ -1,28 +1,53 @@
 module symlist;
 
 import
-    std.stdio, std.array, std.traits, std.conv, std.json, std.format,
-    std.algorithm;
+    core.stdc.string;
 import
-    iz.memory: construct;
+    std.array, std.traits, std.conv, std.json, std.format,
+    std.algorithm, std.string;
+import
+    iz.memory: construct, destruct;
 import
     iz.containers : Array;
 import
     dparse.lexer, dparse.ast, dparse.parser, dparse.formatter : Formatter;
 import
+    dparse.rollback_allocator;
+import
     common;
 
 /**
- * Serializes the symbols in the standard output
+ * Visit and enumerate all the declaration of a module.
+ *
+ * Params:
+ *      src     = The module to visit, as source code.
+ *      deep    = Defines if the nested declarations are visited.
+ * Returns:
+ *      The serialized symbols, as a C string.
  */
-void listSymbols(const(Module) mod, AstErrors errors, bool deep = true)
+extern(C) const(char)* listSymbols(const(char)* src, bool deep)
 {
-    mixin(logCall);
+    Appender!(AstErrors) errors;
+
+    void handleErrors(string fname, size_t line, size_t col, string message, bool err)
+    {
+        errors ~= construct!(AstError)(cast(ErrorType) err, message, line, col);
+    }
+
+    LexerConfig config;
+    RollbackAllocator rba;
+    StringCache sCache = StringCache(StringCache.defaultBucketCount);
+
+    scope mod = src[0 .. src.strlen]
+                .getTokensForParser(config, &sCache)
+                .parseModule("", &rba, &handleErrors);
+
     alias SL = SymbolListBuilder!(ListFmt.Pas);
-    SL.addAstErrors(errors);
-    SL sl = construct!(SL)(deep);
+    SL sl = construct!(SL)(errors, deep);
+    scope(exit) destruct(sl);
+
     sl.visit(mod);
-    sl.serialize.writeln;
+    return sl.serialize();
 }
 
 private:
@@ -68,27 +93,22 @@ final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
 
     static if (Fmt == ListFmt.Pas)
     {
-        static Appender!string pasStream;
+        Appender!(char[]) pasStream;
     }
     else
     {
-        static JSONValue json;
-        static JSONValue* jarray;
+        JSONValue json;
+        JSONValue* jarray;
     }
 
-    static Array!(char) funcNameApp;
-    static Formatter!(typeof(&funcNameApp)) fmtVisitor;
-    static uint utc;
+    Array!char funcNameApp;
+    Formatter!(Array!char*) fmtVisitor;
+    uint utc;
 
-    this(bool deep)
+    this(Appender!(AstErrors) errors, bool deep)
     {
         _deep = deep;
-    }
-
-    alias visit = ASTVisitor.visit;
-
-    static this()
-    {
+        funcNameApp.length = 0;
         static if (Fmt == ListFmt.Pas)
         {
             pasStream.put("object TSymbolList\rsymbols=<");
@@ -99,9 +119,12 @@ final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
             jarray = &json;
         }
         fmtVisitor = construct!(typeof(fmtVisitor))(&funcNameApp);
+        addAstErrors(errors.data);
     }
 
-    static void addAstErrors(AstErrors errors)
+    alias visit = ASTVisitor.visit;
+
+    void addAstErrors(AstErrors errors)
     {
         foreach(error; errors)
         {
@@ -129,21 +152,21 @@ final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
         }
     }
 
-    string serialize()
+    const(char)* serialize()
     {
         static if (Fmt == ListFmt.Pas)
         {
             pasStream.put(">\rend");
-            return pasStream.data;
+            return pasStream.data.toStringz;
         }
         else
         {
             JSONValue result = parseJSON("{}");
             result["items"] = json;
             version (assert)
-                return result.toPrettyString;
+                return result.toPrettyString.toStringz;
             else
-                return result.toString;
+                return result.toString.toStringz;
         }
     }
 

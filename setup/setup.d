@@ -11,9 +11,14 @@ version(X86)    version(Windows)version = win32;
 version(Windows)
 {
     enum exeExt = ".exe";
+    enum libExt = ".dll";
     pragma(lib, "ole32.lib");
 }
-else enum exeExt = "";
+else
+{
+    enum exeExt = "";
+    enum libExt = ".so";
+}
 
 alias ImpType = immutable ubyte[];
 alias ResType = immutable Resource;
@@ -35,8 +40,8 @@ struct Resource
 
 immutable Resource[] ceResources =
 [
-    Resource(cast(ImpType) import("dexed" ~ exeExt), "dexed" ~ exeExt, Kind.exe),
-    Resource(cast(ImpType) import("dastworx" ~ exeExt), "dastworx" ~ exeExt, Kind.exe),
+    Resource(cast(ImpType) import("dexed" ~ exeExt), "dexed" ~ exeExt, Kind.exe),    
+    Resource(cast(ImpType) import("libdexed-d" ~ libExt), "libdexed-d" ~ libExt, Kind.exe),
     Resource(cast(ImpType) import("dexed.ico"), "dexed.ico", Kind.dat),
     Resource(cast(ImpType) import("dexed.png"), "dexed.png", Kind.dat),
     Resource(cast(ImpType) import("dexed.license.txt"), "dexed.license.txt", Kind.doc)
@@ -54,6 +59,7 @@ immutable Resource[] oldResources =
 [
     Resource(cast(ImpType) [], "cesyms" ~ exeExt, Kind.exe),
     Resource(cast(ImpType) [], "cetodo" ~ exeExt, Kind.exe),
+    Resource(cast(ImpType) [], "dastworx" ~ exeExt, Kind.exe),    
 ];
 
 version(Windows)
@@ -428,7 +434,7 @@ void postInstall()
         f.writeln("[Desktop Entry]");
         f.writeln("Name=dexed");
         f.writeln("Path=" ~ exePath);
-        f.writeln("Exec=" ~ exePath ~ "dexed %f");
+        f.writeln("Exec=env LD_LIBRARY_PATH="~ exePath ~ " "~ exePath ~ "dexed %f");
         f.writeln("Icon=" ~ datPath ~ "dexed.png");
         f.writeln("Type=Application");
         f.writeln("Categories=Application;IDE;Development;");

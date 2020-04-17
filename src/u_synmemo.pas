@@ -12,7 +12,7 @@ uses
   md5, Spin, LCLIntf, LazFileUtils, LMessages, SynHighlighterCpp, math,
   //SynEditMarkupFoldColoring,
   Clipbrd, fpjson, jsonparser, LazUTF8, LazUTF8Classes, Buttons, StdCtrls,
-  u_common, u_writableComponent, u_d2syn, u_txtsyn, u_dialogs, u_dastworx,
+  u_common, u_writableComponent, u_d2syn, u_txtsyn, u_dialogs,
   u_sharedres, u_dlang, u_stringrange, u_dbgitf, u_observer, u_diff,
   u_processes;
 
@@ -482,7 +482,7 @@ var
 implementation
 
 uses
-  u_interfaces, u_dcd, SynEditHighlighterFoldBase, u_lcldragdrop;
+  u_interfaces, u_dcd, SynEditHighlighterFoldBase, u_lcldragdrop, u_dexed_d;
 
 const
   DcdCompletionKindStrings: array[TDCDCompletionKind] of string = (
@@ -2402,30 +2402,8 @@ begin
 end;
 
 function TDexedMemo.implementMain: THasMain;
-var
-  res: char = '0';
-  prc: TProcess;
-  src: string;
 begin
-  if fDastWorxExename.length = 0 then
-    exit(mainDefaultBehavior);
-  src := Lines.Text;
-  prc := TProcess.Create(nil);
-  try
-    prc.Executable:= fDastWorxExename;
-    prc.Parameters.Add('-m');
-    prc.Options := [poUsePipes{$IFDEF WINDOWS}, poNewConsole{$ENDIF}];
-    prc.ShowWindow := swoHIDE;
-    prc.Execute;
-    prc.Input.Write(src[1], src.length);
-    prc.CloseInput;
-    prc.Output.Read(res, 1);
-    while prc.Running do
-      sleep(1);
-  finally
-    prc.Free;
-  end;
-  case res = '1' of
+  case hasMainFun(PChar(self.Text)) of
     false:result := mainNo;
     true: result := mainYes;
   end;
@@ -2629,7 +2607,7 @@ var
 begin
   d := TStringList.Create;
   try
-    getDdocTemplate(lines, d, CaretY, fInsertPlusDdoc);
+    d.Text := ddocTemplate(PChar(lines.Text), caretY, fInsertPlusDdoc);
     if d.Text.isNotEmpty then
     begin
       BeginUndoBlock;

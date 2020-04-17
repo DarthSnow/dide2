@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, u_common, u_writableComponent, LazFileUtils,
   ghashmap, ghashset,
-  u_dcd, u_projutils, u_interfaces, u_dlang, u_dastworx,
+  u_dcd, u_projutils, u_interfaces, u_dlang, u_dexed_d,
   u_compilers;
 
 type

@@ -5,7 +5,7 @@ cd win64
 7z a -tzip -mx9^
  ..\output\dexed.%ver%.win64.zip^
  dcd.license.txt dexed.license.txt^
- dexed.exe dastworx.exe^
+ dexed.exe dexed-d.dll^
  dexed.ico dexed.png^
  dcd-server.exe dcd-client.exe dscanner.exe^
  libeay32.dll ssleay32.dll

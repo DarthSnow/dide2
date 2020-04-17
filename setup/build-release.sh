@@ -8,9 +8,25 @@ dcd_ver=""
 dscanner_ver=""
 echo "building dexed release" $ver
 
-# dastworx
-cd dastworx
-bash build.sh
+# libdexed-d shared objects
+if [ ! -d "./bin" ]; then
+    mkdir "./bin"
+fi
+DEXED_BIN_PATH=$(readlink --canonicalize "./bin")
+SEARCH_PATH_LDC=$(find "/" -iname "libdruntime-ldc.a" 2>/dev/null | grep -m 1 "libdruntime")
+SEARCH_PATH_LDC=$(dirname $SEARCH_PATH_LDC)
+export LIBRARY_PATH="$LIBRARY_PATH":"$SEARCH_PATH_LDC":"$DEXED_BIN_PATH"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH":"$SEARCH_PATH_LDC":"$DEXED_BIN_PATH"
+
+# libdexed-d
+cd dexed-d
+dub build --build=release --compiler=ldc2
+if [ ! -f "../bin/libdexed-d.so" ]; then
+    echo "this explains linking issues..."
+    exit 1
+fi
+cp "../bin/libdexed-d.so" "/lib64/libdexed-d.so"
+cp "../bin/libdexed-d.so" "/lib/libdexed-d.so"
 cd ..
 
 # dexed
@@ -30,12 +46,12 @@ else
     cd dcd
     git pull
 fi
-git submodule update --init --recursive
 git fetch --tags
 if [ ! -z "$dcd_ver" ]; then
     git checkout $dcd_ver
 fi
-make ldc
+dub build --build=release --config=client --compiler=$DC
+dub build --build=release --config=server --compiler=$DC
 echo "...done"
 cd ..
 
@@ -48,12 +64,11 @@ else
     cd d-scanner
     git pull
 fi
-git submodule update --init --recursive
 git fetch --tags
 if [ ! -z "$dscanner_ver" ]; then
     git checkout $dscanner_ver
 fi
-make ldc
+dub build --build=release --compiler=$DC
 echo "...done"
 cd ..
 
@@ -62,7 +77,7 @@ echo "moving files and binaries..."
 if [ ! -d setup/nux64 ]; then
     mkdir setup/nux64
 fi
-mv bin/dastworx setup/nux64/
+mv bin/libdexed-d.so setup/nux64/
 mv bin/dexed setup/nux64/
 mv dcd/bin/dcd-server setup/nux64/
 mv dcd/bin/dcd-client setup/nux64/
@@ -83,7 +98,11 @@ bash deb.sh
 echo "...done"
 SETUP_APP_NAME="dexed.$ver.linux64.setup"
 echo "building the custom setup program..."
-ldmd2 setup.d -O -release -Jnux64 -J./ -of"output/"$SETUP_APP_NAME
+SETUP_DC=$DC
+if [ "$SETUP_DC" = ldc2 ]; then
+    SETUP_DC=ldmd2
+fi
+$SETUP_DC setup.d -O -release -Jnux64 -J./ -of"output/"$SETUP_APP_NAME
 bash zip-nux64.sh
 bash setupzip-nux-noarch.sh $SETUP_APP_NAME
 echo "...done"
@@ -102,7 +121,7 @@ if [ ! -z "$GITLAB_CI" ]; then
     ZP2_NAME="dexed.$ver.linux64.zip"
 
     # read the log
-    ldc2 extract_last_changelog_part.d
+    $DC extract_last_changelog_part.d
     LOG=$(./extract_last_changelog_part)
     LOG=$(echo "$LOG" | sed -z 's/\n/\\n/g' | sed -z 's/\"/\\"/g')
 
