@@ -5,14 +5,14 @@ header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4
 
 ![](img/coedit_kde4_thumb.png)
 
-This documentation is based on Dexed version 3.8.2.
+This documentation is based on Dexed version 3.8.9-dev.
 Screenshots can be outdated but descriptions are up to date.
 
 ## First steps
 
 _Install and configure Dexed._
 
-* [Build](build.html)
+* [Build](build.html), warning: not relevant for dexed 3.8.0 to 3.8.4. See this [old instructions instead](https://gitlab.com/basile.b/dexed/-/blob/v3.8.4/docs/build.md).
 * [Setup](setup.html)
 
 ## Features
