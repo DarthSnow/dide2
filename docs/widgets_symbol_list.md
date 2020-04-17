@@ -4,7 +4,6 @@ header-includes: <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4
 ---
 
 This list displays the symbols declared in the D module that has the focus (imports, classes, variables, etc).
-The widget is a GUI front-end for one the [_dastworx_](https://gitlab.com/basile.b/dexed/-/tree/master/dastworx) feature.
 
 It can be used to quickly find and go to the declaration of a symbol but also as a basic linter since the syntactic errors are displayed (almost immediately if the option _refresh on change_ is checked).
 
