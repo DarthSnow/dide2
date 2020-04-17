@@ -2,6 +2,7 @@
   "name" : "dexed-d",
   "targetType" : "dynamicLibrary",
   "targetPath" : "../bin",
+  "targetName" : "libdexed-d",
   "dependencies" : {
     "libdparse" : {
       "path" : "../etc/libdparse"
