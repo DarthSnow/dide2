@@ -4,12 +4,13 @@
 
 - DUB projects: dependencies specified with _path_ were not available for auto-completion, also improved the detection patterns so that the _path_ property work with more packages. (#29)
 - DUB runnables: document specific messages were not cleared between two calls to "Run DUB single file package". (#27)
+
 ## Other
 
 - Toolchain: removed the background tool _dastworx_ and replaced it with a library called _libdexed-d_. Although this will not change the user experience:
     - Thousands of system calls to create the process and read its streams are saved.
     - ddemangle not required anymore.
-    - crash in the new library will be fatal from now, i.e the IDE will have to be relaunched, while previously the __dastworx was launched again, without significant impact on the IDE.
+    - crash in the new library might be fatal from now, i.e the IDE will have to be relaunched, while previously _dastworx_ was launched again, without significant impact on the IDE.
 
 # v3.8.4
 
