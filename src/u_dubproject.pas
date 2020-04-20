@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, fpjson, jsonparser, jsonscanner, process, strutils,
   LazFileUtils, RegExpr, fgl,
-  u_common, u_interfaces, u_observer, u_dialogs, u_processes,
+  u_common, u_interfaces, u_observer, u_dialogs, u_processes, u_projutils,
   u_writableComponent, u_compilers, u_semver, u_stringrange;
 
 type
@@ -1567,10 +1567,14 @@ procedure TDubProject.updateImportPathsFromJson;
         // local path specified
         if deps.findObject(n, c) and c.findAny('path', j) then
         begin
-          s := expandFilenameEx(fBasePath, j.AsString);
+          s := expandFilenameEx(fBasePath, j.AsString) + DirectorySeparator;
+          // as auto detected by DUB
           if (s + 'source').dirExists then
             fImportPaths.Add(s)
           else if (s + 'src').dirExists then
+            fImportPaths.Add(s)
+          // when standard src content is directly in the repo root
+          else if (s + n).dirExists then
             fImportPaths.Add(s);
           continue;
         end;

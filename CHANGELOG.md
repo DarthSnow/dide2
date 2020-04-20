@@ -1,5 +1,9 @@
 # v3.9.0-dev
 
+## Bugs fixed
+
+- DUB projects: dependencies specified with _path_ were not available for auto-completion, also improved the detection patterns so that the _path_ property work with more packages. (#29)
+
 ## Other
 
 - Toolchain: removed the background tool _dastworx_ and replaced it with a library called _libdexed-d_. Although this will not change the user experience:
