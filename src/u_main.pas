@@ -3433,6 +3433,7 @@ begin
   if fDoc.isNil then
     exit;
   FreeRunnableProc;
+  fMsgs.clearByData(fDoc);
   fRunProc := TDexedProcess.Create(nil);
   if fDoc.fileName.fileExists then
     fDoc.save
