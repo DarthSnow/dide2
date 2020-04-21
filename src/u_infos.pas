@@ -259,11 +259,6 @@ begin
     'mandatory, provides IDE-grade features such as the completion');
   itm.Parent := boxTools;
   itm.ReAlign;
-  itm := TToolInfo.Construct(self, tikFindable, 'dastworx',
-    'background tool that processes the D modules to extract informations' +
-    LineEnding + 'such as the declarations, the imports, the "TODO" comments, etc.');
-  itm.Parent := boxTools;
-  itm.ReAlign;
   itm := TToolInfo.Construct(self, tikOptional, 'dub',
     'the D package manager, mandatory to compile project in DUB format');
   itm.Parent := boxTools;

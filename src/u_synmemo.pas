@@ -193,7 +193,6 @@ type
     fIdentDialShown: boolean;
     fScrollMemo: TScrollMemo;
     fFilename: string;
-    fDastWorxExename: string;
     fModified: boolean;
     fFileDate: double;
     fCacheLoaded: boolean;
@@ -1214,8 +1213,6 @@ begin
 
   fAutoCloseCurlyBrace:= autoCloseOnNewLineLexically;
   fAutoClosedPairs:= [autoCloseSquareBracket];
-
-  fDastWorxExename:= exeFullName('dastworx' + exeExt);
 
   fDebugger := EntitiesConnector.getSingleService('IDebugger') as IDebugger;
 

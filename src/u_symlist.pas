@@ -150,10 +150,7 @@ type
     procedure updateVisibleCat;
     procedure clearTree;
     procedure smartExpand;
-
-    procedure checkIfHasToolExe;
-    procedure callToolProc;
-
+    procedure getSymbols;
     procedure docNew(document: TDexedMemo);
     procedure docClosing(document: TDexedMemo);
     procedure docFocused(document: TDexedMemo);
@@ -187,7 +184,6 @@ implementation
 
 const
   OptsFname = 'symbollist.txt';
-  toolExeName = 'dastworx' + exeExt;
 
 {$REGION Serializable symbols---------------------------------------------------}
 constructor TSymbol.create(ACollection: TCollection);
@@ -329,7 +325,6 @@ begin
   fAutoRefresh := false;
   fRefreshOnFocus := true;
   fRefreshOnChange := false;
-  checkIfHasToolExe;
 
   fActCopyIdent := TAction.Create(self);
   fActCopyIdent.OnExecute:=@actCopyIdentExecute;
@@ -460,10 +455,9 @@ end;
 procedure TSymbolListWidget.SetVisible(value: boolean);
 begin
   inherited;
-  checkIfHasToolExe;
   getMessageDisplay(fMsgs);
   if value then
-    callToolProc;
+    getSymbols;
 end;
 
 procedure TSymbolListWidget.setToolBarFlat(value: boolean);
@@ -501,7 +495,7 @@ procedure TSymbolListWidget.actRefreshExecute(Sender: TObject);
 begin
   if Updating then
     exit;
-  callToolProc;
+  getSymbols;
 end;
 
 procedure TSymbolListWidget.actAutoRefreshExecute(Sender: TObject);
@@ -551,7 +545,7 @@ begin
   if event <> oeeAccept then
     exit;
   fOptions.AssignTo(self);
-  callToolProc;
+  getSymbols;
 end;
 
 function TSymbolListWidget.optionedOptionsModified: boolean;
@@ -587,7 +581,7 @@ begin
   if fAutoRefresh then
     beginDelayedUpdate
   else if fRefreshOnFocus then
-    callToolProc;
+    getSymbols;
 end;
 
 procedure TSymbolListWidget.docChanged(document: TDexedMemo);
@@ -598,7 +592,7 @@ begin
   if fAutoRefresh then
     beginDelayedUpdate
   else if fRefreshOnChange then
-    callToolProc;
+    getSymbols;
 
   if fSmartExpander then
     smartExpand;
@@ -610,12 +604,11 @@ procedure TSymbolListWidget.updateDelayed;
 begin
   if not fAutoRefresh then
     exit;
-  callToolProc;
+  getSymbols;
 end;
 
 procedure TSymbolListWidget.btnRefreshClick(Sender: TObject);
 begin
-  checkIfHasToolExe;
   fActRefresh.Execute;
 end;
 
@@ -734,13 +727,7 @@ begin
   fDoc.SelectLine;
 end;
 
-procedure TSymbolListWidget.checkIfHasToolExe;
-begin
-  fToolExeName := exeFullName(toolExeName);
-  fHasToolExe := fToolExeName.fileExists;
-end;
-
-procedure TSymbolListWidget.callToolProc;
+procedure TSymbolListWidget.getSymbols;
 
   function getCatNode(node: TTreeNode; stype: TSymbolType ): TTreeNode;
     function newCat(const aCat: string): TTreeNode;
