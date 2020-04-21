@@ -21,13 +21,16 @@ type
     fAutoRefresh: boolean;
     fSingleClick: boolean;
     fColumns: TTodoColumns;
+    fdisableIfMoreFilesThan: integer;
   published
     property autoRefresh: boolean read fAutoRefresh write fAutoRefresh;
     property singleClickSelect: boolean read fSingleClick write fSingleClick;
     property columns: TTodoColumns read fColumns write fColumns;
+    property disableIfMoreFilesThan: integer read fdisableIfMoreFilesThan write fdisableIfMoreFilesThan default 25;
   public
     procedure AssignTo(target: TPersistent); override;
     procedure Assign(source: TPersistent); override;
+    constructor create(AOwner: TComponent); override;
   end;
 
   TTodoContext = (tcNone, tcProject, tcFile);
@@ -91,7 +94,6 @@ type
     fProj: ICommonProject;
     fDoc: TDexedMemo;
     fTodos: TTodoItems;
-    fMsgs: IMessagesDisplay;
     fOptions: TTodoOptions;
     // IDocumentObserver
     procedure docNew(document: TDexedMemo);
@@ -113,7 +115,7 @@ type
     function optionedOptionsModified: boolean;
     // TODOlist things
     function getContext: TTodoContext;
-    procedure callToolProcess;
+    procedure scanTodoItems(autoRefreshed: boolean);
     procedure clearTodoList;
     procedure fillTodoList;
     procedure lstItemsColumnClick(Sender: TObject; Column: TListColumn);
@@ -141,7 +143,6 @@ implementation
 {$R *.lfm}
 
 const
-  ToolExeName = 'dastworx' + exeExt;
   OptFname = 'todolist.txt';
 
 {$REGION TTodoItems ------------------------------------------------------------}
@@ -246,7 +247,7 @@ procedure TTodoListWidget.SetVisible(value: boolean);
 begin
   inherited;
   if value and fAutoRefresh then
-    callToolProcess;
+    scanTodoItems(true);
   refreshVisibleColumns;
 end;
 
@@ -258,6 +259,11 @@ end;
 {$ENDREGION}
 
 {$REGION IEditableOptions ----------------------------------------------------}
+constructor TTodoOptions.create(AOwner: TComponent);
+begin
+  fdisableIfMoreFilesThan := 25;
+end;
+
 procedure TTodoOptions.AssignTo(target: TPersistent);
 var
   widg: TTodoListWidget;
@@ -322,14 +328,16 @@ procedure TTodoListWidget.docNew(document: TDexedMemo);
 begin
   fDoc := document;
   if Visible and fAutoRefresh then
-    callToolProcess;
+    scanTodoItems(true);
 end;
 
 procedure TTodoListWidget.docFocused(document: TDexedMemo);
 begin
+  if fDoc = document then
+    exit;
   fDoc := document;
-  if Visible and fAutoRefresh then
-    callToolProcess;
+  if fDoc.isNotNil and Visible and fAutoRefresh then
+    scanTodoItems(true);
 end;
 
 procedure TTodoListWidget.docChanged(document: TDexedMemo);
@@ -357,7 +365,7 @@ begin
   if fProj <> project then
     exit;
   if Visible and fAutoRefresh then
-    callToolProcess;
+    scanTodoItems(true);
 end;
 
 procedure TTodoListWidget.projClosing(project: ICommonProject);
@@ -366,14 +374,16 @@ begin
     exit;
   fProj := nil;
   if Visible and fAutoRefresh then
-    callToolProcess;
+    scanTodoItems(true);
 end;
 
 procedure TTodoListWidget.projFocused(project: ICommonProject);
 begin
+  if fProj = project then
+    exit;
   fProj := project;
   if Visible and fAutoRefresh then
-    callToolProcess;
+    scanTodoItems(true);
 end;
 
 procedure TTodoListWidget.projCompiling(project: ICommonProject);
@@ -401,7 +411,7 @@ begin
     exit(tcFile);
 end;
 
-procedure TTodoListWidget.callToolProcess;
+procedure TTodoListWidget.scanTodoItems(autoRefreshed: boolean);
 var
   ctxt: TTodoContext;
   i,j: integer;
@@ -420,11 +430,12 @@ begin
       exit;
   end;
 
-  // files passed to the tool argument
-  if (ctxt = tcProject) then
+  if ctxt = tcProject then
   begin
     i := 0;
     j := fProj.sourcesCount-1;
+    if autoRefreshed and (j > fOptions.disableIfMoreFilesThan) then
+      exit;
     for i := 0 to j do
     begin
       nme := fProj.sourceAbsolute(i);
@@ -518,7 +529,7 @@ begin
     exit;
 
   // the collection will be cleared if a file is opened
-  // docFocused->callToolProcess->fTodos....clear
+  // docFocused->scanTodoItems->fTodos....clear
   // so line and filename must be copied
   itm := TTodoItem(lstItems.Selected.Data);
   fname := itm.filename;
@@ -590,7 +601,7 @@ end;
 
 procedure TTodoListWidget.btnRefreshClick(Sender: TObject);
 begin
-  callToolProcess;
+  scanTodoItems(false);
 end;
 
 procedure TTodoListWidget.filterItems(Sender: TObject);
@@ -618,7 +629,7 @@ begin
   fAutoRefresh := value;
   mnuAutoRefresh.Checked := value;
   if fAutoRefresh then
-    callToolProcess;
+    scanTodoItems(true);
 end;
 
 procedure TTodoListWidget.setColumns(value: TTodoColumns);

@@ -13,16 +13,15 @@ extern(C) const(char)* todoItems(const(char)* joinedFiles)
     scope Appender!string stream;
     stream.reserve(32);
     stream.put("object TTodoItems\ritems=<");
-    foreach(fname; joinedFilesToFiles(joinedFiles))
+    foreach (fname; joinedFilesToFiles(joinedFiles))
     {
         stream.reserve(256);
-        scope StringCache cache = StringCache(StringCache.defaultBucketCount);
         scope LexerConfig config = LexerConfig("", StringBehavior.source);
-        ubyte[] source = cast(ubyte[]) std.file.read(fname);
-        foreach(ref token; DLexer(source, config, &cache)
-            .array
-            .filter!((a) => a.type == tok!"comment"))
-                analyze(token, fname, stream);
+        scope source = cast(ubyte[]) std.file.read(fname);
+        scope StringCache cache = StringCache(optimalBucketCount(source.length));
+        DLexer(source, config, &cache)
+            .filter!(a => a.type == tok!"comment")
+            .each!(t => analyze(t, fname, stream));
     }
     stream.put(">end");
     return stream.data.toStringz();
