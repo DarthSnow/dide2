@@ -15,7 +15,8 @@ type
     tkDDocs, tkSpecK, tkError, tkAsmbl, tkAttri, tkLost,  tkTypes);
 
   TRangeKind = (rkString1, rkString2, rkBlockCom1, rkBlockCom2,
-    rkBlockDoc1, rkBlockDoc2, rkAsm);
+    rkBlockDoc1, rkBlockDoc2, rkAsm,
+    rkStringQParen, rkStringQSquare, rkStringQGe, rStringQCurly);
 
   TRangeKinds = set of TRangeKind;
 
@@ -26,12 +27,16 @@ type
   // internal class used to keep trace of the useful informations of the previous line
   TSynD2SynRange = class(TSynCustomHighlighterRange)
   private
-    namedRegionCount: Integer;
-    nestedCommentsCount: Integer;
-    rangeKinds: TRangeKinds;
+    namedRegionCount    : Integer;
+    nestedCommentsCount : Integer;
+    nestedQParensStrings: Integer;
+    nestedQSquareStrings: Integer;
+    nestedQGeStrings    : Integer;
+    nestedQCurlyStrings : Integer;
+    rangeKinds          : TRangeKinds;
     // double quoted multi-line string prefixed with 'r':
     // => don't skip '"' following '\'
-    rString: boolean;
+    rString             : boolean;
   public
     procedure Assign(source: TSynCustomHighlighterRange); override;
     function Compare(range: TSynCustomHighlighterRange): integer; override;
@@ -130,6 +135,9 @@ begin
     rng := TSynD2SynRange(source);
     rangeKinds := rng.rangeKinds;
     namedRegionCount := rng.namedRegionCount;
+    nestedQGeStrings:= rng.nestedQGeStrings;
+    nestedQParensStrings := rng.nestedQParensStrings;
+    nestedQSquareStrings := rng.nestedQSquareStrings;
   end;
 end;
 
@@ -612,7 +620,7 @@ begin
   // double quoted strings | raw double quoted strings
   if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, stringPrefixes) then
   begin
-    if readerPrev^ in ['r','x','q'] then
+    if readerPrev^ in ['r','x'] then
     begin
       fCurrRange.rString := reader^ = 'r';
       if not (readerNext^ = '"') then
@@ -717,6 +725,146 @@ begin
     StartCodeFoldBlock(nil, fkBrackets in fFoldKinds);
     exit;
   end else readerReset;
+
+  // q"(  )" strings
+  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, 'q"(') then
+  begin
+    fTokKind := tkStrng;
+    fCurrRange.nestedQParensStrings += 1;
+    if readUntil(reader, fTokStop, ')"') then
+    begin
+      fCurrRange.nestedQParensStrings -= 1;
+      if fCurrRange.nestedQParensStrings = 0 then
+      begin
+        readDelim(reader, fTokStop, stringPostfixes);
+        exit;
+      end;
+    end;
+    fCurrRange.rangeKinds += [rkStringQParen];
+    readLine(reader, fTokStop);
+    exit;
+  end else readerReset;
+  if rkStringQParen in fCurrRange.rangeKinds then
+  begin
+    fTokKind := tkStrng;
+    if readUntil(reader, fTokStop, ')"') then
+    begin
+      fCurrRange.nestedQParensStrings -= 1;
+      if fCurrRange.nestedQParensStrings = 0 then
+      begin
+        readDelim(reader, fTokStop, stringPostfixes);
+        fCurrRange.rangeKinds -= [rkStringQParen];
+        exit;
+      end;
+    end;
+    readLine(reader, fTokStop);
+    exit;
+  end;
+
+  // q"[  ]" strings
+  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, 'q"[') then
+  begin
+    fTokKind := tkStrng;
+    fCurrRange.nestedQSquareStrings += 1;
+    if readUntil(reader, fTokStop, ']"') then
+    begin
+      fCurrRange.nestedQSquareStrings -= 1;
+      if fCurrRange.nestedQSquareStrings = 0 then
+      begin
+        readDelim(reader, fTokStop, stringPostfixes);
+        exit;
+      end;
+    end;
+    fCurrRange.rangeKinds += [rkStringQSquare];
+    readLine(reader, fTokStop);
+    exit;
+  end else readerReset;
+  if rkStringQSquare in fCurrRange.rangeKinds then
+  begin
+    fTokKind := tkStrng;
+    if readUntil(reader, fTokStop, ']"') then
+    begin
+      fCurrRange.nestedQSquareStrings -= 1;
+      if fCurrRange.nestedQSquareStrings = 0 then
+      begin
+        readDelim(reader, fTokStop, stringPostfixes);
+        fCurrRange.rangeKinds -= [rkStringQSquare];
+        exit;
+      end;
+    end;
+    readLine(reader, fTokStop);
+    exit;
+  end;
+
+  // q"<  >" strings
+  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, 'q"<') then
+  begin
+    fTokKind := tkStrng;
+    fCurrRange.nestedQGeStrings += 1;
+    if readUntil(reader, fTokStop, '>"') then
+    begin
+      fCurrRange.nestedQGeStrings -= 1;
+      if fCurrRange.nestedQGeStrings = 0 then
+      begin
+        readDelim(reader, fTokStop, stringPostfixes);
+        exit;
+      end;
+    end;
+    fCurrRange.rangeKinds += [rkStringQGe];
+    readLine(reader, fTokStop);
+    exit;
+  end else readerReset;
+  if rkStringQGe in fCurrRange.rangeKinds then
+  begin
+    fTokKind := tkStrng;
+    if readUntil(reader, fTokStop, ')"') then
+    begin
+      fCurrRange.nestedQGeStrings -= 1;
+      if fCurrRange.nestedQGeStrings = 0 then
+      begin
+        readDelim(reader, fTokStop, stringPostfixes);
+        fCurrRange.rangeKinds -= [rkStringQGe];
+        exit;
+      end;
+    end;
+    readLine(reader, fTokStop);
+    exit;
+  end;
+
+  // q"{  }" strings
+  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, 'q"{') then
+  begin
+    fTokKind := tkStrng;
+    fCurrRange.nestedQCurlyStrings += 1;
+    if readUntil(reader, fTokStop, '}"') then
+    begin
+      fCurrRange.nestedQCurlyStrings -= 1;
+      if fCurrRange.nestedQCurlyStrings = 0 then
+      begin
+        readDelim(reader, fTokStop, stringPostfixes);
+        exit;
+      end;
+    end;
+    fCurrRange.rangeKinds += [rStringQCurly];
+    readLine(reader, fTokStop);
+    exit;
+  end else readerReset;
+  if rStringQCurly in fCurrRange.rangeKinds then
+  begin
+    fTokKind := tkStrng;
+    if readUntil(reader, fTokStop, '}"') then
+    begin
+      fCurrRange.nestedQCurlyStrings -= 1;
+      if fCurrRange.nestedQCurlyStrings = 0 then
+      begin
+        readDelim(reader, fTokStop, stringPostfixes);
+        fCurrRange.rangeKinds -= [rStringQCurly];
+        exit;
+      end;
+    end;
+    readLine(reader, fTokStop);
+    exit;
+  end;
 
   // char literals
   if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, #39) then

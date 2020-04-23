@@ -2,6 +2,7 @@
 
 ## Enhancements
 
+- Dlang highlighter: added suport for HEREDOC strings of type `q"()"` `q"[]"` and `q"<>"`. "free" HEREDOC strings wont be handled as they might be removed as per DIP 1026.
 - TODO list: a new option, _disableIfMoreFilesThan_, allows to disable auto refreshing of the list could be slow when the current project is huge.
 
 ## Bugs fixed
