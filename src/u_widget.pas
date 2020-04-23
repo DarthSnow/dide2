@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, ExtCtrls, ActnList, Menus,
-  AnchorDocking, u_interfaces, u_dsgncontrols, u_common;
+  AnchorDocking, u_interfaces, u_dsgncontrols, u_common, u_dialogs;
 
 type
 
@@ -188,7 +188,9 @@ begin
   result := inherited;
   if fIsDockable and (not DockMaster.AllowDragging) and not
     (DockMaster.GetAnchorSite(self).GetTopParent = DockMaster.GetAnchorSite(self)) then
-      result := false;
+  begin
+    result := dlgYesNo('widgets are currently locked, close anyway ?') = mrYes;
+  end;
 end;
 
 function TDexedWidget.getIfModal: boolean;

@@ -3,6 +3,7 @@
 ## Enhancements
 
 - Dlang highlighter: added suport for HEREDOC strings literal of type `q"()"` `q"[]"`, `q"<>"` and `q"{}"`. "Custom" HEREDOC strings literal wont be handled as they might be removed as per DIP 1026.
+- Docking: added disalog to remind that docking is locked in certain scenarios. (#30)
 - TODO list: a new option, _disableIfMoreFilesThan_, allows to disable auto refreshing of the list could be slow when the current project is huge.
 
 ## Bugs fixed
@@ -14,7 +15,7 @@
 ## Other
 
 - Toolchain: removed the background tool _dastworx_ and replaced it with a library called _libdexed-d_.
-- Toolchain: ddemangle is not required anymore and is moved to _libdexed-d_.
+- Toolchain: ddemangle is not required anymore, demangling D names is nopw done in _libdexed-d_.
 
 # v3.8.4
 
