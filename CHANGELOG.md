@@ -2,20 +2,19 @@
 
 ## Enhancements
 
-- Dlang highlighter: added suport for HEREDOC strings of type `q"()"` `q"[]"` and `q"<>"`. "free" HEREDOC strings wont be handled as they might be removed as per DIP 1026.
+- Dlang highlighter: added suport for HEREDOC strings literal of type `q"()"` `q"[]"`, `q"<>"` and `q"{}"`. "Custom" HEREDOC strings literal wont be handled as they might be removed as per DIP 1026.
 - TODO list: a new option, _disableIfMoreFilesThan_, allows to disable auto refreshing of the list could be slow when the current project is huge.
 
 ## Bugs fixed
 
-- DUB projects: dependencies specified with _path_ were not available for auto-completion, also improved the detection patterns so that the _path_ property work with more packages. (#29)
+- DUB projects: dependencies specified with _path_ and with their source located in "src" or "source "were not passed correctly to DCD. (#29)
+- DUB projects: dependencies specified with _path_ are recognized when their sources are in a sub folder taking as name the package name. (#29)
 - DUB runnables: document specific messages were not cleared between two calls to "Run DUB single file package". (#27)
 
 ## Other
 
-- Toolchain: removed the background tool _dastworx_ and replaced it with a library called _libdexed-d_. Although this will not change the user experience:
-    - Thousands of system calls to create the process and read its streams are saved.
-    - ddemangle not required anymore.
-    - crash in the new library might be fatal from now, i.e the IDE will have to be relaunched, while previously _dastworx_ was launched again, without significant impact on the IDE.
+- Toolchain: removed the background tool _dastworx_ and replaced it with a library called _libdexed-d_.
+- Toolchain: ddemangle is not required anymore and is moved to _libdexed-d_.
 
 # v3.8.4
 
