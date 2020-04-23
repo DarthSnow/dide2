@@ -3,7 +3,8 @@
 ## Enhancements
 
 - Dlang highlighter: added suport for HEREDOC strings literal of type `q"()"` `q"[]"`, `q"<>"` and `q"{}"`. "Custom" HEREDOC strings literal wont be handled as they might be removed as per DIP 1026.
-- Docking: added disalog to remind that docking is locked in certain scenarios. (#30)
+- Docking: added a dialog to remind that docking is locked in certain scenarios. (#30)
+- Search Replace: the result of _FindAll_ when the string to seach is a regular expression are highlighted. (#14)
 - TODO list: a new option, _disableIfMoreFilesThan_, allows to disable auto refreshing of the list could be slow when the current project is huge.
 
 ## Bugs fixed

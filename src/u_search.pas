@@ -7,9 +7,9 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   Menus, StdCtrls, actnList, Buttons, SynEdit, SynEditSearch, SynEditTypes,
-  u_common, u_mru, u_widget, u_synmemo, u_interfaces, u_observer, strutils,
-  u_writableComponent, u_dialogs, u_sharedres, u_dsgncontrols,
-  SynEditTextBuffer;
+  RegExpr, SynEditTextBuffer, strutils,
+  u_common, u_mru, u_widget, u_synmemo, u_interfaces, u_observer,
+  u_writableComponent, u_dialogs, u_sharedres, u_dsgncontrols;
 
 type
 
@@ -459,7 +459,13 @@ var
   msg: string;
   fmt: string;
   i: integer;
+  j: integer = 0;
+  k: integer;
+  o: integer = -1;
   res: array of TPoint = nil;
+  r: TRegExpr;
+  s: string;
+  rStart: integer;
 begin
   result := 0;
   search := TSynEditSearch.Create;
@@ -496,11 +502,53 @@ begin
       msgs.message(msg, nil, amcMisc, amkInf);
     end;
     fmt := fileName + '(%d,%d): "%s"';
-    for i := 0 to high(res) do
+    // highlighting
+    if ssoRegExpr in options then
     begin
-      msg := format(fmt, [res[i].Y, res[i].X, Trim(lines[res[i].Y-1])]);
+      r := TRegExpr.Create(fToFind);
+      try
+        r.ModifierI := not (ssoMatchCase in options);
+        for i := 0 to high(res) do
+        begin
+          msg := Trim(lines[res[i].Y-1]);
+          // current result is on same line as previous
+          if res[i].Y = o then
+            j += 1
+          else
+            j := 0;
+          rStart := 1;
+          s := '';
+          k := 0;
+          if r.Exec(msg) then
+          repeat
+            s += msg[rStart .. r.MatchPos[0]-1];
+            // count of time we got the same line as result is the nth match to highlight
+            if k = j then
+            begin
+              s += '`' + r.Match[0] + '`';
+              rStart := r.MatchPos[0] + r.MatchLen[0];
+              // dont bother with slicing trailing results once highlighting done
+              break;
+            end
+            else
+              s += r.Match[0];
+            rStart := r.MatchPos[0] + r.MatchLen[0];
+            k += 1;
+          until
+            not r.ExecNext();
+          s += msg[rStart .. msg.length];
+          msgs.message(format(fmt, [res[i].Y, res[i].X, s]), nil, amcMisc, amkInf);
+          o := res[i].Y;
+        end;
+      finally
+        r.Free;
+      end;
+    end
+    else for i := 0 to high(res) do
+    begin
+      msg := Trim(lines[res[i].Y-1]);
       msg := strutils.ReplaceStr(msg, fToFind, '`' + fToFind + '`');
-      msgs.message(msg, nil, amcMisc, amkInf);
+      msgs.message(format(fmt, [res[i].Y, res[i].X, msg]), nil, amcMisc, amkInf);
     end;
   finally
     search.free;
