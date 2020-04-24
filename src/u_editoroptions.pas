@@ -110,7 +110,7 @@ type
     property ddocDelay: Integer read fDDocDelay write setDDocDelay;
     property dscannerDelay: integer read fDscannerDelay write setDscannerDelay;
     property dscannerEnabled: boolean read fDscannerEnabled write fDscannerEnabled;
-    property detectIndentMode: boolean read fDetectIndentationMode write fDetectIndentationMode;
+    property detectIndentMode: boolean read fDetectIndentationMode write fDetectIndentationMode default true;
     property folding: TSynSelectedColor read fFoldedColor write setFoldedColor;
     property font: TFont read fFont write setFont;
     property highlighterDlang: TPersistent read fD2Syn write setD2Syn;
@@ -207,6 +207,7 @@ begin
   fTxtSyn := TSynTxtSyn.Create(self);
   fTxtSyn.Assign(TxtSyn);
   //
+  fDetectIndentationMode:=true;
   fDDocDelay:=200;
   fAutoDotDelay:=100;
   fCurrLineAttribs := TSynSelectedColor.Create;
