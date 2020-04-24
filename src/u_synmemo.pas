@@ -3427,12 +3427,12 @@ end;
 
 procedure TDexedMemo.checkFileDate;
 var
-  mr: TModalResult;
-  newDate: double;
-  newMd5: TMDDigest;
-  curMd5: TMDDigest;
-  str: TStringList;
-  txt: string;
+  mr      : TModalResult;
+  newDate : double;
+  newMd5  : TMDDigest;
+  curMd5  : TMDDigest;
+  str     : TStringList;
+  newTxt  : string;
 begin
   if fDiffDialogWillClose or fDisableFileDateCheck then
     exit;
@@ -3450,34 +3450,44 @@ begin
     str := TStringList.Create;
     try
       str.LoadFromFile(fFilename);
-      txt := str.strictText;
-      newMd5 := MD5String(txt);
-      txt := lines.strictText;
-      curMd5 := MD5String(txt);
-      if not MDMatch(curMd5, newMd5) then
-      begin
-        lines.SaveToFile(tempFilename);
-        fDiffDialogWillClose := true;
-        With TDiffViewer.construct(self, fTempFileName, fFilename) do
-        try
-          mr := ShowModal;
-          case mr of
-            mrOK:
-            begin
-              replaceUndoableContent(str.strictText);
-              fModified := false;
-              fFileDate := newDate;
-            end;
-            mrIgnore: fFileDate := newDate;
-            mrCancel:;
-          end;
-        finally
-          free;
-          fDiffDialogWillClose := false;
-        end;
-      end;
+      newTxt  := str.strictText;
     finally
       str.Free;
+    end;
+    newMd5 := MD5String(newTxt);
+    curMd5 := MD5String(lines.strictText);
+    if not MDMatch(curMd5, newMd5) then
+    begin
+      lines.SaveToFile(tempFilename);
+      fDiffDialogWillClose := true;
+      with TDiffViewer.construct(self, fTempFileName, fFilename) do
+      try
+        mr := ShowModal;
+        case mr of
+          mrOK:
+          begin
+            replaceUndoableContent(newTxt);
+            fModified := false;
+            fFileDate := newDate;
+          end;
+          mrAll:
+          begin
+            fModified := false;
+            text      := newTxt;
+            fFileDate := newDate;
+          end;
+          mrIgnore:
+          begin
+            fFileDate := newDate;
+          end;
+          mrCancel:
+          begin
+          end;
+        end;
+      finally
+        free;
+        fDiffDialogWillClose := false;
+      end;
     end;
   end
   else fFileDate := newDate;

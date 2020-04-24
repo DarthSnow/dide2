@@ -10,7 +10,11 @@ uses
   u_common, StdCtrls, ExtCtrls, Buttons;
 
 type
+
+  { TDiffViewer }
+
   TDiffViewer = class(TForm)
+    btnAccept1: TBitBtn;
     btnIgnore: TBitBtn;
     btnAccept: TBitBtn;
     btnCancel: TBitBtn;

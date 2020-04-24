@@ -2,8 +2,10 @@
 
 ## Enhancements
 
-- Dlang highlighter: added suport for HEREDOC strings literal of type `q"()"` `q"[]"`, `q"<>"` and `q"{}"`. "Custom" HEREDOC strings literal wont be handled as they might be removed as per DIP 1026.
+- D highlighter: added suport for HEREDOC strings literal of type `q"()"` `q"[]"`, `q"<>"` and `q"{}"`. Support for HEREDOC strings literal based on a custom identifier wont be added as they might be removed as per DIP 1026.
 - Docking: added a dialog to remind that docking is locked in certain scenarios. (#30)
+- Editor: set the option to detect the indentation mode on by default, to prevent mixed indentation style.
+- Editor: a fourth button in the diff dialog allows to reload but without preserving the undo history, which is better to navigate using _go to next changed area_ and _go to prev changed area_.
 - Search Replace: the result of _FindAll_ when the string to seach is a regular expression are highlighted. (#14)
 - TODO list: a new option, _disableIfMoreFilesThan_, allows to disable auto refreshing of the list could be slow when the current project is huge.
 
