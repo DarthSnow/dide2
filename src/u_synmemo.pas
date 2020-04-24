@@ -3525,7 +3525,6 @@ procedure TDexedMemo.KeyDown(var Key: Word; Shift: TShiftState);
 var
   line: string;
   ddc: char;
-  lxd: boolean;
   ccb: TBraceCloseOption;
 begin
   case Key of
@@ -3543,24 +3542,9 @@ begin
       line := LineText;
       if [ssCtrl] <> Shift then
       begin
-        lxd := false;
-        if ((LogicalCaretXY.X - 1 >= line.length) or
-          isBlank(line[LogicalCaretXY.X .. line.length])) then
-        begin
-          lexWholeText([TLexOption.lxoNoWhites, TLexOption.lxoNoComments]);
-          lxd := true;
-          ccb := lexCanCloseBrace;
-          if ccb <> braceCloseInvalid then
-          begin
-            Key := 0;
-            curlyBraceCloseAndIndent((ccb = braceClosePositive) and not (fAutoCloseCurlyBrace = autoCloseNever));
-            lxd := false;
-          end;
-        end;
         if (fSmartDdocNewline) then
         begin
-          if not lxd then
-            lexWholeText();
+          lexWholeText();
           ddc := canInsertLeadingDdocSymbol;
           if ddc in ['*', '+'] then
           begin
@@ -3569,6 +3553,17 @@ begin
             fCanShowHint:=false;
             fDDocWin.Hide;
             exit;
+          end;
+        end;
+        if ((LogicalCaretXY.X - 1 >= line.length) or
+          isBlank(line[LogicalCaretXY.X .. line.length])) then
+        begin
+          lexWholeText([TLexOption.lxoNoWhites, TLexOption.lxoNoComments]);
+          ccb := lexCanCloseBrace;
+          if ccb <> braceCloseInvalid then
+          begin
+            Key := 0;
+            curlyBraceCloseAndIndent((ccb = braceClosePositive) and not (fAutoCloseCurlyBrace = autoCloseNever));
           end;
         end;
       end
