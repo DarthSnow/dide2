@@ -7,6 +7,3 @@
 [submodule "etc/stdx-allocator"]
 	path = etc/stdx-allocator
 	url = https://github.com/dlang-community/stdx-allocator.git
-[submodule "etc/pegged"]
-	path = etc/pegged
-	url = https://github.com/PhilippeSigaud/Pegged.git
