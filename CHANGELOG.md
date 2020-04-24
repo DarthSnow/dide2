@@ -9,14 +9,15 @@
 
 ## Bugs fixed
 
-- DUB projects: dependencies specified with _path_ and with their source located in "src" or "source "were not passed correctly to DCD. (#29)
+- DUB projects: dependencies specified with _path_ and with their sources located in "src" or "source" were not passed correctly to DCD. (#29)
 - DUB projects: dependencies specified with _path_ are recognized when their sources are in a sub folder taking as name the package name. (#29)
 - DUB runnables: document specific messages were not cleared between two calls to "Run DUB single file package". (#27)
+- Editor: case where brace auto close is triggered while in comment. (#31)
 
 ## Other
 
 - Toolchain: removed the background tool _dastworx_ and replaced it with a library called _libdexed-d_.
-- Toolchain: ddemangle is not required anymore, demangling D names is nopw done in _libdexed-d_.
+- Toolchain: ddemangle is not required anymore, demangling D names is now done in _libdexed-d_.
 
 # v3.8.4
 

@@ -2042,7 +2042,7 @@ begin
         if svo.valid and sva.valid and (svo > sva) then
           result := url
         else
-          dlgOkInfo('No new release available');
+          dlgOkInfo('No new version available');
       end;
     finally
       dat.free;
@@ -2088,7 +2088,7 @@ begin
     url := checkForUpdate;
     if url <> '' then
     begin
-      if dlgYesNo('An new version is available, do you wish to visit the release page ?' +
+      if dlgYesNo('A new version is available, do you wish to visit the release page ?' +
         lineEnding + '(' + url +')') = mrYes then
           OpenURL(url);
     end;
