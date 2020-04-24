@@ -549,7 +549,7 @@
         <PackageName Value="LCL"/>
       </Item8>
     </RequiredPackages>
-    <Units Count="60">
+    <Units Count="61">
       <Unit0>
         <Filename Value="dexed.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -865,6 +865,10 @@
         <Filename Value="..\src\u_simpleget.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit59>
+      <Unit60>
+        <Filename Value="..\src\u_dexed_d.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit60>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

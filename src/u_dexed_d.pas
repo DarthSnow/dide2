@@ -39,26 +39,36 @@ type
   // Give a view on D `char[][]`
   TDStrings = specialize TDArray<TDString>;
 
+{$IFDEF POSIX}
+const
+  libdexedd_name = 'libdexed-d';
+{$ENDIF}
+{$IFDEF WINDOWS}
+const
+  libdexedd_name = 'dexed-d';
+{$ENDIF}
+
+
 // Necessary to start the GC, run the static constructors, etc
-procedure rt_init(); cdecl; external 'libdexed-d';
+procedure rt_init(); cdecl; external libdexedd_name;
 // Cleanup
-procedure rt_term(); cdecl; external 'libdexed-d';
+procedure rt_term(); cdecl; external libdexedd_name;
 // Demangle a line possibly containing a D mangled name.
-function ddemangle(const text: PChar): PChar; cdecl; external 'libdexed-d';
+function ddemangle(const text: PChar): PChar; cdecl; external libdexedd_name;
 // Detects wether the source code for the module `src` contains the main() function.
-function hasMainFun(const src: PChar): Boolean; cdecl; external 'libdexed-d';
+function hasMainFun(const src: PChar): Boolean; cdecl; external libdexedd_name;
 // Returns the DDOC template for the declaration location at `caretLine` in the source code `src`.
-function ddocTemplate(const src: PChar; caretLine: integer; plusComment: Boolean): PChar; cdecl; external 'libdexed-d';
+function ddocTemplate(const src: PChar; caretLine: integer; plusComment: Boolean): PChar; cdecl; external libdexedd_name;
 // List the imports of the module represented by `src`.
-function listImports(const src: PChar): TDStrings; cdecl; external 'libdexed-d';
+function listImports(const src: PChar): TDStrings; cdecl; external libdexedd_name;
 // List the imports of the modules located in `files` (list of files joined with pathseparaotr and null terminated)
-function listFilesImports(const files: PChar): TDStrings; cdecl; external 'libdexed-d';
+function listFilesImports(const files: PChar): TDStrings; cdecl; external libdexedd_name;
 // Get the variables necessary to compute the Halstead metrics of the functions within a module.
-function halsteadMetrics(const src: PChar): PChar; cdecl; external 'libdexed-d';
+function halsteadMetrics(const src: PChar): PChar; cdecl; external libdexedd_name;
 // Get the list of declarations within a module.
-function listSymbols(const src: PChar; deep: Boolean): PChar; cdecl; external 'libdexed-d';
+function listSymbols(const src: PChar; deep: Boolean): PChar; cdecl; external libdexedd_name;
 // Get the TODO items located in `files` (list of files joined with pathseparaotr and null terminated)
-function todoItems(joinedFiles: PChar): PChar; cdecl; external 'libdexed-d';
+function todoItems(joinedFiles: PChar): PChar; cdecl; external libdexedd_name;
 
 (**
  * Gets the module name and the imports of the source code located in
