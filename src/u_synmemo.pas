@@ -3809,11 +3809,13 @@ begin
           begin
             forceIndentation(imTabs, TMixedIndentationDialog.fSpacesPerTab);
             Options:= Options - [eoTabsToSpaces];
+            Options:= Options + [eoSpacesToTabs];
           end;
           11:
           begin
             forceIndentation(imSpaces, TMixedIndentationDialog.fSpacesPerTab);
             Options:= Options + [eoTabsToSpaces];
+            Options:= Options - [eoSpacesToTabs];
           end;
         end;
         finally
