@@ -108,7 +108,7 @@ struct Formater
 static immutable string exePath, datPath, shortCutPath;
 version(linux) immutable string asSu;
 
-static this()
+shared static this()
 {
     version(Windows)
     { 

@@ -42,6 +42,7 @@ echo "building dcd..."
 if [ ! -d dcd ]; then
     git clone https://github.com/dlang-community/dcd.git
     cd dcd
+    git submodule update --init
 else
     cd dcd
     git pull
@@ -50,8 +51,7 @@ git fetch --tags
 if [ ! -z "$dcd_ver" ]; then
     git checkout $dcd_ver
 fi
-dub build --build=release --config=client --compiler=$DC
-dub build --build=release --config=server --compiler=$DC
+make ldc
 echo "...done"
 cd ..
 
@@ -60,6 +60,7 @@ echo "building dscanner..."
 if [ ! -d d-scanner ]; then
     git clone https://github.com/dlang-community/d-scanner.git
     cd d-scanner
+    git submodule update --init
 else
     cd d-scanner
     git pull
@@ -68,7 +69,7 @@ git fetch --tags
 if [ ! -z "$dscanner_ver" ]; then
     git checkout $dscanner_ver
 fi
-dub build --build=release --compiler=$DC
+make ldc
 echo "...done"
 cd ..
 

@@ -34,12 +34,14 @@ fi
 
 name_and_ver=dexed-$maj.$min.$pch-$lbl.$arch
 buildroot=$HOME/rpmbuild/BUILDROOT/$name_and_ver
+buildspec=$HOME/rpmbuild/SPECS
 bindir=$buildroot/usr/bin
 pixdir=$buildroot/usr/share/pixmaps
 shcdir=$buildroot/usr/share/applications
 libdir=$buildroot/usr/lib64
 
 mkdir -p $buildroot
+mkdir -p $buildspec
 mkdir -p $bindir
 mkdir -p $pixdir
 mkdir -p $shcdir
@@ -66,7 +68,7 @@ Version: $maj.$min.$pch
 Release: $lbl
 Summary: IDE for the D programming language
 License: Boost
-URL: www.github.com/Basile-z/dexed
+URL: gitlab.com/basile.b/dexed
 Requires: gtk2, glibc, cairo, libX11, vte
 
 %description
@@ -80,7 +82,7 @@ Dexed is an IDE for the DMD D compiler.
 
 %changelog
 * $dte Basile Burg b2.temp@gmx.com
-- see https://github.com/Basile-z/dexed/releases/tag/$ver
+- see https://gitlab.com/basile.b/dexed/-/blame/master/setup/rpm.sh
 ">$specname
 
 rpmbuild -ba $specname --define "_rpmdir /$cp_trgt"

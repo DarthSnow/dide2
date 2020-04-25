@@ -1,12 +1,12 @@
-# v3.9.0-dev
+# v3.9.0
 
 ## Enhancements
 
-- D highlighter: added suport for HEREDOC strings literal of type `q"()"` `q"[]"`, `q"<>"` and `q"{}"`. Support for HEREDOC strings literal based on a custom identifier wont be added as they might be removed as per DIP 1026.
+- D highlighter: added suport for HEREDOC string literald of type `q"()"` `q"[]"`, `q"<>"` and `q"{}"`. Support for HEREDOC based on a custom delimiter wont be added as they might be removed as per DIP 1026.
 - Docking: added a dialog to remind that docking is locked in certain scenarios. (#30)
-- Editor: set the option to detect the indentation mode on by default, to prevent mixed indentation style.
-- Editor: a fourth button in the diff dialog allows to reload but without preserving the undo history, which is better to navigate using _go to next changed area_ and _go to prev changed area_.
-- Search Replace: the result of _FindAll_ when the string to seach is a regular expression are highlighted. (#14)
+- Editor: the option to detect the indentation is activated by default, to prevent mixed indentation style.
+- Editor: a fourth button in the diff dialog allows to reload but without preserving the undo history, which is better when using _go to next changed area_ and _go to prev changed area_ to navigate in the editor.
+- Search Replace: the result of _FindAll_ when the string to search is not a trivial regular expression are also highlighted. (#14)
 - TODO list: a new option, _disableIfMoreFilesThan_, allows to disable auto refreshing of the list could be slow when the current project is huge.
 
 ## Bugs fixed
@@ -15,12 +15,12 @@
 - DUB projects: dependencies specified with _path_ are recognized when their sources are in a sub folder taking as name the package name. (#29)
 - DUB runnables: document specific messages were not cleared between two calls to "Run DUB single file package". (#27)
 - Editor: case where brace auto close is triggered while in comment. (#31)
-- Editor: prevent unexpected validation of properties in certain cases, such as `a.map` giving `a.mangleof` after `!`.
+- Editor: prevent unexpected validation of properties in certain cases, such as `a.map` giving `a.mangleof!` after `!`.
 
 ## Other
 
-- Toolchain: removed the background tool _dastworx_ and replaced it with a library called _libdexed-d_.
-- Toolchain: ddemangle is not required anymore, demangling D names is now done in _libdexed-d_.
+- Toolchain: removed the background tool _dastworx_ and replaced it with a statically linked shared library called _libdexed-d_.
+- Toolchain: ddemangle is not required anymore, demangling of D names now happens in _libdexed-d_.
 
 # v3.8.4
 
