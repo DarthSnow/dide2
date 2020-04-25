@@ -54,7 +54,7 @@ type
 
   TIdentifierMatchOptions = set of TIdentifierMatchOption;
 
-  // Simple THintWindow descendant allowing the font size to be in sync with the editor.
+  // Simple THintWindow derived that keep its font size in sync with the editor.
   TEditorHintWindow = class(THintWindow)
   public
     class var FontSize: Integer;
@@ -70,7 +70,7 @@ type
   public
     // like ActivateHint(string) but
     // prevent overzealous opimizations that prevent flickering
-    // that become a problem when the hint string is dynamic.
+    // but that become a problem when the hint string is dynamic.
     procedure ActivateDynamicHint(const AHint: String);
     function CalcHintRect(MaxWidth: Integer; const AHint: string; AData: Pointer): TRect; override;
     procedure Paint; override;
@@ -89,7 +89,7 @@ type
     property nestedIndex: Integer read fNestedIndex write fNestedIndex;
   end;
 
-  // Stores the state of a document between two cessions.
+  // Stores the state of a document between two sessions.
   TSynMemoCache = class(TWritableLfmTextComponent)
   private
     fMemo: TDexedMemo;
@@ -3233,7 +3233,7 @@ end;
 
 procedure TDexedMemo.highlightCurrentIdentifier;
 var
-  str: string;
+  s: string;
   i: integer;
 begin
   fIdentifier := GetWordAtRowCol(LogicalCaretXY);
@@ -3241,15 +3241,15 @@ begin
     SetHighlightSearch(fIdentifier, fMatchIdentOpts)
   else if SelAvail and (BlockBegin.Y = BlockEnd.Y) then
   begin
-    str := SelText;
-    for i := 1 to str.length do
+    s := SelText;
+    for i := 1 to s.length do
     begin
-      if not (str[i] in [' ', #10, #13]) then
+      if not (s[i] in [' ', #9, #10, #13]) then
       begin
-        SetHighlightSearch(str, fMatchSelectionOpts);
+        SetHighlightSearch(s, fMatchSelectionOpts);
         break;
       end;
-      if i = str.length then
+      if i = s.length then
         SetHighlightSearch('', []);
     end;
   end
@@ -3876,8 +3876,6 @@ procedure TDexedMemo.showHintEvent(Sender: TObject; HintInfo: PHintInfo);
 var
   p: TPoint;
 begin
-  //if cursor <> crDefault then
-  //  exit;
   p := ScreenToClient(mouse.CursorPos);
   if p.x > Gutter.MarksPart.Width then
     exit;
