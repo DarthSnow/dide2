@@ -515,7 +515,7 @@ end;
 procedure TEditorWidget.docFocused(document: TDexedMemo);
 begin
   if fDoc.isNotNil and pageControl.currentPage.isNotNil and
-    (pageControl.currentPage.Caption = '<new document>') then
+    (pageControl.currentPage.Caption = newdocPageCaption) then
       updatePageCaption(pageControl.currentPage);
   if document = fDoc then
     exit;
@@ -652,7 +652,7 @@ end;
 procedure TEditorWidget.pageBtnAddCLick(Sender: TObject);
 begin
   TDexedMemo.Create(nil);
-  pageControl.currentPage.Caption:='<new document>';
+  pageControl.currentPage.Caption := newdocPageCaption;
 end;
 
 procedure TEditorWidget.setDetectModuleName(value: boolean);
@@ -675,7 +675,7 @@ begin
   fDoc.hideCallTips;
   fDoc.hideDDocs;
   if (pageControl.currentPage.Caption = '') or
-    (pageControl.currentPage.Caption ='<new document>') then
+    (pageControl.currentPage.Caption = newdocPageCaption) then
   begin
     fKeyChanged := true;
     beginDelayedUpdate;
@@ -842,7 +842,7 @@ end;
 
 procedure TEditorWidget.updatePageCaption(page: TDexedPage);
 var
-  txt: string = '<new document>';
+  txt: string = newdocPageCaption;
   dc1: TDexedMemo = nil;
   dc2: TDexedMemo = nil;
 begin

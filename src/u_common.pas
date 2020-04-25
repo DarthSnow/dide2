@@ -337,6 +337,10 @@ var
   // terminal used under posix
   consoleProgram: string;
 
+const
+  // used as page caption and filename when a doc has never been saved
+  newdocPageCaption = '<new document>';
+
 
 implementation
 

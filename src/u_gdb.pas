@@ -1525,7 +1525,7 @@ begin
   fDoc := document;
   if fGdbState = gsNone then
     updateDebugeeOptionsEditor;
-  if (fDoc.fileName <> '<new document>') then
+  if (fDoc.fileName <> newdocPageCaption) then
   begin
     fSynchronizingBreakpoints:= true;
     if fSynchronizedDocuments.IndexOf(document.fileName) = -1 then

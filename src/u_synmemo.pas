@@ -1147,7 +1147,7 @@ begin
   Highlighter := fD2Highlighter;
 
   fTempFileName := GetTempDir(false) + 'temp_' + uniqueObjStr(self) + '.d';
-  fFilename := '<new document>';
+  fFilename := newdocPageCaption;
   fModified := false;
   TextBuffer.AddNotifyHandler(senrUndoRedoAdded, @changeNotify);
 
@@ -3138,7 +3138,7 @@ begin
     if fFilename.length > 0 then
       result := fFilename.extractFileName
     else
-      result := '<new document>';
+      result := newdocPageCaption;
   end;
 end;
 
@@ -3437,7 +3437,7 @@ begin
   if fDiffDialogWillClose or fDisableFileDateCheck then
     exit;
   if fFilename.isNotEmpty and not fFilename.fileExists and
-    (fFilename <> '<new document>') then
+    (fFilename <> newdocPageCaption) then
   begin
     // cant use a dialog: dialog closed -> doc focused -> warn again, etc
     getMessageDisplay.message(fFilename + ' does not exist anymore', self, amcEdit, amkWarn);
