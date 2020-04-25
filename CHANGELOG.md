@@ -15,6 +15,7 @@
 - DUB projects: dependencies specified with _path_ are recognized when their sources are in a sub folder taking as name the package name. (#29)
 - DUB runnables: document specific messages were not cleared between two calls to "Run DUB single file package". (#27)
 - Editor: case where brace auto close is triggered while in comment. (#31)
+- Editor: prevent unexpected validation of properties in certain cases, such as `a.map` giving `a.mangleof` after `!`.
 
 ## Other
 

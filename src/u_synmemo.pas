@@ -278,6 +278,7 @@ type
     procedure completionDeleteKey(sender: TObject);
     procedure getCompletionList;
     procedure completionFormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure completionFormUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
     function completionItemPaint(const AKey: string; ACanvas: TCanvas;X, Y: integer;
       Selected: boolean; Index: integer): boolean;
     procedure completionCodeCompletion(var value: string; SourceValue: string;
@@ -1125,7 +1126,8 @@ begin
   fCompletion.OnCodeCompletion:=@completionCodeCompletion;
   fCompletion.OnPaintItem:= @completionItemPaint;
   fCompletion.OnKeyDelete:= @completionDeleteKey;
-  fCompletion.TheForm.OnKeyDown:= @completionFormKeyDown;
+  fCompletion.OnKeyDown:= @completionFormKeyDown;
+  fCompletion.OnUTF8KeyPress:= @completionFormUTF8KeyPress;
   fCompletion.CaseSensitive:=true;
   TStringList(fCompletion.ItemList).CaseSensitive:=true;
   fCompletion.LongLineHintType:=sclpNone;
@@ -2828,7 +2830,6 @@ begin
     // these "stinky" lines are necessary because
     // the proc is called before deletion is effective
     // i.e the deleted char is still there...
-    // related issues #400 and #398
     caretX := caretX - 1;
     ExecuteCommand(ecDeleteChar, #0, nil);
     caretX := caretX + 1;
@@ -2890,6 +2891,21 @@ procedure TDexedMemo.completionFormKeyDown(Sender: TObject; var Key: Word; Shift
 begin
   if char(key) = #9 then
     key := 13;
+end;
+
+procedure TDexedMemo.completionFormUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
+const
+  s: string = '!()[],<>=+-/*%^|&@;?:{}~';
+var
+  c: char;
+begin
+  for c in s do
+    if UTF8Key = c then
+  begin
+    UTF8Key := #0;
+    fCompletion.AddCharAtCursor(c);
+    break;
+  end
 end;
 
 function TDexedMemo.completionItemPaint(const AKey: string; ACanvas: TCanvas;X, Y: integer;
