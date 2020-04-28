@@ -17,7 +17,7 @@ cfgdir=$basdir/DEBIAN
 bindir=$basdir/usr/bin
 pixdir=$basdir/usr/share/pixmaps
 shcdir=$basdir/usr/share/applications
-libdir=$basdir/usr/lib64
+libdir=$basdir/usr/lib
 
 mkdir -p $basdir
 mkdir -p $cfgdir
