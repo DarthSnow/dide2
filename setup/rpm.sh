@@ -69,10 +69,12 @@ Release: $lbl
 Summary: IDE for the D programming language
 License: Boost
 URL: gitlab.com/basile.b/dexed
-Requires: gtk2, glibc, cairo, libX11, vte
+Requires: gtk2, glibc, cairo, libX11, vte, libcurl
 
 %description
 Dexed is an IDE for the DMD D compiler.
+
+%define __requires_exclude libcurl.so.4
 
 %files
 /usr/bin/dexed
