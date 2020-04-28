@@ -1,9 +1,14 @@
-# v3.9.1-dev
+# v3.9.1
 
 ## Bugs fixed
 
 - Other: Sigsegv upon starting dexed. (#33)
 - Other: the setting files could be corrupted when values contained mutli-bytes UTF-8 characters. (#19)
+- installers: fix the _rpm_ package since it required a dependency specific to the gitlab runner used to release.
+
+## Other
+
+- installers: adjusted the _.deb_ package to make it compatible with both Debian and Ubuntu. (#33) 
 
 # v3.9.0
 
