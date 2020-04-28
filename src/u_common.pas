@@ -617,7 +617,7 @@ begin
   try
     str1.WriteComponent(value);
     str1.Position := 0;
-    ObjectBinaryToText(str1,str2);
+    ObjectBinaryToText(str1, str2, oteLFM);
     ForceDirectories(fname.extractFilePath);
     str2.SaveToFile(fname);
   finally
