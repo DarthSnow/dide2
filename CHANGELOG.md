@@ -1,3 +1,10 @@
+# v3.9.1-dev
+
+## Bugs fixed
+
+- Other: Sigsegv upon starting dexed. (#33)
+- Other: the setting files could be corrupted when values contained mutli-bytes UTF-8 characters. (#19)
+
 # v3.9.0
 
 ## Enhancements

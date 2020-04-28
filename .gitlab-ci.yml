@@ -21,10 +21,18 @@ release:
     GIT_SUBMODULE_STRATEGY: normal
   before_script:
   - apt-get update -y
+  # deps, packaging tools
   - apt-get install -y rpm
   - apt-get install -y git
   - apt-get install -y zip
   - apt-get install -y libcurl4-openssl-dev
+  # gitlab Ubuntu-based runners default to LD gold
+  # but linking lazarus programs requires LD bfd.
+  - update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 20
+  - update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.gold" 10
+  - update-alternatives --config ld
+  - ld --version
+  # lazarus
   - curl -JLO https://sourceforge.net/projects/lazarus/files/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.0.8/fpc-laz_3.0.4-1_amd64.deb/download && apt install -y ./fpc-laz_3.0.4-1_amd64.deb
   - curl -JLO https://sourceforge.net/projects/lazarus/files/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.0.8/fpc-src_3.0.4-2_amd64.deb/download && apt install -y ./fpc-src_3.0.4-2_amd64.deb
   - curl -JLO https://sourceforge.net/projects/lazarus/files/Lazarus%20Linux%20amd64%20DEB/Lazarus%202.0.8/lazarus-project_2.0.8-0_amd64.deb/download && apt install -y ./lazarus-project_2.0.8-0_amd64.deb
