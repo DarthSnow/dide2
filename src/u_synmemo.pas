@@ -3449,6 +3449,7 @@ var
   curMd5  : TMDDigest;
   str     : TStringList;
   newTxt  : string;
+  p       : TPoint;
 begin
   if fDiffDialogWillClose or fDisableFileDateCheck then
     exit;
@@ -3488,9 +3489,11 @@ begin
           end;
           mrAll:
           begin
+            p         := self.CaretXY;
             fModified := false;
-            text      := newTxt;
+            self.text := newTxt;
             fFileDate := newDate;
+            CaretXY   := p;
           end;
           mrIgnore:
           begin

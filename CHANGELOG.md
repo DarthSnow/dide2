@@ -1,3 +1,9 @@
+# v3.9.2-dev
+
+## Bugs fixed
+
+- Editor, Diff: the button used to "reload from disk and reset the history" didn't work.
+
 # v3.9.1
 
 ## Bugs fixed
