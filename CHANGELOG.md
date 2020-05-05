@@ -1,5 +1,11 @@
 # v3.9.2-dev
 
+## Regressions
+
+- Symbol list: performance regression, async behavior is now emulated with threads. (#35)
+- Todolist: performance regression, async behavior is now emulated with threads. (#35)
+- Todolist: small non growing leak introduced in v3.9.0
+
 ## Bugs fixed
 
 - Editor, Diff: the button used to "reload from disk and reset the history" didn't work.

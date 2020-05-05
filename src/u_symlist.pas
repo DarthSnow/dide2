@@ -138,13 +138,14 @@ type
     fAutoExpandErrors: boolean;
     fSortSymbols: boolean;
     fSmartExpander: boolean;
-    fTreeDataToThread: string;
+    fSourcecodeForThread: string;
     fTreeDataFromThread: string;
+    fLockThreadedParsing: boolean;
     ndAlias, ndClass, ndEnum, ndFunc, ndUni: TTreeNode;
     ndImp, ndIntf, ndMix, ndStruct, ndTmp: TTreeNode;
     ndVar, ndWarn, ndErr, ndUt: TTreeNode;
-    procedure getTreeDataInThread;
-    procedure gotTreeDataFromThread(sender: TObject);
+    procedure threadedParsing;
+    procedure threadedParsingFinished(sender: TObject);
     procedure TreeDblClick(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
     procedure actAutoRefreshExecute(Sender: TObject);
@@ -733,6 +734,8 @@ end;
 
 procedure TSymbolListWidget.getSymbols;
 begin
+  if fLockThreadedParsing then
+    exit;
   if fDoc.isNil then
     exit;
   if (fDoc.Lines.Count = 0) or not fDoc.isDSource then
@@ -741,16 +744,17 @@ begin
     updateVisibleCat;
     exit;
   end;
-  fTreeDataToThread := fDoc.Lines.Text;
-  TTHread.ExecuteInThread(@getTreeDataInThread, @gotTreeDataFromThread);
+  fSourcecodeForThread := fDoc.Lines.Text;
+  fLockThreadedParsing := true;
+  TTHread.ExecuteInThread(@threadedParsing, @threadedParsingFinished);
 end;
 
-procedure TSymbolListWidget.getTreeDataInThread;
+procedure TSymbolListWidget.threadedParsing;
 begin
-  fTreeDataFromThread := listSymbols(PChar(fTreeDataToThread), fDeep);
+  fTreeDataFromThread := listSymbols(PChar(fSourcecodeForThread), fDeep);
 end;
 
-procedure TSymbolListWidget.gotTreeDataFromThread(sender: TObject);
+procedure TSymbolListWidget.threadedParsingFinished(sender: TObject);
 
   function getCatNode(node: TTreeNode; stype: TSymbolType ): TTreeNode;
     function newCat(const aCat: string): TTreeNode;
@@ -832,11 +836,11 @@ procedure TSymbolListWidget.gotTreeDataFromThread(sender: TObject);
   end;
 
 var
-  s: string;
   i: Integer;
   f: string;
   n: TTreeNode;
 begin
+  fLockThreadedParsing := false;
   if fDoc.isNil then
     exit;
 

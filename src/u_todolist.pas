@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, ListFilterEdit, Forms, Controls,
   strutils, Graphics, Dialogs, ExtCtrls, Menus, Buttons, ComCtrls,
+  syncobjs,
   u_widget, process, u_common, u_interfaces, u_synmemo, u_processes,
   u_writableComponent, u_observer, u_sharedres, u_dexed_d,
   u_dsgncontrols;
@@ -88,6 +89,9 @@ type
     procedure mnuAutoRefreshClick(Sender: TObject);
     procedure toolbarResize(Sender: TObject);
   private
+    fFileListForThread: string;
+    fSerializedTodoItemFromThread: string;
+    fLockItemsScanning: boolean;
     fAutoRefresh: Boolean;
     fSingleClick: Boolean;
     fColumns: TTodoColumns;
@@ -95,8 +99,6 @@ type
     fDoc: TDexedMemo;
     fTodos: TTodoItems;
     fOptions: TTodoOptions;
-    fTodoItemsDataFromThread: string;
-    fTodoItemsresultFromThread: string;
     // IDocumentObserver
     procedure docNew(document: TDexedMemo);
     procedure docFocused(document: TDexedMemo);
@@ -118,8 +120,8 @@ type
     // TODOlist things
     function getContext: TTodoContext;
     procedure scanTodoItems(autoRefreshed: boolean);
-    procedure scanTodoInThread;
-    procedure scannedTodoInThread(Sender : TObject);
+    procedure threadedScanning;
+    procedure threadedScanningFinished(Sender : TObject);
     procedure clearTodoList;
     procedure fillTodoList;
     procedure lstItemsColumnClick(Sender: TObject; Column: TListColumn);
@@ -418,16 +420,19 @@ end;
 
 procedure TTodoListWidget.scanTodoItems(autoRefreshed: boolean);
 var
-  ctxt: TTodoContext;
-  i,j: integer;
-  nme: string;
-  str: string = '';
-  txt: TMemoryStream;
+  c: TTodoContext;
+  i: integer;
+  j: integer;
+  n: string;
 begin
+  if fLockItemsScanning then
+    exit;
+
+  fFileListForThread := '';
   clearTodoList;
 
-  ctxt := getContext;
-  case ctxt of
+  c := getContext;
+  case c of
     tcNone: exit;
     tcProject: if (fProj = nil) or (fProj.sourcesCount = 0) then
       exit;
@@ -435,50 +440,51 @@ begin
       exit;
   end;
 
-  if ctxt = tcProject then
+  if c = tcProject then
   begin
-    i := 0;
     j := fProj.sourcesCount-1;
     if autoRefreshed and (j > fOptions.disableIfMoreFilesThan) then
       exit;
     for i := 0 to j do
     begin
-      nme := fProj.sourceAbsolute(i);
-      if not hasDlangSyntax(nme.extractFileExt) then
+      n := fProj.sourceAbsolute(i);
+      if not hasDlangSyntax(n.extractFileExt) then
         continue;
-      str += nme;
+      if not n.fileExists then
+        continue;
+      fFileListForThread += n;
       if i <> j then
-        str += PathSeparator;
+        fFileListForThread += PathSeparator;
     end;
   end
   else if fDoc.fileName <> newdocPageCaption then
   begin
-    str := fDoc.fileName;
+    fFileListForThread := fDoc.fileName;
   end;
 
-  if str.isNotEmpty then
+  if fFileListForThread.isNotEmpty then
   begin
-    fTodoItemsDataFromThread := str;
-    TThread.ExecuteInThread(@scanTodoInThread, @scannedTodoInThread);
+    fLockItemsScanning := true;
+    TThread.ExecuteInThread(@threadedScanning, @threadedScanningFinished);
   end;
 
 end;
 
-procedure TTodoListWidget.scanTodoInThread;
+procedure TTodoListWidget.threadedScanning;
 begin
-  fTodoItemsResultFromThread := todoItems(PChar(fTodoItemsDataFromThread));
+  fSerializedTodoItemFromThread := todoItems(PChar(fFileListForThread));
 end;
 
-procedure TTodoListWidget.scannedTodoInThread(Sender : TObject);
+procedure TTodoListWidget.threadedScanningFinished(Sender : TObject);
 var
   txt: TmemoryStream;
 begin
-  if fTodoItemsResultFromThread.length < 10 then
+  if fSerializedTodoItemFromThread.length < 10 then
     exit;
   txt := TMemoryStream.create;
   try
-    txt.Write(fTodoItemsResultFromThread[1], fTodoItemsResultFromThread.length);
-    txt.Position:=0;
+    txt.Write(fSerializedTodoItemFromThread[1], fSerializedTodoItemFromThread.length);
+    txt.Position := 0;
     fTodos.loadFromTxtStream(txt);
     fillTodoList;
   finally
@@ -542,6 +548,7 @@ begin
       lstItems.Column[4].Visible := True;
   end;
   lstItems.EndUpdate;
+  fLockItemsScanning := false;
 end;
 
 procedure TTodoListWidget.handleListClick(Sender: TObject);
