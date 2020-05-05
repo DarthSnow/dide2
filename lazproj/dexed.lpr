@@ -3,9 +3,9 @@ program dexed;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  {$IFDEF UNIX}//{$IFDEF UseCThreads}
   cthreads,
-  {$ENDIF}{$ENDIF}
+  {$ENDIF}//{$ENDIF}
   Interfaces, Forms, lazcontrols, runtimetypeinfocontrols, anchordockpkg,
   tachartlazaruspkg, u_sharedres, u_dexed_d, u_observer, u_libman,
   u_symstring, u_tools, u_dcd, u_main, u_writableComponent,
