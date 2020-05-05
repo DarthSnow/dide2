@@ -95,6 +95,8 @@ type
     fDoc: TDexedMemo;
     fTodos: TTodoItems;
     fOptions: TTodoOptions;
+    fTodoItemsDataFromThread: string;
+    fTodoItemsresultFromThread: string;
     // IDocumentObserver
     procedure docNew(document: TDexedMemo);
     procedure docFocused(document: TDexedMemo);
@@ -116,6 +118,8 @@ type
     // TODOlist things
     function getContext: TTodoContext;
     procedure scanTodoItems(autoRefreshed: boolean);
+    procedure scanTodoInThread;
+    procedure scannedTodoInThread(Sender : TObject);
     procedure clearTodoList;
     procedure fillTodoList;
     procedure lstItemsColumnClick(Sender: TObject; Column: TListColumn);
@@ -446,14 +450,33 @@ begin
         str += PathSeparator;
     end;
   end
-  else str := fDoc.fileName;
+  else if fDoc.fileName <> newdocPageCaption then
+  begin
+    str := fDoc.fileName;
+  end;
 
-  str := todoItems(PChar(str));
-  if str.length < 10 then
+  if str.isNotEmpty then
+  begin
+    fTodoItemsDataFromThread := str;
+    TThread.ExecuteInThread(@scanTodoInThread, @scannedTodoInThread);
+  end;
+
+end;
+
+procedure TTodoListWidget.scanTodoInThread;
+begin
+  fTodoItemsResultFromThread := todoItems(PChar(fTodoItemsDataFromThread));
+end;
+
+procedure TTodoListWidget.scannedTodoInThread(Sender : TObject);
+var
+  txt: TmemoryStream;
+begin
+  if fTodoItemsResultFromThread.length < 10 then
     exit;
   txt := TMemoryStream.create;
   try
-    txt.Write(str[1], str.length);
+    txt.Write(fTodoItemsResultFromThread[1], fTodoItemsResultFromThread.length);
     txt.Position:=0;
     fTodos.loadFromTxtStream(txt);
     fillTodoList;

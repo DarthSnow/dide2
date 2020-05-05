@@ -138,9 +138,13 @@ type
     fAutoExpandErrors: boolean;
     fSortSymbols: boolean;
     fSmartExpander: boolean;
+    fTreeDataToThread: string;
+    fTreeDataFromThread: string;
     ndAlias, ndClass, ndEnum, ndFunc, ndUni: TTreeNode;
     ndImp, ndIntf, ndMix, ndStruct, ndTmp: TTreeNode;
     ndVar, ndWarn, ndErr, ndUt: TTreeNode;
+    procedure getTreeDataInThread;
+    procedure gotTreeDataFromThread(sender: TObject);
     procedure TreeDblClick(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
     procedure actAutoRefreshExecute(Sender: TObject);
@@ -728,6 +732,25 @@ begin
 end;
 
 procedure TSymbolListWidget.getSymbols;
+begin
+  if fDoc.isNil then
+    exit;
+  if (fDoc.Lines.Count = 0) or not fDoc.isDSource then
+  begin
+    clearTree;
+    updateVisibleCat;
+    exit;
+  end;
+  fTreeDataToThread := fDoc.Lines.Text;
+  TTHread.ExecuteInThread(@getTreeDataInThread, @gotTreeDataFromThread);
+end;
+
+procedure TSymbolListWidget.getTreeDataInThread;
+begin
+  fTreeDataFromThread := listSymbols(PChar(fTreeDataToThread), fDeep);
+end;
+
+procedure TSymbolListWidget.gotTreeDataFromThread(sender: TObject);
 
   function getCatNode(node: TTreeNode; stype: TSymbolType ): TTreeNode;
     function newCat(const aCat: string): TTreeNode;
@@ -817,21 +840,12 @@ begin
   if fDoc.isNil then
     exit;
 
-  if (fDoc.Lines.Count = 0) or not fDoc.isDSource then
-  begin
-    clearTree;
-    updateVisibleCat;
-    exit;
-  end;
-  s := fDoc.Lines.Text;
-  s := listSymbols(PChar(s), fDeep);
-
-  if s.isEmpty or ndAlias.isNil then
+  if fTreeDataFromThread.isEmpty or ndAlias.isNil then
     exit;
 
   clearTree;
   updateVisibleCat;
-  fSyms.LoadFromString(s);
+  fSyms.LoadFromString(fTreeDataFromThread);
   f := TreeFilterEdit1.Filter;
   TreeFilterEdit1.Text := '';
   tree.BeginUpdate;
