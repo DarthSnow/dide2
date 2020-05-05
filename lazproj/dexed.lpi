@@ -448,7 +448,7 @@
               <Define1 Value="GTK_REMOVE_CLIPBOARD_NULL"/>
             </OtherDefines>
             <ExecuteBefore>
-              <Command Value="bash dside.sh DEBUG"/>
+              <Command Value="dub build --build=debug --compiler=ldc2 --root=..\dexed-d"/>
             </ExecuteBefore>
           </Other>
         </CompilerOptions>
@@ -497,7 +497,7 @@
           <Other>
             <CustomOptions Value="-dDEBUG"/>
             <ExecuteBefore>
-              <Command Value="bash dside.sh"/>
+              <Command Value="dub build --compiler=ldc2 --root=..\dexed-d"/>
             </ExecuteBefore>
           </Other>
         </CompilerOptions>
@@ -917,7 +917,7 @@
         <Define1 Value="GTK_REMOVE_CLIPBOARD_NULL"/>
       </OtherDefines>
       <ExecuteBefore>
-        <Command Value="bash dside.sh RELEASE"/>
+        <Command Value="dub build --build=release --compiler=ldc2 --root=..\dexed-d"/>
       </ExecuteBefore>
     </Other>
   </CompilerOptions>
