@@ -9,6 +9,25 @@ import
 import
     iz.memory;
 
+
+extern(C) void setRtOptions()
+{
+    import core.gc.config : config;
+    config.gc = "precise";
+}
+
+extern(C) void minimizeGcHeap()
+{
+    import core.memory : GC;
+    __gshared ubyte c;
+    if (c++ > 96)
+    {
+        GC.collect();
+        GC.minimize();
+        c = 0;
+    }
+}
+
 enum ErrorType: ubyte
 {
     warning,

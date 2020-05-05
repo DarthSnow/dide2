@@ -489,6 +489,7 @@ begin
     fillTodoList;
   finally
     txt.free;
+    minimizeGcHeap();
   end;
 end;
 

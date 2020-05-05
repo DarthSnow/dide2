@@ -11,14 +11,14 @@ import
 extern(C) const(char)* todoItems(const(char)* joinedFiles)
 {
     scope Appender!string stream;
+    scope LexerConfig config = LexerConfig("", StringBehavior.source);
+    scope StringCache cache = StringCache(4096);
     stream.reserve(32);
     stream.put("object TTodoItems\ritems=<");
     foreach (fname; joinedFilesToFiles(joinedFiles))
     {
         stream.reserve(256);
-        scope LexerConfig config = LexerConfig("", StringBehavior.source);
         scope source = cast(ubyte[]) std.file.read(fname);
-        scope StringCache cache = StringCache(optimalBucketCount(source.length));
         DLexer(source, config, &cache)
             .filter!(a => a.type == tok!"comment")
             .each!(t => analyze(t, fname, stream));

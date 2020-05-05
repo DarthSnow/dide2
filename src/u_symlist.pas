@@ -874,6 +874,7 @@ begin
   tree.EndUpdate;
   if f.isNotEmpty then
     TreeFilterEdit1.Text := f;
+  minimizeGcHeap();
 end;
 
 procedure TSymbolListWidget.smartExpand;

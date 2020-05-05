@@ -49,6 +49,12 @@ const
 {$ENDIF}
 
 
+// Used to release memroy allocated in external D functions that are called in a thread.
+// because managing the GC only work from the main thread.
+// memory is released every 96 calls.
+procedure minimizeGcHeap(); cdecl; external libdexedd_name;
+// Select the precise GC
+procedure setRtOptions(); cdecl; external libdexedd_name;
 // Necessary to start the GC, run the static constructors, etc
 procedure rt_init(); cdecl; external libdexedd_name;
 // Cleanup
@@ -125,6 +131,7 @@ begin
 end;
 
 initialization
+  setRtOptions();
   rt_init();
 finalization
   rt_term();
