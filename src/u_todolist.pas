@@ -265,6 +265,7 @@ end;
 {$REGION IEditableOptions ----------------------------------------------------}
 constructor TTodoOptions.create(AOwner: TComponent);
 begin
+  inherited create(aOwner);
   fdisableIfMoreFilesThan := 25;
 end;
 
