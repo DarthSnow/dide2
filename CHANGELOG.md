@@ -1,4 +1,4 @@
-# v3.9.2-dev
+# v3.9.2
 
 ## Regressions
 
