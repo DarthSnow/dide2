@@ -6,7 +6,7 @@ import
     std.array, std.traits, std.conv, std.json, std.format,
     std.algorithm, std.string;
 import
-    iz.memory: construct, destruct;
+    iz.memory: construct, destruct, MustAddGcRange, TellRangeAdded, NoGc;
 import
     iz.containers : Array;
 import
@@ -34,9 +34,9 @@ extern(C) const(char)* listSymbols(const(char)* src, bool deep)
         errors ~= construct!(AstError)(cast(ErrorType) err, message, line, col);
     }
 
-    LexerConfig config;
-    RollbackAllocator rba;
-    StringCache sCache = StringCache(StringCache.defaultBucketCount);
+    scope LexerConfig config;
+    scope RollbackAllocator rba;
+    scope StringCache sCache = StringCache(StringCache.defaultBucketCount);
 
     scope mod = src[0 .. src.strlen]
                 .getTokensForParser(config, &sCache)
@@ -44,10 +44,17 @@ extern(C) const(char)* listSymbols(const(char)* src, bool deep)
 
     alias SL = SymbolListBuilder!(ListFmt.Pas);
     SL sl = construct!(SL)(errors, deep);
-    scope(exit) destruct(sl);
+    scope(exit)
+    {
+        destruct(sl);
+        destroy(errors);
+        destroy(sCache);
+        destroy(rba);
+    }
 
     sl.visit(mod);
-    return sl.serialize();
+    const(char)* result = sl.serialize();
+    return result;
 }
 
 private:
@@ -87,13 +94,15 @@ string makeSymbolTypeArray()
 
 mixin(makeSymbolTypeArray);
 
-final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
+static assert (!MustAddGcRange!(SymbolListBuilder!(ListFmt.Pas)));
+
+@TellRangeAdded final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
 {
     private immutable bool _deep;
 
     static if (Fmt == ListFmt.Pas)
     {
-        Appender!(char[]) pasStream;
+        Array!char pasStream;
     }
     else
     {
@@ -108,7 +117,6 @@ final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
     this(Appender!(AstErrors) errors, bool deep)
     {
         _deep = deep;
-        funcNameApp.length = 0;
         static if (Fmt == ListFmt.Pas)
         {
             pasStream.put("object TSymbolList\rsymbols=<");
@@ -120,6 +128,16 @@ final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
         }
         fmtVisitor = construct!(typeof(fmtVisitor))(&funcNameApp);
         addAstErrors(errors.data);
+    }
+
+    ~this()
+    {
+        destruct(funcNameApp);
+        destruct(fmtVisitor);
+        static if (Fmt == ListFmt.Pas)
+        {
+            destruct(pasStream);
+        }
     }
 
     alias visit = ASTVisitor.visit;
@@ -156,8 +174,8 @@ final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
     {
         static if (Fmt == ListFmt.Pas)
         {
-            pasStream.put(">\rend");
-            return pasStream.data.toStringz;
+            pasStream.put(">\rend\0");
+            return cast(typeof(return))pasStream[].dup.ptr;
         }
         else
         {
@@ -419,8 +437,21 @@ final class SymbolListBuilder(ListFmt Fmt): ASTVisitor
         otherVisitorImpl(decl, SymbolType._function, "shared static dtor", decl.line, decl.column);
     }
 
-    override void visit(const Expression){}
-    override void visit(const ExpressionNode){}
-    override void visit(const ExpressionStatement){}
+    override void visit(const Expression)           {}
+    override void visit(const ExpressionNode)       {}
+    override void visit(const ExpressionStatement)  {}
+    override void visit(const PragmaStatement)      {}
+    override void visit(const Initializer)          {}
+    override void visit(const FunctionContract)     {}
+    override void visit(const AsmStatement)         {}
+    override void visit(const ReturnStatement)      {}
+    override void visit(const BreakStatement)       {}
+    override void visit(const ContinueStatement)    {}
+    override void visit(const GotoStatement)        {}
+    override void visit(const MixinDeclaration)     {}
+    override void visit(const Type)                 {}
+    override void visit(const Type2)                {}
+    override void visit(const StaticAssertStatement){}
+    override void visit(const StaticAssertDeclaration){}
 }
 

@@ -12,15 +12,15 @@ import
 
 extern(C) void setRtOptions()
 {
-    import core.gc.config : config;
-    config.gc = "precise";
+    //import core.gc.config : config;
+    //config.gc = "precise";
 }
 
 extern(C) void minimizeGcHeap()
 {
     import core.memory : GC;
     __gshared ubyte c;
-    if (c++ > 96)
+    if (c++ > 32)
     {
         GC.collect();
         GC.minimize();
