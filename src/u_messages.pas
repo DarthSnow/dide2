@@ -114,6 +114,7 @@ type
     fOptionsBackup: TMessagesOptions;
     fBtns: array[TAppMessageCtxt] of TToolButton;
     fFiltering: boolean;
+    fMustScrollToBack: boolean;
     function itemShouldBeVisible(item: TTreeNode; aCtxt: TAppMessageCtxt): boolean;
     procedure filterMessages(aCtxt: TAppMessageCtxt);
     procedure clearOutOfRangeMessg;
@@ -165,6 +166,7 @@ type
     procedure clearbyContext(aCtxt: TAppMessageCtxt);
     procedure clearbyData(data: Pointer);
     procedure scrollToBack;
+    procedure checkIfMustScrollToBack();
   protected
     procedure setToolBarFlat(value: boolean); override;
     procedure updateLoop; override;
@@ -977,6 +979,7 @@ begin
     fBtns[aCtxt].Click;
   if fastDisplay then
     IncLoopUpdate;
+  checkIfMustScrollToBack();
   item := List.Items.AddObject(nil, msg, dt);
   item.ImageIndex := iconIndex(aKind);
   item.SelectedIndex := item.ImageIndex;
@@ -1070,9 +1073,17 @@ begin
   list.EndUpdate;
 end;
 
+procedure TMessagesWidget.checkIfMustScrollToBack();
+var
+  i: TTreeNode;
+begin
+  i := List.BottomItem;
+  fMustScrollToBack := i.isNotNil and i.IsVisible;
+end;
+
 procedure TMessagesWidget.scrollToBack;
 begin
-  if not Visible then
+  if not Visible or not fMustScrollToBack then
     exit;
   if List.BottomItem.isNotNil then
     List.BottomItem.MakeVisible;
