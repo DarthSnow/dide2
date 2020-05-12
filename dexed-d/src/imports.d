@@ -67,7 +67,12 @@ extern(C) string[] listFilesImports(const(char)* joinedFiles)
     LexerConfig config  = LexerConfig("", StringBehavior.source);
     ImportLister il     = construct!(ImportLister)(&result);
 
-    scope(exit) destruct(il);
+    scope(exit)
+    {
+        destruct(il);
+        destroy(sCache);
+        destroy(rba);
+    }
 
     foreach(fname; joinedFilesToFiles(joinedFiles))
     {
@@ -85,11 +90,14 @@ extern(C) string[] listFilesImports(const(char)* joinedFiles)
     return result;
 }
 
+static assert(!MustAddGcRange!ImportLister);
+
+@TellRangeAdded
 private final class ImportLister: ASTVisitor
 {
     alias visit = ASTVisitor.visit;
     size_t mixinDepth;
-    string[]* results;
+    @NoGc string[]* results;
 
     this(string[]* results)
     {

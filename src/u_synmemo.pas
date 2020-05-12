@@ -2406,6 +2406,7 @@ begin
     false:result := mainNo;
     true: result := mainYes;
   end;
+  minimizeGcHeap();
 end;
 
 procedure TDexedMemo.autoClosePair(value: TAutoClosedPair);

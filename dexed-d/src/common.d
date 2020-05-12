@@ -20,7 +20,7 @@ extern(C) void minimizeGcHeap()
 {
     import core.memory : GC;
     __gshared ubyte c;
-    if (c++ > 32)
+    if (c++ > 31)
     {
         GC.collect();
         GC.minimize();

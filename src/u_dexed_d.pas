@@ -48,17 +48,17 @@ const
   libdexedd_name = 'dexed-d';
 {$ENDIF}
 
-
-// Used to release memroy allocated in external D functions that are called in a thread.
-// because managing the GC only work from the main thread.
-// memory is released every 96 calls.
-procedure minimizeGcHeap(); cdecl; external libdexedd_name;
-// Select the precise GC
-procedure setRtOptions(); cdecl; external libdexedd_name;
 // Necessary to start the GC, run the static constructors, etc
 procedure rt_init(); cdecl; external libdexedd_name;
 // Cleanup
 procedure rt_term(); cdecl; external libdexedd_name;
+// Used to release memroy allocated in external D functions that are called in a thread,
+// because managing the GC only works from the main thread.
+// Memory is released every 32 calls.
+// This function must be called from the main thread.
+procedure minimizeGcHeap(); cdecl; external libdexedd_name;
+// noop
+procedure setRtOptions(); cdecl; external libdexedd_name;
 // Demangle a line possibly containing a D mangled name.
 function ddemangle(const text: PChar): PChar; cdecl; external libdexedd_name;
 // Detects wether the source code for the module `src` contains the main() function.
@@ -97,7 +97,6 @@ begin
   result := (fPtr + index)^;
 end;
 
-
 procedure getModuleImports(source, imports: TStrings);
 var
   i: TDStrings;
@@ -112,6 +111,7 @@ begin
     s := e.ptr[0 .. e.length-1];
     imports.Add(s);
   end;
+  minimizeGcHeap();
 end;
 
 procedure getModulesImports(files: string; results: TStrings);
@@ -128,6 +128,7 @@ begin
     s := e.ptr[0 .. e.length-1];
     results.Add(s);
   end;
+  minimizeGcHeap();
 end;
 
 initialization

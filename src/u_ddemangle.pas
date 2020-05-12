@@ -25,6 +25,7 @@ begin
     // note, assign to result has for effect to alloc a FPC string
     // (by implicit convertion) so the D memory is not used.
     result := ddemangle(s);
+    minimizeGcHeap();
   end
   else
     result := value;
