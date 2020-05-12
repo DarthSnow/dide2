@@ -1239,6 +1239,9 @@ var
   i: integer = 0;
   ident: string = '';
   absName: string;
+  nsr: string;
+const
+  nonStandardRoot: array [0..3] of string = ('src', 'source', 'sources', 'import');
 begin
   result := false;
   while (true) do
@@ -1265,14 +1268,24 @@ begin
         getMultiDocHandler.openDocument(ident);
         exit(true);
       end;
-      // if fname relative to project path
       if fProj <> nil then
       begin
+        // if fname relative to project path
         absName := expandFilenameEx(fProj.filename.extractFileDir + DirectorySeparator, ident);
         if absName.fileExists then
         begin
           getMultiDocHandler.openDocument(absName);
           exit(true);
+        end;
+        for nsr in nonStandardRoot do
+        begin
+          // if fname is relative to <project path>/<nsr>
+          absName := expandFilenameEx(fProj.filename.extractFileDir + DirectorySeparator + nsr + DirectorySeparator, ident);
+          if absName.fileExists then
+          begin
+            getMultiDocHandler.openDocument(absName);
+            exit(true);
+          end;
         end;
       end;
       // finally try using pwd ...
