@@ -1,3 +1,14 @@
+# v3.9.3-dev
+
+## Enhancements
+
+- Messages: only auto scroll on new message if the bottom-most message is in view, like in terminal emulators. (#39)
+- Messages: enhanced detection patterns to open a file from a message. The new detections are for messages containing a filename of the project, relative to _src_ or _src_ instead of the project root directory.
+
+## Bugs fixed
+
+- libdexed-d: reduce memory usage caused by D allocations. (#38)
+
 # v3.9.2
 
 ## Regressions
