@@ -3,6 +3,7 @@
 ## Bugs fixed
 
 - Messages: force auto scrolling to bottom once and if the messages context is modified.
+- Terminal: after launcging dexed, the current directory was not constrained even when the settings to follow the current project or document path were activated. (#5)
 
 # v3.9.3
 

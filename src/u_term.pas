@@ -83,6 +83,7 @@ type
     fLastCheckedDirectory: string;
     fDisableScrollBarSync: boolean;
     fNeedApplyChanges: boolean;
+    fPaintOnce: boolean;
     procedure checkDirectory(const dir: string);
     procedure updateScrollBar();
     procedure terminalTextScrolled(sender: TObject; delta: integer);
@@ -311,11 +312,22 @@ begin
 end;
 
 procedure TTermWidget.ContentPaint(Sender: TObject);
+var
+  s: string;
 begin
   if not fNeedApplyChanges then
     exit;
   fNeedApplyChanges:=false;
   fOpts.applyChanges;
+  // ugly fix for https://gitlab.com/basile.b/dexed/-/issues/5
+  if not fPaintOnce then
+  begin
+    s := fLastCheckedDirectory;
+    fLastCheckedDirectory := '';
+    if s.isNotEmpty then
+      checkDirectory(s);
+  end;
+  fPaintOnce := true;
 end;
 
 procedure TTermWidget.terminalTextScrolled(sender: TObject; delta: integer);
