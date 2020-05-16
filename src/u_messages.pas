@@ -115,6 +115,7 @@ type
     fBtns: array[TAppMessageCtxt] of TToolButton;
     fFiltering: boolean;
     fMustScrollToBack: boolean;
+    fJustChangedContext: boolean;
     function itemShouldBeVisible(item: TTreeNode; aCtxt: TAppMessageCtxt): boolean;
     procedure filterMessages(aCtxt: TAppMessageCtxt);
     procedure clearOutOfRangeMessg;
@@ -535,10 +536,12 @@ procedure TMessagesWidget.selCtxtClick(Sender: TObject);
 var
   btn: TToolButton;
   i: Integer;
+  o: TAppMessageCtxt;
 begin
   if sender.isNil then
     exit;
   //
+  o := fCtxt;
   fCtxt := amcAll;
   btn := TToolButton(Sender);
   for i := 0 to toolbar.ButtonCount-1 do
@@ -553,6 +556,8 @@ begin
     fCtxt := amcApp
   else if btn = btnSelMisc then
     fCtxt := amcMisc;
+  if o <> fCtxt then
+    fJustChangedContext := true;
   filterMessages(fCtxt);
 end;
 
@@ -1077,8 +1082,16 @@ procedure TMessagesWidget.checkIfMustScrollToBack();
 var
   i: TTreeNode;
 begin
-  i := List.BottomItem;
-  fMustScrollToBack := i.isNotNil and i.IsVisible;
+  if fJustChangedContext then
+  begin
+    fMustScrollToBack := true;
+    fJustChangedContext := false;
+  end
+  else
+  begin
+    i := List.BottomItem;
+    fMustScrollToBack := i.isNotNil and i.IsVisible;
+  end;
 end;
 
 procedure TMessagesWidget.scrollToBack;

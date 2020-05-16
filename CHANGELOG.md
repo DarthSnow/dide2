@@ -1,3 +1,9 @@
+# v3.9.4-dev
+
+## Bugs fixed
+
+- Messages: force auto scrolling to bottom once and if the messages context is modified.
+
 # v3.9.3
 
 ## Enhancements
