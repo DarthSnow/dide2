@@ -1,9 +1,13 @@
 # v3.9.4-dev
 
+## Enhancements
+
+- D highlighter: highlight `@()` just like `@Identifier` ans skipping the enclosed content. Nested `@()` are still not handled.
+
 ## Bugs fixed
 
 - Messages: force auto scrolling to bottom once and if the messages context is modified.
-- Terminal: after launcging dexed, the current directory was not constrained even when the settings to follow the current project or document path were activated. (#5)
+- Terminal: after launching dexed, the current directory was not constrained even when the settings to follow the current project or document path were activated. (#5)
 
 # v3.9.3
 

@@ -15,7 +15,7 @@ type
     tkDDocs, tkSpecK, tkError, tkAsmbl, tkAttri, tkLost,  tkTypes);
 
   TRangeKind = (rkString1, rkString2, rkBlockCom1, rkBlockCom2,
-    rkBlockDoc1, rkBlockDoc2, rkAsm,
+    rkBlockDoc1, rkBlockDoc2, rkAsm, rkAttrib,
     rkStringQParen, rkStringQSquare, rkStringQGe, rStringQCurly);
 
   TRangeKinds = set of TRangeKind;
@@ -33,6 +33,7 @@ type
     nestedQSquareStrings: Integer;
     nestedQGeStrings    : Integer;
     nestedQCurlyStrings : Integer;
+    attribParenCount    : Integer;
     rangeKinds          : TRangeKinds;
     // double quoted multi-line string prefixed with 'r':
     // => don't skip '"' following '\'
@@ -43,6 +44,7 @@ type
     procedure Clear; override;
     //
     procedure copyFrom(source: TSynD2SynRange);
+    function notInExclusiveRange(): boolean;
   end;
 
 	TSynD2Syn = class (TSynCustomFoldHighlighter)
@@ -184,6 +186,11 @@ begin
     rangeKinds := source.rangeKinds;
     rString := source.rString;
   end;
+end;
+
+function TSynD2SynRange.notInExclusiveRange(): boolean;
+begin
+  result := rangeKinds - [rkAttrib, rkAsm] = [];
 end;
 
 constructor TSynD2Syn.create(aOwner: TComponent);
@@ -461,7 +468,7 @@ begin
     fCurrRange := TSynD2SynRange.Create(nil);
 
   // line comments / region beg-end
-  if (fCurrRange.rangeKinds = []) or (fCurrRange.rangeKinds = [rkAsm]) then
+  if fCurrRange.notInExclusiveRange() then
     if readDelim(reader, fTokStop, '//') then
   begin
     fTokKind := tkCommt;
@@ -493,7 +500,7 @@ begin
   end else readerReset;
 
   // block comments 1
-  if (fCurrRange.rangeKinds = []) or (fCurrRange.rangeKinds = [rkAsm]) then
+  if fCurrRange.notInExclusiveRange() then
     if readDelim(reader, fTokStop, '/*') then
   begin
     fTokKind := tkCommt;
@@ -535,7 +542,7 @@ begin
   end;
 
   // block comments 2
-  if (fCurrRange.rangeKinds = []) or (fCurrRange.rangeKinds = [rkAsm]) then
+  if fCurrRange.notInExclusiveRange() then
     if readDelim(reader, fTokStop, '/+') then
   begin
     fTokKind := tkCommt;
@@ -618,7 +625,7 @@ begin
   end;
 
   // double quoted strings | raw double quoted strings
-  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, stringPrefixes) then
+  if (fCurrRange.notInExclusiveRange()) and readDelim(reader, fTokStop, stringPrefixes) then
   begin
     if readerPrev^ in ['r','x'] then
     begin
@@ -691,7 +698,7 @@ begin
   end;
 
   // backticks strings
-  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, '`') then
+  if fCurrRange.notInExclusiveRange() and readDelim(reader, fTokStop, '`') then
   begin
     fTokKind := tkStrng;
     if readUntil(reader, fTokStop, '`') then
@@ -727,7 +734,7 @@ begin
   end else readerReset;
 
   // q"(  )" strings
-  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, 'q"(') then
+  if fCurrRange.notInExclusiveRange() and readDelim(reader, fTokStop, 'q"(') then
   begin
     fTokKind := tkStrng;
     fCurrRange.nestedQParensStrings += 1;
@@ -762,7 +769,7 @@ begin
   end;
 
   // q"[  ]" strings
-  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, 'q"[') then
+  if fCurrRange.notInExclusiveRange() and readDelim(reader, fTokStop, 'q"[') then
   begin
     fTokKind := tkStrng;
     fCurrRange.nestedQSquareStrings += 1;
@@ -797,7 +804,7 @@ begin
   end;
 
   // q"<  >" strings
-  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, 'q"<') then
+  if fCurrRange.notInExclusiveRange() and readDelim(reader, fTokStop, 'q"<') then
   begin
     fTokKind := tkStrng;
     fCurrRange.nestedQGeStrings += 1;
@@ -832,7 +839,7 @@ begin
   end;
 
   // q"{  }" strings
-  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, 'q"{') then
+  if fCurrRange.notInExclusiveRange() and readDelim(reader, fTokStop, 'q"{') then
   begin
     fTokKind := tkStrng;
     fCurrRange.nestedQCurlyStrings += 1;
@@ -867,7 +874,7 @@ begin
   end;
 
   // char literals
-  if (fCurrRange.rangeKinds = []) and readDelim(reader, fTokStop, #39) then
+  if fCurrRange.notInExclusiveRange() and readDelim(reader, fTokStop, #39) then
   begin
     fTokKind := tkStrng;
     while true do
@@ -1006,6 +1013,23 @@ begin
         if ((reader+1)^ in stringPostfixes) and not isIdentifier((reader+2)^) then
           readerNext;
       end;
+      '(':
+      begin
+        if rkAttrib in fCurrRange.rangeKinds then
+          fCurrRange.attribParenCount += 1;
+      end;
+      ')':
+      begin
+        if rkAttrib in fCurrRange.rangeKinds then
+        begin
+          fCurrRange.attribParenCount -= 1;
+          if fCurrRange.attribParenCount = 0 then
+          begin
+            fCurrRange.rangeKinds -= [rkAttrib];
+            fTokKind := tkAttri;
+          end;
+        end;
+      end;
     end;
     readerNext;
     exit;
@@ -1086,8 +1110,16 @@ begin
         readerNext;
       end;
       exit;
-    end else
-      readerPrev;
+    end
+    else if (reader^ = '(') and (not (rkAttrib in fCurrRange.rangeKinds)) then
+    begin
+      fCurrRange.rangeKinds += [rkAttrib];
+      fTokKind:=tkAttri;
+      fCurrRange.attribParenCount := 1;
+      readerNext;
+      exit;
+    end
+    else readerPrev();
   end;
 
   // Keywords & identifiers
