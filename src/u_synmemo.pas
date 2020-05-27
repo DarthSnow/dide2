@@ -203,7 +203,8 @@ type
     fMultiDocSubject: TObject;
     fDefaultFontSize: Integer;
     fPositions: TSynMemoPositions;
-    fMousePos: TPoint;
+    fMousePhysical: TPoint;
+    fMouseLogical: TPoint;
     fCallTipWin: TEditorCallTipWindow;
     fDDocWin: TEditorHintWindow;
     fDDocDelay: Integer;
@@ -2769,7 +2770,7 @@ begin
   if assigned(fDebugger) and fDebugger.running then
   begin
     lexWholeText([TLexOption.lxoNoComments]);
-    exp := getExpressionAt(fLexToks, fMousePos);
+    exp := getExpressionAt(fLexToks, fMouseLogical);
     ev1 := fDebugger.evaluate(exp);
     if ev1.isEmpty then
       ev1 := '???';
@@ -3518,15 +3519,15 @@ var
   i, len, llen: Integer;
 begin
   result := 0;
-  if fMousePos.y-1 > Lines.Count-1 then
+  if fMousePhysical.y-1 > Lines.Count-1 then
     exit;
-  llen := Lines[fMousePos.y-1].length;
-  if fMousePos.X > llen  then
+  llen := Lines[fMousePhysical.y-1].length;
+  if fMousePhysical.X > llen  then
     exit;
   len := getSysLineEndLen;
-  for i:= 0 to fMousePos.y-2 do
+  for i:= 0 to fMousePhysical.y-2 do
     result += Lines[i].length + len;
-  result += fMousePos.x;
+  result += fMousePhysical.x;
 end;
 
 procedure TDexedMemo.patchClipboardIndentation;
@@ -3727,8 +3728,9 @@ begin
     (((dx < 0) and (dx > -5) or (dx > 0) and (dx < 5)) or
       ((dy < 0) and (dy > -5) or (dy > 0) and (dy < 5))) then
         fCanShowHint:=true;
-  fOldMousePos := Point(X, Y);
-  fMousePos := PixelsToRowColumn(fOldMousePos);
+  fOldMousePos   := Point(X, Y);
+  fMousePhysical := PixelsToRowColumn(fOldMousePos);
+  fMouseLogical  := PixelsToLogicalPos(fOldMousePos);
   if ssLeft in Shift then
     highlightCurrentIdentifier;
 

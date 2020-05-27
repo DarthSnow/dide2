@@ -6,6 +6,8 @@
 
 ## Bugs fixed
 
+- GDB commander: automatic break on exception did not work if the cprogram was compiled with LDC2. (#41)
+- GDB commander: expressions obtained by mouse motion were not correct when the source used tabulations to indent. (#42)
 - Messages: force auto scrolling to bottom once and if the messages context is modified.
 - Terminal: after launching dexed, the current directory was not constrained even when the settings to follow the current project or document path were activated. (#5)
 
