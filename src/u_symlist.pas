@@ -847,12 +847,12 @@ begin
   if fTreeDataFromThread.isEmpty or ndAlias.isNil then
     exit;
 
+  tree.BeginUpdate;
   clearTree;
   updateVisibleCat;
   fSyms.LoadFromString(fTreeDataFromThread);
   f := TreeFilterEdit1.Filter;
   TreeFilterEdit1.Text := '';
-  tree.BeginUpdate;
   for i := 0 to fSyms.symbols.Count-1 do
     symbolToTreeNode(nil, fSyms.symbols[i]);
   if fAutoExpandErrors then
@@ -871,9 +871,9 @@ begin
   end;
   if fSmartExpander then
     smartExpand;
-  tree.EndUpdate;
   if f.isNotEmpty then
     TreeFilterEdit1.Text := f;
+  tree.EndUpdate;
   minimizeGcHeap();
 end;
 
@@ -881,14 +881,14 @@ procedure TSymbolListWidget.smartExpand;
 var
   i: integer;
   n: TTreeNode;
-  target: NativeUint;
-  nearest: NativeUint = 0;
+  target: PtrUInt;
+  nearest: PtrUInt = 0;
   toExpand: TTreeNode = nil;
 
   procedure look(root: TTreeNode);
   var
     i: integer;
-    line: NativeUint;
+    j: PtrUInt;
   begin
     for i := 0 to root.Count-1 do
     begin
@@ -897,19 +897,20 @@ var
         continue;
       if n.Parent.isNil then
         continue;
-      case n.Parent.Text of
-        'Alias', 'Enum', 'Import', 'Variable':
+      if (n.Parent = ndAlias)
+      or (n.Parent = ndEnum)
+      or (n.Parent = ndImp)
+      or (n.Parent = ndVar) then
           continue;
-      end;
       {$PUSH}{$WARNINGS OFF}{$HINTS OFF}
-      line := NativeUInt(n.Data);
+      j := NativeUInt(n.Data);
       {$POP}
-      if line > target then
+      if j > target then
         continue;
-      if line > nearest then
+      if j > nearest then
       begin
-        nearest := line;
-        toExpand := n;
+        nearest   := j;
+        toExpand  := n;
       end;
     end;
   end;

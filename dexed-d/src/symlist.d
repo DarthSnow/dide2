@@ -3,7 +3,7 @@ module symlist;
 import
     core.stdc.string;
 import
-    std.array, std.traits, std.conv, std.json, std.format,
+    std.array, std.conv, std.json, std.format,
     std.algorithm, std.string;
 import
     iz.memory: construct, destruct, MustAddGcRange, TellRangeAdded, NoGc;
@@ -85,6 +85,7 @@ enum SymbolType
 
 string makeSymbolTypeArray()
 {
+    import std.traits : EnumMembers;
     string result = "string[SymbolType.max + 1] symbolTypeStrings = [";
     foreach(st; EnumMembers!SymbolType)
         result ~= `"` ~ to!string(st) ~ `",`;
@@ -306,11 +307,6 @@ static assert (!MustAddGcRange!(SymbolListBuilder!(ListFmt.Pas)));
         namedVisitorImpl!(AnonymousEnumMember, SymbolType._enum)(decl);
     }
 
-    override void visit(const AnonymousEnumDeclaration decl)
-    {
-        decl.accept(this);
-    }
-
     override void visit(const AutoDeclarationPart decl)
     {
         otherVisitorImpl(decl, SymbolType._variable, decl.identifier.text,
@@ -437,21 +433,38 @@ static assert (!MustAddGcRange!(SymbolListBuilder!(ListFmt.Pas)));
         otherVisitorImpl(decl, SymbolType._function, "shared static dtor", decl.line, decl.column);
     }
 
+    override void visit(const AliasInitializer)     {}
+    override void visit(const AlignAttribute)       {}
+    override void visit(const ArrayInitializer)     {}
+    override void visit(const AsmStatement)         {}
+    override void visit(const AtAttribute)          {}
+    override void visit(const Attribute)            {}
+    override void visit(const AttributeDeclaration) {}
+    override void visit(const BaseClassList)        {}
+    override void visit(const BreakStatement)       {}
+    override void visit(const Catches)              {}
+    override void visit(const Constraint)           {}
+    override void visit(const ContinueStatement)    {}
+    override void visit(const Deprecated)           {}
     override void visit(const Expression)           {}
     override void visit(const ExpressionNode)       {}
     override void visit(const ExpressionStatement)  {}
-    override void visit(const PragmaStatement)      {}
-    override void visit(const Initializer)          {}
+    override void visit(const FunctionAttribute)    {}
     override void visit(const FunctionContract)     {}
-    override void visit(const AsmStatement)         {}
-    override void visit(const ReturnStatement)      {}
-    override void visit(const BreakStatement)       {}
-    override void visit(const ContinueStatement)    {}
     override void visit(const GotoStatement)        {}
+    override void visit(const Initializer)          {}
+    override void visit(const LabeledStatement)     {}
+    override void visit(const MemberFunctionAttribute){}
     override void visit(const MixinDeclaration)     {}
+    override void visit(const NamespaceList)        {}
+    override void visit(const PragmaStatement)      {}
+    override void visit(const ReturnStatement)      {}
+    override void visit(const StaticAssertDeclaration){}
+    override void visit(const StaticAssertStatement){}
+    override void visit(const StructInitializer)    {}
+    override void visit(const SynchronizedStatement){}
+    override void visit(const ThrowStatement)       {}
     override void visit(const Type)                 {}
     override void visit(const Type2)                {}
-    override void visit(const StaticAssertStatement){}
-    override void visit(const StaticAssertDeclaration){}
 }
 
