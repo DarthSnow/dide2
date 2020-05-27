@@ -400,7 +400,7 @@ type
     fFirstTimeRun: boolean;
     fMultidoc: IMultiDocHandler;
     fProcInputHandler: IProcInputHandler;
-    fUpdateCount: NativeInt;
+    fUpdateCount: PtrInt;
     fProj: ICommonProject;
     fFreeProj: ICommonProject;
     fProjBeforeGroup: ICommonProject;

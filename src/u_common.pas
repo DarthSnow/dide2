@@ -764,13 +764,13 @@ end;
 function uniqueObjStr(const value: TObject): string;
 begin
   {$PUSH}{$HINTS OFF}{$WARNINGS OFF}{$R-}
-  exit( format('%.8X',[NativeUint(value)]));
+  exit( format('%.8X',[PtrUint(value)]));
   {$POP}
 end;
 
 function shortenPath(const path: string; thresh: Word = 60): string;
 var
-  i: NativeInt;
+  i: PtrInt;
   sepCnt: integer = 0;
   drv: string;
   pth1: string;

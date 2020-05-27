@@ -725,7 +725,7 @@ begin
     exit;
 
   {$PUSH}{$WARNINGS OFF}{$HINTS OFF}
-  line := NativeUInt(Tree.Selected.Data);
+  line := PtrUInt(Tree.Selected.Data);
   {$POP}
   fDoc.setFocus;
   fDoc.CaretY := line;
@@ -903,7 +903,7 @@ var
       or (n.Parent = ndVar) then
           continue;
       {$PUSH}{$WARNINGS OFF}{$HINTS OFF}
-      j := NativeUInt(n.Data);
+      j := PtrUint(n.Data);
       {$POP}
       if j > target then
         continue;

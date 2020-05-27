@@ -406,7 +406,7 @@ end;
 
 procedure TProjectConfigurationWidget.updateImperative;
 var
-  i: NativeInt;
+  i: PtrInt;
 begin
   selConf.ItemIndex:= -1;
   selConf.Clear;

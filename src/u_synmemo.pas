@@ -936,7 +936,7 @@ begin
   Inc(fPos);
   {$HINTS OFF}
   if fPos < fList.Count then
-    fMemo.CaretY := NativeInt(fList.Items[fPos])
+    fMemo.CaretY := PtrInt(fList.Items[fPos])
   {$HINTS ON}
   else Dec(fPos);
 end;
@@ -946,14 +946,14 @@ begin
   Dec(fPos);
   {$HINTS OFF}
   if fPos > -1 then
-    fMemo.CaretY := NativeInt(fList.Items[fPos])
+    fMemo.CaretY := PtrInt(fList.Items[fPos])
   {$HINTS ON}
   else Inc(fPos);
 end;
 
 procedure TSynMemoPositions.store;
 var
-  delta: NativeInt;
+  delta: PtrInt;
 const
   thresh = 6;
 begin
@@ -962,11 +962,11 @@ begin
   {$HINTS OFF}{$WARNINGS OFF}
   if fList.Count > 0 then
   begin
-    delta := fMemo.CaretY - NativeInt(fList.Items[fPos]);
+    delta := fMemo.CaretY - PtrInt(fList.Items[fPos]);
     if (delta > -thresh) and (delta < thresh) then
       exit;
   end;
-  fList.Insert(0, Pointer(NativeInt(fMemo.CaretY)));
+  fList.Insert(0, Pointer(PtrInt(fMemo.CaretY)));
   {$POP}
   while fList.Count > fMax do
     fList.Delete(fList.Count-1);

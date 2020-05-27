@@ -39,7 +39,7 @@ type
     fConfigs: TCollection;
     fSrcs: TStringList;
     fConfIx: Integer;
-    fUpdateCount: NativeInt;
+    fUpdateCount: PtrInt;
     fProjectSubject: TProjectSubject;
     fRunner: TDexedProcess;
     fOutputFilename: string;
@@ -222,7 +222,7 @@ end;
 
 procedure TNativeProject.setOptsColl(value: TCollection);
 var
-  i: nativeInt;
+  i: PtrInt;
 begin
   fConfigs.Assign(value);
   for i:= 0 to fConfigs.Count-1 do
@@ -286,7 +286,7 @@ procedure TNativeProject.customSaveToFile(const fname: string);
 var
   oldAbs, newRel, oldBase: string;
   f: string;
-  i: NativeInt;
+  i: PtrInt;
 begin
   beginUpdate;
   f := fname;
