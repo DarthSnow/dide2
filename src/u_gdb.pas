@@ -1987,7 +1987,10 @@ begin
   if (_d_throwc in fOptions.coreBreakingSymbols) then
     gdbCommand('-break-insert --function _d_throwc');
   if (_d_throwdwarf in fOptions.coreBreakingSymbols) then
-    gdbCommand('-break-insert --function _d_throwdwarf');
+  begin
+    gdbCommand('-break-insert --function _d_throwdwarf');      // DMD
+    gdbCommand('-break-insert --function _d_throw_exception'); // LDC
+  end;
   if (_d_assertm in fOptions.coreBreakingSymbols) then
     gdbCommand('-break-insert --function _d_assertm');
   if (_d_assert in fOptions.coreBreakingSymbols) then
