@@ -1,7 +1,7 @@
 module common;
 
 import
-    core.stdc.string;
+    core.stdc.string, core.runtime: rt_init, rt_term;
 import
     std.array, std.traits, std.meta, std.conv, std.algorithm, std.file, std.path;
 import
@@ -9,12 +9,8 @@ import
 import
     iz.memory;
 
-version(Windows)
-{
-    import core.runtime: rt_init, rt_term;
-    export extern(C) int d_rt_init(){ return rt_init(); }
-    export extern(C) int d_rt_term(){ return rt_term(); }
-}
+export extern(C) int d_rt_init(){ return rt_init(); }
+export extern(C) int d_rt_term(){ return rt_term(); }
 
 export extern(C) void setRtOptions()
 {
