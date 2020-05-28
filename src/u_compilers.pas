@@ -148,7 +148,7 @@ type
     //
     function singleServiceName: string;
     function isCompilerValid(value: DCompiler): boolean;
-    function getCompilerPath(value: DCompiler): string;
+    function getCompilerPath(value: DCompiler; translateToWrapper: boolean): string;
     procedure getCompilerImports(value: DCompiler; paths: TStrings);
     //
     procedure projNew(project: ICommonProject);
@@ -615,21 +615,21 @@ begin
   end;
 end;
 
-function TCompilersPathsEditor.getCompilerPath(value: DCompiler): string;
+function TCompilersPathsEditor.getCompilerPath(value: DCompiler; translateToWrapper: boolean): string;
 begin
   result := '';
   with fPaths do case value of
     DCompiler.dmd: exit(DmdExeName);
-    DCompiler.gdc: exit(GdcExeName);
+    DCompiler.gdc: if not translateToWrapper then exit(GdcExeName) else exit(exeFullName('gdmd' + exeExt));
     DCompiler.gdmd: exit(exeFullName('gdmd' + exeExt));
-    DCompiler.ldc: exit(LdcExeName);
+    DCompiler.ldc: if not translateToWrapper then exit(LdcExeName) else exit(exeFullName('ldmd2' + exeExt));
     DCompiler.ldmd: exit(exeFullName('ldmd2' + exeExt));
     DCompiler.user1: exit(User1ExeName);
     DCompiler.user2: exit(User2ExeName);
     DCompiler.global:
     begin
       checkIfGlobalIsGlobal;
-      exit(getCompilerPath(fPaths.definedAsGlobal));
+      exit(getCompilerPath(fPaths.definedAsGlobal, translateToWrapper));
     end;
   end;
 end;

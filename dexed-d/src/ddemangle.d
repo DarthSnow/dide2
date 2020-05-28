@@ -7,7 +7,7 @@ import std.string       : toStringz;
 
 extern(C):
 
-const(char)* ddemangle(const(char)* line)
+export const(char)* ddemangle(const(char)* line)
 {
     __gshared Regex!char reDemangle;
     __gshared bool reInit;

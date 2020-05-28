@@ -25,7 +25,7 @@ import
  * Returns:
  *      The serialized symbols, as a C string.
  */
-extern(C) const(char)* listSymbols(const(char)* src, bool deep)
+export extern(C) const(char)* listSymbols(const(char)* src, bool deep)
 {
     Appender!(AstErrors) errors;
 

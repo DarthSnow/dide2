@@ -869,9 +869,9 @@ begin
   fCompilProc := TDexedProcess.Create(nil);
   subjProjCompiling(fProjectSubject, fAsProjectItf);
   fMsgs.message('compiling ' + prjname, fAsProjectItf, amcProj, amkInf);
-  fMsgs.message(usingCompilerInfo(CEProjectCompiler), fAsProjectItf, amcProj, amkInf);
+  fMsgs.message(usingCompilerInfo(CEProjectCompiler, false), fAsProjectItf, amcProj, amkInf);
   fCompilProc.CurrentDirectory := prjpath;
-  fCompilProc.Executable := fCompilerSelector.getCompilerPath(CEProjectCompiler);
+  fCompilProc.Executable := fCompilerSelector.getCompilerPath(CEProjectCompiler, false);
   if not fCompilProc.Executable.fileExists then
   begin
     fMsgs.message(format('error, the compiler path for `%s` does not seem valid',
@@ -1072,7 +1072,7 @@ var
 begin
   str := TStringList.Create;
   try
-    str.Add(fCompilerSelector.getCompilerPath(CEProjectCompiler));
+    str.Add(fCompilerSelector.getCompilerPath(CEProjectCompiler, false));
     getOpts(str);
     result := str.Text;
   finally

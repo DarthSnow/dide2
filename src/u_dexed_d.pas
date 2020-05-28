@@ -21,23 +21,25 @@ type
   type
     PT = ^T;
   strict private
-    fLength: PtrUInt;
+    fLength: PtrInt;
     fPtr:    PT;
-    function getItem(index: PtrUint): T;
+    function getItem(index: Ptrint): T;
   public
     // The count of elements
-    property length: PtrUInt read fLength;
+    property length: PtrInt read fLength;
     // Pointer to the first element.
     property ptr: PT read fPtr;
     // overload "[]"
-    property item[index: PtrUint]: T read getItem; default;
+    property item[index: Ptrint]: T read getItem; default;
   end;
 
   // Give a view on D `char[]`
   TDString = specialize TDArray<char> ;
+  PDString = ^TDString;
 
   // Give a view on D `char[][]`
   TDStrings = specialize TDArray<TDString>;
+  PDStrings = ^TDStrings;
 
 {$IFDEF POSIX}
 const
@@ -49,9 +51,9 @@ const
 {$ENDIF}
 
 // Necessary to start the GC, run the static constructors, etc
-procedure rt_init(); cdecl; external libdexedd_name;
+function d_rt_init(): integer; cdecl; external libdexedd_name;
 // Cleanup
-procedure rt_term(); cdecl; external libdexedd_name;
+function d_rt_term(): integer; cdecl; external libdexedd_name;
 // Used to release memroy allocated in external D functions that are called in a thread,
 // because managing the GC only works from the main thread.
 // Memory is released every 32 calls.
@@ -66,9 +68,9 @@ function hasMainFun(const src: PChar): Boolean; cdecl; external libdexedd_name;
 // Returns the DDOC template for the declaration location at `caretLine` in the source code `src`.
 function ddocTemplate(const src: PChar; caretLine: integer; plusComment: Boolean): PChar; cdecl; external libdexedd_name;
 // List the imports of the module represented by `src`.
-function listImports(const src: PChar): TDStrings; cdecl; external libdexedd_name;
+function listImports(const src: PChar): PDStrings; cdecl; external libdexedd_name;
 // List the imports of the modules located in `files` (list of files joined with pathseparaotr and null terminated)
-function listFilesImports(const files: PChar): TDStrings; cdecl; external libdexedd_name;
+function listFilesImports(const files: PChar): PDStrings; cdecl; external libdexedd_name;
 // Get the variables necessary to compute the Halstead metrics of the functions within a module.
 function halsteadMetrics(const src: PChar): PChar; cdecl; external libdexedd_name;
 // Get the list of declarations within a module.
@@ -92,7 +94,7 @@ procedure getModulesImports(files: string; results: TStrings);
 
 implementation
 
-function TDArray.getItem(index: PtrUint): T;
+function TDArray.getItem(index: Ptrint): T;
 begin
   result := (fPtr + index)^;
 end;
@@ -104,7 +106,7 @@ var
   j: integer;
   s: string;
 begin
-  i := listImports(PChar(source.Text));
+  i := listImports(PChar(source.Text))^;
   for j := 0 to i.length-1 do
   begin
     e := i[j];
@@ -121,8 +123,8 @@ var
   j: integer;
   s: string;
 begin
-  i := listFilesImports(PChar(files));
-  for j := 0 to i.length-1 do
+  i := listFilesImports(PChar(files))^;
+	for j := 0 to i.length-1 do
   begin
     e := i[j];
     s := e.ptr[0 .. e.length-1];
@@ -133,7 +135,7 @@ end;
 
 initialization
   setRtOptions();
-  rt_init();
+  d_rt_init();
 finalization
-  rt_term();
+  d_rt_term();
 end.

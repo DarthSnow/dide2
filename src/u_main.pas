@@ -3053,7 +3053,7 @@ begin
   dmdproc := TDexedProcess.Create(nil);
   try
     fMsgs.message('compiling ' + shortenPath(fDoc.fileName, 25), fDoc, amcEdit, amkInf);
-    fMsgs.message(usingCompilerInfo(fRunnablesOptions.compiler), fDoc, amcEdit, amkInf);
+    fMsgs.message(usingCompilerInfo(fRunnablesOptions.compiler, true), fDoc, amcEdit, amkInf);
     if fDoc.fileName.fileExists then
       fDoc.save
     else
@@ -3069,11 +3069,7 @@ begin
   	dmdproc.OnTerminate:= @asyncprocTerminate;
     dmdproc.Options := [poUsePipes, poStderrToOutPut];
     dmdproc.CurrentDirectory:=fDoc.fileName.extractFileDir;
-    case fRunnablesOptions.compiler of
-      gdc, gdmd: dmdProc.Executable := fCompilerSelector.getCompilerPath(gdmd);
-      ldc, ldmd: dmdProc.Executable := fCompilerSelector.getCompilerPath(ldmd);
-      else dmdProc.Executable       := fCompilerSelector.getCompilerPath(fRunnablesOptions.compiler);
-    end;
+    dmdProc.Executable:= fCompilerSelector.getCompilerPath(fRunnablesOptions.compiler, true);
     if not dmdProc.Executable.fileExists then
     begin
       fMsgs.message(format('error, the compiler path for `%s` does not seem valid',
@@ -3456,7 +3452,7 @@ begin
     {$ENDIF}
     fRunProc.XTermProgram:=consoleProgram;
   end;
-  d := fCompilerSelector.getCompilerPath(fRunnablesOptions.compiler);
+  d := fCompilerSelector.getCompilerPath(fRunnablesOptions.compiler, true);
   if not d.fileExists then
   begin
     fMsgs.message(format('error, the compiler path for `%s` does not seem valid',

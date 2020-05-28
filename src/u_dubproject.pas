@@ -898,7 +898,7 @@ begin
     str.Add('--build=' + fBuildTypes[fBuiltTypeIx]);
     if (fConfigs.Count <> 1) and (fConfigs[0] <> DubDefaultConfigName) then
       str.Add('--config=' + fConfigs[fConfigIx]);
-    str.Add('--compiler=' + fCompilerSelector.getCompilerPath(DubCompiler));
+    str.Add('--compiler=' + fCompilerSelector.getCompilerPath(DubCompiler, false));
     dubBuildOptions.getOpts(str);
     result := str.Text;
   finally
@@ -1164,7 +1164,7 @@ begin
     if (fConfigs.Count <> 1) and (fConfigs[0] <> DubDefaultConfigName) then
       fDubProc.Parameters.Add('--config=' + fConfigs[fConfigIx]);
   end;
-  d := fCompilerSelector.getCompilerPath(DubCompiler);
+  d := fCompilerSelector.getCompilerPath(DubCompiler, true);
   if not d.fileExists then
   begin
     fMsgs.message(format('error, the compiler path for `%s` does not seem valid',

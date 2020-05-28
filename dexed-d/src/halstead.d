@@ -30,7 +30,7 @@ version(unittest){} else import
  * - the count of operands, named "n2count" (as JSONNumber)
  * - the sum of operands, named "n2sum" (as JSONNumber)
  */
-extern(C) const(char)* halsteadMetrics(const(char)* src)
+export extern(C) const(char)* halsteadMetrics(const(char)* src)
 {
     LexerConfig config;
     RollbackAllocator rba;
@@ -264,7 +264,7 @@ private final class HalsteadMetric: ASTVisitor
 
     override void visit(const(PrimaryExpression) primary)
     {
-	    if (primary.identifierOrTemplateInstance !is null)
+        if (primary.identifierOrTemplateInstance !is null)
         {
             if (inFunctionCallChain[$-1])
                 chain ~= primary.identifierOrTemplateInstance;

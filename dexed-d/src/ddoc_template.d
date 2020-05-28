@@ -20,7 +20,7 @@ import
  *      caretLine = the line where the declaration is located.
  *      plusComment = indicates if the template use the "*" or the "+" decoration.
  */
-extern(C) const(char)* ddocTemplate(const(char)* src, int caretLine, bool plusComment)
+export extern(C) const(char)* ddocTemplate(const(char)* src, int caretLine, bool plusComment)
 {
     LexerConfig config;
     RollbackAllocator rba;

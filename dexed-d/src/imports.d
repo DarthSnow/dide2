@@ -16,6 +16,11 @@ private alias moduleDeclarationToText = (ModuleDeclaration md) => md.moduleName
     .map!(a => a.text)
     .join(".");
 
+struct Result
+{
+    string[] data;
+}
+
 /**
  * Lists the modules imported by a module
  *
@@ -27,9 +32,9 @@ private alias moduleDeclarationToText = (ModuleDeclaration md) => md.moduleName
  * The results are used by to automatically detect the static libraries used by a
  * dexed runnable module.
  */
-extern(C) string[] listImports(const(char)* src)
+export extern(C) string[]* listImports(const(char)* src)
 {
-    string[] result;
+    string[]* result = &(new Result).data;
     LexerConfig config;
     RollbackAllocator rba;
     StringCache sCache = StringCache(StringCache.defaultBucketCount);
@@ -38,11 +43,11 @@ extern(C) string[] listImports(const(char)* src)
                 .getTokensForParser(config, &sCache)
                 .parseModule("", &rba, &ignoreErrors);
     if (auto md = mod.moduleDeclaration)
-        result ~= '"' ~ moduleDeclarationToText(md) ~ '"';
+        *result ~= '"' ~ moduleDeclarationToText(md) ~ '"';
     else
-        result ~= "\"#\"";
+        *result ~= "\"#\"";
 
-    ImportLister il = construct!(ImportLister)(&result);
+    ImportLister il = construct!(ImportLister)(result);
     scope (exit) destruct(il);
 
     il.visit(mod);
@@ -59,13 +64,13 @@ extern(C) string[] listImports(const(char)* src)
  * The results are used by to build a key value store linking libraries to other
  * libraries, which is part of dexed "libman".
  */
-extern(C) string[] listFilesImports(const(char)* joinedFiles)
+export extern(C) string[]* listFilesImports(const(char)* joinedFiles)
 {
-    string[] result;
+    string[]* result = &(new Result).data;
     RollbackAllocator rba;
     StringCache sCache  = StringCache(StringCache.defaultBucketCount);
     LexerConfig config  = LexerConfig("", StringBehavior.source);
-    ImportLister il     = construct!(ImportLister)(&result);
+    ImportLister il     = construct!(ImportLister)(result);
 
     scope(exit)
     {
@@ -80,9 +85,9 @@ extern(C) string[] listFilesImports(const(char)* joinedFiles)
                     .getTokensForParser(config, &sCache)
                     .parseModule("", &rba, &ignoreErrors);
         if (auto md = mod.moduleDeclaration)
-            result ~= '"' ~ moduleDeclarationToText(md) ~ '"';
+            *result ~= '"' ~ moduleDeclarationToText(md) ~ '"';
         else
-            result ~= '"' ~ cast(string)fname ~ '"';
+            *result ~= '"' ~ cast(string)fname ~ '"';
 
         il.visit(mod);
     }

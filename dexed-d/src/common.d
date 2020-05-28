@@ -9,14 +9,20 @@ import
 import
     iz.memory;
 
+version(Windows)
+{
+    import core.runtime: rt_init, rt_term;
+    export extern(C) int d_rt_init(){ return rt_init(); }
+    export extern(C) int d_rt_term(){ return rt_term(); }
+}
 
-extern(C) void setRtOptions()
+export extern(C) void setRtOptions()
 {
     //import core.gc.config : config;
     //config.gc = "precise";
 }
 
-extern(C) void minimizeGcHeap()
+export extern(C) void minimizeGcHeap()
 {
     import core.memory : GC;
     __gshared ubyte c;

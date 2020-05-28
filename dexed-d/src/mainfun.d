@@ -17,7 +17,7 @@ import
  * Returns:
  *      wether a module contains the main function.
  */
-extern(C) bool hasMainFun(const(char)* src)
+export extern(C) bool hasMainFun(const(char)* src)
 {
     scope LexerConfig config;
     scope RollbackAllocator rba;

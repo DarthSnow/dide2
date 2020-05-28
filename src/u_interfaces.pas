@@ -391,13 +391,13 @@ type
     // Indicates wether a D compiler is usable.
     function isCompilerValid(value: DCompiler): boolean;
     // Returns a D compiler exe filename.
-    function getCompilerPath(value: DCompiler): string;
+    function getCompilerPath(value: DCompiler; translateToWrapper: boolean): string;
     // Fills value with the runtime/phobos import paths for a particular D compiler.
     procedure getCompilerImports(value: DCompiler; paths: TStrings);
   end;
 
   // Returns a string indicating which compiler will be used.
-  function usingCompilerInfo(value: DCompiler): string;
+  function usingCompilerInfo(value: DCompiler; translateToWrapper: boolean): string;
 
 type
 
@@ -668,10 +668,10 @@ begin
 end;
 {$ENDREGION}
 
-function usingCompilerInfo(value: DCompiler): string;
+function usingCompilerInfo(value: DCompiler; translateToWrapper: boolean): string;
 begin
   result := format('using %s (%s)',
-    [getCompilerSelector.getCompilerPath(value), DCompiler2String[value]]);
+    [getCompilerSelector.getCompilerPath(value, translateToWrapper), DCompiler2String[value]]);
 end;
 
 end.

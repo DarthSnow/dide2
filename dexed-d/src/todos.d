@@ -8,7 +8,7 @@ import
 import
     common;
 
-extern(C) const(char)* todoItems(const(char)* joinedFiles)
+export extern(C) const(char)* todoItems(const(char)* joinedFiles)
 {
     scope Appender!string stream;
     scope LexerConfig config = LexerConfig("", StringBehavior.source);
