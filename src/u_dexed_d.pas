@@ -137,5 +137,7 @@ initialization
   setRtOptions();
   d_rt_init();
 finalization
+  {$IFDEF POSIX}
   d_rt_term();
+  {$ENDIF}
 end.
