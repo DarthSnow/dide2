@@ -9,7 +9,9 @@
 - GDB commander: automatic break on exception did not work if the cprogram was compiled with LDC2. (#41)
 - GDB commander: expressions obtained by mouse motion were not correct when the source used tabulations to indent. (#42)
 - Messages: force auto scrolling to bottom once and if the messages context is modified.
+- Runnables: ldc2 was not translated to ldmd when the "global compiler" was set to compile the runnables. (#43)
 - Terminal: after launching dexed, the current directory was not constrained even when the settings to follow the current project or document path were activated. (#5)
+- Windows: fixed broken compilation that was caused by libdexed-d.
 
 # v3.9.3
 
