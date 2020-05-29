@@ -1,4 +1,4 @@
-# v3.9.4-dev
+# v3.9.4
 
 ## Enhancements
 
