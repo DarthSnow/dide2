@@ -50,7 +50,7 @@ type
     property followEditors: boolean read fFollowEditors write fFollowEditors;
     property followProjects: boolean read fFollowProjects write fFollowProjects;
     property followExplorer: boolean read fFollowExplorer write fFollowExplorer;
-    property scrollbackLines: longword read fScrollbackLines write fScrollbackLines default 512;
+    property scrollbackLines: longword read fScrollbackLines write fScrollbackLines default 10000;
     property shortcuts: TTerminalShortcuts read fShortcuts write fShortcuts;
   end;
 
@@ -146,7 +146,7 @@ begin
   fSelectedColor:= clBlack;
   fFont.Name:= 'Monospace';
   fFont.Size:= 12;
-  fScrollbackLines:=512;
+  fScrollbackLines:=10000;
   fShortcuts := TTerminalShortcuts.create;
 end;
 
@@ -342,6 +342,7 @@ begin
   if fDisableScrollBarSync or not visible or fTerm.isNil then
     exit;
   i                   := fTerm.getVScrollInfo();
+  ScrollBar1.Min      := i.min;
   ScrollBar1.Max      := i.max;
   ScrollBar1.Position := i.value;
   ScrollBar1.PageSize := i.pageSize;

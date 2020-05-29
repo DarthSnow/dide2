@@ -39,7 +39,6 @@ inherited TermWidget: TTermWidget
       end
     end
     inherited toolbar: TDexedToolBar
-      Height = 30
       Width = 666
     end
   end

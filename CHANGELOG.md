@@ -11,6 +11,7 @@
 - Messages: force auto scrolling to bottom once and if the messages context is modified.
 - Runnables: ldc2 was not translated to ldmd when the "global compiler" was set to compile the runnables. (#43)
 - Terminal: after launching dexed, the current directory was not constrained even when the settings to follow the current project or document path were activated. (#5)
+- Terminal: problem with the min position of the scrollbar. Visible for example when a program output more lines then the *scrollbackLines* setting.
 - Windows: fixed broken compilation that was caused by libdexed-d.
 
 # v3.9.3
