@@ -11,7 +11,7 @@ unit TerminalCtrls;
 interface
 
 uses
-  Gtk2Term, Classes, SysUtils, Controls,
+  Gtk2Term, Classes, SysUtils, Controls, math,
   {$ifdef windows} windows, AsyncProcess,{$endif}
   Graphics, dialogs;
 
@@ -642,10 +642,10 @@ begin
   if assigned(fTerminalHanlde) then
   begin
     a               := vte_terminal_get_adjustment(fTerminalHanlde);
-    result.max      := round(a^.upper);
-    result.min      := round(a^.lower);
-    result.value    := round(a^.value);
-    result.pageSize := round(a^.page_size);
+    result.min      := trunc(a^.lower);
+    result.max      := max(trunc(a^.upper), result.min + 1);
+    result.value    := trunc(a^.value);
+    result.pageSize := trunc(a^.page_size);
   end;
 {$endif}
 end;
