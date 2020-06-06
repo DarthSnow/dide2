@@ -17,6 +17,8 @@ type
 
   TAsmSyntax = (intel, att);
 
+  TDebugTargetKind = (dtkProject, dtkRunnable);
+
   {$IFDEF CPU64}
   TCpuRegister = (rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp, r8, r9, r10, r11, r12, r13,
     r14, r15, rip);
@@ -500,7 +502,7 @@ type
     fGdbState: TGdbState;
     fSubj: TDebugObserverSubject;
     fDoc: TDexedMemo;
-    fDbgRunnable: boolean;
+    fDebugTargetKind: TDebugTargetKind;
     fCatchCustomEval: boolean;
     fCatchCustomEvalAsString: boolean;
     fCaughtCustomEvalAstring: string;
@@ -1830,14 +1832,14 @@ end;
 
 procedure TGdbWidget.mnuSelProjClick(Sender: TObject);
 begin
-  fDbgRunnable := false;
+  fDebugTargetKind := dtkProject;
   mnuSelRunnable.Checked:=false;
   updateDebugeeOptionsEditor;
 end;
 
 procedure TGdbWidget.mnuSelRunnableClick(Sender: TObject);
 begin
-  fDbgRunnable := true;
+  fDebugTargetKind := dtkRunnable;
   mnuSelProj.Checked:=false;
   updateDebugeeOptionsEditor;
 end;
@@ -1886,57 +1888,57 @@ const
   asmFlavorStr: array[TAsmSyntax] of string = ('intel','att');
 begin
   clearDisplays;
-  if not fDbgRunnable and (fProj = nil) then
+  if (fDebugTargetKind = dtkProject) and (fProj = nil) then
   begin
     dlgOkInfo('No project to debug', 'GDB commander');
     exit;
   end;
-  if fDbgRunnable and fDoc.isNil then
+  if (fDebugTargetKind = dtkRunnable) and fDoc.isNil then
   begin
     dlgOkInfo('No runnable to debug', 'GDB commander');
     exit;
   end;
-  if not fDbgRunnable and (fProj.binaryKind <> executable) then
+  if (fDebugTargetKind = dtkProject) and (fProj.binaryKind <> executable) then
   begin
     dlgOkInfo('The project cannot be debugged because it does not output an executable', 'GDB commander');
     exit;
   end;
-  if not fDbgRunnable then
-    fExe := fProj.outputFilename
-  else
-    fExe := fDoc.fileName.stripFileExt + exeExt;
-  //
+  case fDebugTargetKind of
+    dtkProject:   fExe := fProj.outputFilename;
+    dtkRunnable:  fExe := fDoc.fileName.stripFileExt + exeExt;
+  end;
+
   if (fExe = '/') or not fExe.fileExists then
   begin
-    if fDbgRunnable then
+    if (fDebugTargetKind = dtkRunnable) then
       dlgOkInfo('Either the runnable is not compiled or it cannot be found' +
         LineEnding + 'Note that the runnable option "outputFolder" is not supported by this widget.' +
         LineEnding + LineEnding + 'Expected target: ' + fExe, 'GDB commander')
     else
-      dlgOkInfo('The project binary is missing, cannot debug.' +
+      dlgOkInfo('The binary to debug is missing, debugging aborted.' +
         LineEnding + LineEnding + 'Expected target: ' + fExe, 'GDB commander');
     exit;
   end;
-  //
+
   fOutputName := fExe + '.inferiorout';
   fInputName  := fExe + '.inferiorin';
   FreeAndNil(fInput);
   FreeAndNil(fOutput);
-  //
+
   gdb := exeFullName('gdb');
   if not gdb.fileExists then
   begin
     dlgOkInfo('Cannot debug, GDB is missing', 'GDB commander');
     exit;
   end;
-  //
+
   if fInputName.fileExists then
     deletefile(fInputName);
   fInput:= TFileStream.Create(fInputName, fmCreate or fmShareExclusive);
   subjDebugStart(fSubj, self as IDebugger);
-  case fDbgRunnable of
-    true: o := fDebugeeOptions.projectByFile[fDoc.fileName];
-    false:o := fDebugeeOptions.projectByFile[fProj.fileName];
+  case fDebugTargetKind of
+    dtkRunnable:  o := fDebugeeOptions.projectByFile[fDoc.fileName];
+    dtkProject:   o := fDebugeeOptions.projectByFile[fProj.fileName];
   end;
   fLastFunction := '';
   // gdb process
@@ -2047,15 +2049,9 @@ var
 begin
   dbgeeOptsEd.ItemIndex:=-1;
   dbgeeOptsEd.TIObject := nil;
-  if not fDbgRunnable then
-  begin
-    if fProj <> nil then
-      nme := fProj.filename;
-  end
-  else
-  begin
-    if fDoc.isNotNil then
-      nme := fDoc.filename;
+  case fDebugTargetKind of
+    dtkProject  : if fProj <> nil then nme := fProj.filename;
+    dtkRunnable : if fDoc.isNotNil then nme := fDoc.filename;
   end;
   if nme.fileExists then
   begin
