@@ -17,7 +17,7 @@ type
 
   TAsmSyntax = (intel, att);
 
-  TDebugTargetKind = (dtkProject, dtkRunnable);
+  TDebugTargetKind = (dtkProject, dtkRunnable, dtkCustom);
 
   {$IFDEF CPU64}
   TCpuRegister = (rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp, r8, r9, r10, r11, r12, r13,
@@ -426,6 +426,7 @@ type
     Edit1: TComboBox;
     GroupBox3: TGroupBox;
     lstThreads: TListView;
+    mnuSelCustom: TMenuItem;
     mnuEvalDeref: TMenuItem;
     mnuEvalSelected: TMenuItem;
     mnuEvalCustom: TMenuItem;
@@ -483,6 +484,7 @@ type
     procedure mnuEvalSelectedClick(Sender: TObject);
     procedure mnuReadWClick(Sender: TObject);
     procedure mnuReadWriteWClick(Sender: TObject);
+    procedure mnuSelCustomClick(Sender: TObject);
     procedure mnuSelProjClick(Sender: TObject);
     procedure mnuSelRunnableClick(Sender: TObject);
     procedure mnuWriteWClick(Sender: TObject);
@@ -507,6 +509,7 @@ type
     fCatchCustomEvalAsString: boolean;
     fCaughtCustomEvalAstring: string;
     fProj: ICommonProject;
+    fCustomTargetFile: string;
     fJson: TJsonObject;
     fLog: TStringList;
     fDocHandler: IMultiDocHandler;
@@ -1834,6 +1837,7 @@ procedure TGdbWidget.mnuSelProjClick(Sender: TObject);
 begin
   fDebugTargetKind := dtkProject;
   mnuSelRunnable.Checked:=false;
+  mnuSelCustom.Checked:=false;
   updateDebugeeOptionsEditor;
 end;
 
@@ -1841,7 +1845,25 @@ procedure TGdbWidget.mnuSelRunnableClick(Sender: TObject);
 begin
   fDebugTargetKind := dtkRunnable;
   mnuSelProj.Checked:=false;
+  mnuSelCustom.Checked:=false;
   updateDebugeeOptionsEditor;
+end;
+
+procedure TGdbWidget.mnuSelCustomClick(Sender: TObject);
+begin
+  with TOpenDialog.Create(nil) do
+  try
+    if execute then
+    begin
+      fCustomTargetFile := FileName;
+      fDebugTargetKind := dtkCustom;
+      mnuSelProj.Checked:=false;
+      mnuSelRunnable.Checked:=false;
+      updateDebugeeOptionsEditor;
+    end;
+  finally
+    free;
+  end;
 end;
 
 procedure TGdbWidget.mnuWriteWClick(Sender: TObject);
@@ -1906,6 +1928,7 @@ begin
   case fDebugTargetKind of
     dtkProject:   fExe := fProj.outputFilename;
     dtkRunnable:  fExe := fDoc.fileName.stripFileExt + exeExt;
+    dtkCustom :   fExe := fCustomTargetFile;
   end;
 
   if (fExe = '/') or not fExe.fileExists then
@@ -1939,6 +1962,7 @@ begin
   case fDebugTargetKind of
     dtkRunnable:  o := fDebugeeOptions.projectByFile[fDoc.fileName];
     dtkProject:   o := fDebugeeOptions.projectByFile[fProj.fileName];
+    dtkCustom:    o := fDebugeeOptions.projectByFile[fCustomTargetFile];
   end;
   fLastFunction := '';
   // gdb process
@@ -2050,8 +2074,12 @@ begin
   dbgeeOptsEd.ItemIndex:=-1;
   dbgeeOptsEd.TIObject := nil;
   case fDebugTargetKind of
-    dtkProject  : if fProj <> nil then nme := fProj.filename;
-    dtkRunnable : if fDoc.isNotNil then nme := fDoc.filename;
+    dtkProject  : if fProj <> nil then
+      nme := fProj.filename;
+    dtkRunnable : if fDoc.isNotNil then
+      nme := fDoc.filename;
+    dtkCustom   : if fCustomTargetFile.fileExists then
+      nme := fCustomTargetFile;
   end;
   if nme.fileExists then
   begin

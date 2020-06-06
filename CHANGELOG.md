@@ -1,3 +1,9 @@
+# v3.9.5-dev
+
+## Enhancements
+
+- GDB commander: added a 3rd choice in the menu associated to first toolbar button. It allows to debug a custom executable, i.e not tied to a project or a runnable script.
+
 # v3.9.4
 
 ## Enhancements
