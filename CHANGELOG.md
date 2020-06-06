@@ -4,6 +4,10 @@
 
 - GDB commander: added a 3rd choice in the menu associated to first toolbar button. It allows to debug a custom executable, i.e not tied to a project or a runnable script.
 
+## Bugs fixed
+
+- Terminal: possible runtime exception rised because of the scrollbar position.
+
 # v3.9.4
 
 ## Enhancements
