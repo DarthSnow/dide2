@@ -943,8 +943,10 @@ begin
       (sender as TDexedProcess).getFullLines(lst)
     else
       processOutputToStrings(TProcess(sender), lst);
+    fMsgs.beginMessageCall();
     for str in lst do
       fMsgs.message(str, fAsProjectItf, amcProj, amkBub);
+    fMsgs.endMessageCall();
   finally
     lst.Free;
   end;
@@ -974,8 +976,10 @@ begin
   lst := TStringList.Create;
   try
     fCompilProc.getFullLines(lst);
+    fMsgs.beginMessageCall();
     for str in lst do
       fMsgs.message(str, fAsProjectItf, amcProj, amkAuto);
+    fMsgs.endMessageCall();
   finally
     lst.Free;
   end;

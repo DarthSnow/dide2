@@ -1066,8 +1066,10 @@ begin
   lst := TStringList.Create;
   try
     fDubProc.getFullLines(lst);
+    fMsgs.beginMessageCall();
     for str in lst do
       fMsgs.message(str, fAsProjectItf, amcProj, amkAuto);
+    fMsgs.endMessageCall();
   finally
     lst.Free;
   end;

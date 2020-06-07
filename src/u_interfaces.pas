@@ -271,6 +271,10 @@ type
    * Single service provided by the messages widget.
    *)
   IMessagesDisplay = interface(ISingleService)
+    // begins several calls to message()
+    procedure beginMessageCall();
+    // ends several calls to message()
+    procedure endMessageCall();
     // displays a message.
     procedure message(const value: string; aData: Pointer; aCtxt: TAppMessageCtxt; aKind: TAppMessageKind);
     // clears the messages related to the context aCtxt.

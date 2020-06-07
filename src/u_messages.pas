@@ -164,6 +164,8 @@ type
     //
     function singleServiceName: string;
     procedure message(const value: string; aData: Pointer; aCtxt: TAppMessageCtxt; aKind: TAppMessageKind);
+    procedure beginMessageCall();
+    procedure endMessageCall();
     procedure clearbyContext(aCtxt: TAppMessageCtxt);
     procedure clearbyData(data: Pointer);
     procedure scrollToBack;
@@ -942,6 +944,16 @@ begin
   exit('IMessagesDisplay');
 end;
 
+procedure TMessagesWidget.beginMessageCall();
+begin
+  list.BeginUpdate;
+end;
+
+procedure TMessagesWidget.endMessageCall();
+begin
+  list.EndUpdate;
+end;
+
 procedure TMessagesWidget.message(const value: string; aData: Pointer;
   aCtxt: TAppMessageCtxt; aKind: TAppMessageKind);
 var
@@ -952,7 +964,7 @@ begin
   showWidget;
   if not fAlwaysFilter then
     TreeFilterEdit1.Filter:='';
-  if (value.length > fOptions.maxLineLength) and (fOptions.maxLineLength > 0) then
+  if (fOptions.maxLineLength > 0) and (value.length > fOptions.maxLineLength) then
     msg := value[1..fOptions.maxLineLength]
   else
     msg := value;
@@ -963,23 +975,23 @@ begin
   if aCtxt = amcAutoCompile then
   begin
     case fProjCompile of
-      false: aCtxt := amcAutoEdit;
-      true: aCtxt := amcAutoProj;
+      false:  aCtxt := amcAutoEdit;
+      true:   aCtxt := amcAutoProj;
     end;
   end;
   if aCtxt = amcAutoEdit then
   begin
-    aData := fDoc;
-    aCtxt := amcEdit;
+    aData   := fDoc;
+    aCtxt   := amcEdit;
   end
   else if aCtxt = amcAutoProj then
   begin
-    aData := fProj;
-    aCtxt := amcProj;
+    aData   := fProj;
+    aCtxt   := amcProj;
   end;
-  dt := new(PMessageData);
-  dt^.data := aData;
-  dt^.ctxt := aCtxt;
+  dt        := new(PMessageData);
+  dt^.data  := aData;
+  dt^.ctxt  := aCtxt;
   if fAutoSelect and (fCtxt <> aCtxt) then
     fBtns[aCtxt].Click;
   if fastDisplay then

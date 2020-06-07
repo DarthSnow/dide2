@@ -2931,12 +2931,14 @@ begin
   lst := TStringList.Create;
   try
     proc.getFullLines(lst);
+    fMsgs.beginMessageCall();
     if proc = fRunProc then
       for str in lst do
         fMsgs.message(str, fDoc, amcEdit, amkBub)
     else // dmd used to compile runnable
       for str in lst do
         fMsgs.message(str, fDoc, amcEdit, amkAuto);
+    fMsgs.endMessageCall();
   finally
     lst.Free;
   end;

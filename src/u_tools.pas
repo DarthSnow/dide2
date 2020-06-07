@@ -279,8 +279,10 @@ begin
     lst := TStringList.Create;
     try
       fProcess.getFullLines(lst);
+      fMsgs.beginMessageCall();
       for str in lst do
         fMsgs.message(str, nil, amcMisc, amkAuto);
+      fMsgs.endMessageCall();
     finally
       lst.Free;
     end;
