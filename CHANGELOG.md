@@ -6,7 +6,7 @@
 
 ## Bugs fixed
 
-- Terminal: possible runtime exception rised because of the scrollbar position.
+- Terminal: Scrollbar out of range exception plus possible freeze. (#46)
 
 # v3.9.4
 
