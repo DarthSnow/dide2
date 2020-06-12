@@ -136,7 +136,7 @@ static assert (!MustAddGcRange!(SymbolListBuilder!(ListFmt.Pas)));
         destruct(fmtVisitor);
         static if (Fmt == ListFmt.Pas)
         {
-            //destruct(pasStream);
+            destruct(pasStream);
         }
     }
 
@@ -175,8 +175,6 @@ static assert (!MustAddGcRange!(SymbolListBuilder!(ListFmt.Pas)));
         static if (Fmt == ListFmt.Pas)
         {
             pasStream.put(">\rend");
-            import std.stdio;
-            writeln(pasStream.length);
             return (FpcArray!char).fromArray(pasStream);
         }
         else
