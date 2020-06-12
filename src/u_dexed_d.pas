@@ -56,9 +56,9 @@ function d_rt_init(): integer; cdecl; external libdexedd_name;
 function d_rt_term(): integer; cdecl; external libdexedd_name;
 // Used to release memroy allocated in external D functions that are called in a thread,
 // because managing the GC only works from the main thread.
-// Memory is released every 32 calls.
+// Memory is released every 32 calls unless `now` is true.
 // This function must be called from the main thread.
-procedure minimizeGcHeap(); cdecl; external libdexedd_name;
+procedure minimizeGcHeap(const now: boolean = false); cdecl; external libdexedd_name;
 // noop
 procedure setRtOptions(); cdecl; external libdexedd_name;
 // Demangle a line possibly containing a D mangled name.

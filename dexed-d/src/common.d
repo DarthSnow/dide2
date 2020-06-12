@@ -18,11 +18,11 @@ export extern(C) void setRtOptions()
     //config.gc = "precise";
 }
 
-export extern(C) void minimizeGcHeap()
+export extern(C) void minimizeGcHeap(bool now = false)
 {
     import core.memory : GC;
     __gshared ubyte c;
-    if (c++ > 31)
+    if (c++ > 31 || now)
     {
         GC.collect();
         GC.minimize();
