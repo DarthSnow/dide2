@@ -1247,7 +1247,7 @@ begin
   if fTempFileName.fileExists then
     sysutils.DeleteFile(fTempFileName);
 
-  minimizeGcHeap(true);
+  //minimizeGcHeap(true);
 
   inherited;
 end;
