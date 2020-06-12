@@ -1166,7 +1166,7 @@ begin
     if (fConfigs.Count <> 1) and (fConfigs[0] <> DubDefaultConfigName) then
       fDubProc.Parameters.Add('--config=' + fConfigs[fConfigIx]);
   end;
-  d := fCompilerSelector.getCompilerPath(DubCompiler, true);
+  d := fCompilerSelector.getCompilerPath(DubCompiler, false);
   if not d.fileExists then
   begin
     fMsgs.message(format('error, the compiler path for `%s` does not seem valid',
