@@ -8,11 +8,11 @@ import
 import
     common;
 
-export extern(C) const(char)* todoItems(const(char)* joinedFiles)
+export extern(C) FpcArray!(char)* todoItems(const(char)* joinedFiles)
 {
-    scope Appender!string stream;
+    scope Appender!(char[]) stream;
     scope LexerConfig config = LexerConfig("", StringBehavior.source);
-    scope StringCache cache = StringCache(4096);
+    scope StringCache cache  = StringCache(4096);
     stream.reserve(32);
     stream.put("object TTodoItems\ritems=<");
     foreach (fname; joinedFilesToFiles(joinedFiles))
@@ -24,10 +24,10 @@ export extern(C) const(char)* todoItems(const(char)* joinedFiles)
             .each!(t => analyze(t, fname, stream));
     }
     stream.put(">end");
-    return stream.data.toStringz();
+    return (FpcArray!char).fromArray(stream.data);
 }
 
-private void analyze(const(Token) token, const(char)[] fname, ref Appender!string stream)
+private void analyze(const(Token) token, const(char)[] fname, ref Appender!(char[]) stream)
 {
     string text = token.text.strip.patchPascalString;
     string identifier;

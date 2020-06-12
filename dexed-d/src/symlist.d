@@ -25,7 +25,7 @@ import
  * Returns:
  *      The serialized symbols, as a C string.
  */
-export extern(C) const(char)* listSymbols(const(char)* src, bool deep)
+export extern(C) FpcArray!char* listSymbols(const(char)* src, bool deep)
 {
     Appender!(AstErrors) errors;
 
@@ -53,8 +53,7 @@ export extern(C) const(char)* listSymbols(const(char)* src, bool deep)
     }
 
     sl.visit(mod);
-    const(char)* result = sl.serialize();
-    return result;
+    return sl.serialize();
 }
 
 private:
@@ -137,7 +136,7 @@ static assert (!MustAddGcRange!(SymbolListBuilder!(ListFmt.Pas)));
         destruct(fmtVisitor);
         static if (Fmt == ListFmt.Pas)
         {
-            destruct(pasStream);
+            //destruct(pasStream);
         }
     }
 
@@ -171,12 +170,14 @@ static assert (!MustAddGcRange!(SymbolListBuilder!(ListFmt.Pas)));
         }
     }
 
-    const(char)* serialize()
+    FpcArray!char* serialize()
     {
         static if (Fmt == ListFmt.Pas)
         {
-            pasStream.put(">\rend\0");
-            return cast(typeof(return))pasStream[].dup.ptr;
+            pasStream.put(">\rend");
+            import std.stdio;
+            writeln(pasStream.length);
+            return (FpcArray!char).fromArray(pasStream);
         }
         else
         {

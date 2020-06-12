@@ -472,7 +472,7 @@ end;
 
 procedure TTodoListWidget.threadedScanning;
 begin
-  fSerializedTodoItemFromThread := todoItems(PChar(fFileListForThread));
+  fSerializedTodoItemFromThread := string(todoItems(PChar(fFileListForThread)));
 end;
 
 procedure TTodoListWidget.threadedScanningFinished(Sender : TObject);

@@ -7,7 +7,7 @@ import
 import
     dparse.lexer, dparse.ast, dparse.parser, dparse.rollback_allocator;
 import
-    iz.memory;
+    iz.memory, iz.containers;
 
 export extern(C) int d_rt_init(){ return rt_init(); }
 export extern(C) int d_rt_term(){ return rt_term(); }
@@ -437,3 +437,67 @@ alias joinedFilesToFiles = (const char* a) => a[0 .. a.strlen]
     .filter!exists
     .filter!(b => b != "")
     .array;
+
+/**
+ * Translation of the FPC ref counted array type.
+ */
+struct FpcArray(T)
+{
+private:
+
+    size_t  _refCount;
+    size_t  _length;
+    T       _data;
+
+public:
+
+    /**
+     * Converts either and iz.containers.array or a D dynamic array to
+     * an array compatible with Freepascal built in arrays.
+     *
+     * The memory is allocated in the C heap and can be freed from
+     * the Pascal side, e.g on ref count decrement.
+     */
+    static FpcArray!T* fromArray(A)(auto ref A array) nothrow @nogc
+    if (is(Unqual!A == T[]) || is(Unqual!A == iz.containers.Array!T))
+    {
+        alias RT    = FpcArray!T;
+        enum isChar = is(Unqual!T == char);
+        size_t len  = size_t.sizeof * 2 + T.sizeof * array.length + ubyte(isChar);
+        void* mem   = getMem(len);
+        // init refcount to -1 and length to izArray length
+        *cast(size_t*) (mem + 0            ) = -1;
+        *cast(size_t*) (mem + size_t.sizeof) = array.length;
+        // copy izArray data
+        mem[size_t.sizeof * 2 .. len - ubyte(isChar)] = array.ptr[0.. array.length * T.sizeof];
+        // FreePascal specifies that strings are guaranteed to be zero terminated.
+        static if (isChar)
+            *cast(char*) (mem + len - 1) = '\0';
+        auto result = cast(RT*) (mem + size_t.sizeof * 2);
+        return result;
+    }
+
+    size_t length() const pure nothrow @nogc
+    {
+        return _length;
+    }
+
+    size_t refCount() const pure nothrow @nogc
+    {
+        return _refCount;
+    }
+
+    inout(T)* data() inout pure nothrow @nogc
+    {
+        return  &_data;
+    }
+}
+
+unittest
+{
+    enum test = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_è-(')àç_è";
+    Array!char s = test;
+    auto fpcString = (FpcArray!char).fromArray(s);
+    assert(fpcString.length == test.length);
+    assert(fpcString.data[0..fpcString.length] == test);
+}

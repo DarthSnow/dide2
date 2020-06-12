@@ -751,7 +751,7 @@ end;
 
 procedure TSymbolListWidget.threadedParsing;
 begin
-  fTreeDataFromThread := listSymbols(PChar(fSourcecodeForThread), fDeep);
+  fTreeDataFromThread := string(listSymbols(PChar(fSourcecodeForThread), fDeep));
 end;
 
 procedure TSymbolListWidget.threadedParsingFinished(sender: TObject);

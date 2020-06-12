@@ -74,9 +74,9 @@ function listFilesImports(const files: PChar): PDStrings; cdecl; external libdex
 // Get the variables necessary to compute the Halstead metrics of the functions within a module.
 function halsteadMetrics(const src: PChar): PChar; cdecl; external libdexedd_name;
 // Get the list of declarations within a module.
-function listSymbols(const src: PChar; deep: Boolean): PChar; cdecl; external libdexedd_name;
+function listSymbols(const src: PChar; deep: Boolean): pointer; cdecl; external libdexedd_name;
 // Get the TODO items located in `files` (list of files joined with pathseparaotr and null terminated)
-function todoItems(joinedFiles: PChar): PChar; cdecl; external libdexedd_name;
+function todoItems(joinedFiles: PChar): pointer; cdecl; external libdexedd_name;
 
 (**
  * Gets the module name and the imports of the source code located in
