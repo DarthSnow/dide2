@@ -4,19 +4,23 @@
 
 - GDB commander: added a 3rd choice in the menu associated to first toolbar button. It allows to debug a custom executable, i.e not tied to a project or a runnable script.
 
+## Regressions
+
+- DUB project: when compiling a DUB project with LDC, LDC was translated to LDMD. (#47, caused by the fix for #43)
+
 ## Bugs fixed
 
-- Terminal: Scrollbar out of range exception plus possible freeze. (#46)
+- Terminal: Scrollbar out of range exception, optionally freezing the IDE, when interactive program launched (e.g vi). (#46)
 
 # v3.9.4
 
 ## Enhancements
 
-- D highlighter: highlight `@()` just like `@Identifier` ans skipping the enclosed content. Nested `@()` are still not handled.
+- D highlighter: highlight `@()` just like `@Identifier` ans skipping the enclosed content. Nested `@()` are not handled.
 
 ## Bugs fixed
 
-- GDB commander: automatic break on exception did not work if the cprogram was compiled with LDC2. (#41)
+- GDB commander: automatic break on exception did not work if the program was compiled with LDC2. (#41)
 - GDB commander: expressions obtained by mouse motion were not correct when the source used tabulations to indent. (#42)
 - Messages: force auto scrolling to bottom once and if the messages context is modified.
 - Runnables: ldc2 was not translated to ldmd when the "global compiler" was set to compile the runnables. (#43)
