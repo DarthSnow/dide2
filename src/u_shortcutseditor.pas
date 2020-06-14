@@ -482,6 +482,7 @@ var
   end;
 
 begin
+  tree.BeginUpdate;
   tree.Items.Clear;
   fShortcuts.items.Clear;
   fBackup.items.Clear;
@@ -492,8 +493,8 @@ begin
     for j:= 0 to o.scedCount-1 do
       addItem(o.scedGetItem(j), j);
   end;
-
   tree.Items.SortTopLevelNodes(@sortCategories);
+  tree.EndUpdate;
   fBackup.Assign(fShortcuts);
 end;
 
