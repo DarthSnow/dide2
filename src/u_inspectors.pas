@@ -235,9 +235,12 @@ begin
 end;
 
 procedure TActionInEditor.Edit;
+//var
+  //o: TPropertyEditorHook;
 begin
+  //o := PropertyHook;
   SetOrdValue(not GetOrdValue);
-  Modified;
+  //PropertyHook := o;
 end;
 
 initialization

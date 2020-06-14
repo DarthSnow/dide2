@@ -15,7 +15,7 @@ uses
   u_search, u_miniexplorer, u_libman, u_libmaneditor, u_todolist, u_observer,
   u_toolseditor, u_procinput, u_optionseditor, u_symlist, u_mru, u_processes,
   u_infos, u_dubproject, u_dialogs, u_dubprojeditor,{$IFDEF UNIX} u_gdb,{$ENDIF}
-  u_dfmt, u_lcldragdrop, u_projgroup, u_projutils, u_stringrange,
+  u_dfmt, u_lcldragdrop, u_projgroup, u_projutils, u_stringrange, u_dexed_d,
   u_halstead, u_profileviewer, u_semver, u_dsgncontrols, u_term, u_newdubproj;
 
 type
@@ -621,6 +621,7 @@ type
     fAutoKillProcThreshold: dword;
     fGlobalCompiler: DCompiler;
     fAutoCleanMRU: boolean;
+    fMinimizeDlangMemory: TEditEvent;
     function getConsoleProgram: string;
     procedure setConsoleProgram(const value: string);
     function getAdditionalPATH: string;
@@ -628,6 +629,7 @@ type
     function getNativeProjecCompiler: DCompiler;
     procedure setNativeProjecCompiler(value: DCompiler);
     procedure setSplitterScsrollSpeed(value: byte);
+    procedure setMinimizeDlangMemory(value: TEditEvent);
   published
     property additionalPATH: string read getAdditionalPATH write setAdditionalPath;
     property autoCheckUpdates: boolean read fAutoCheckUpdates write fAutoCheckUpdates;
@@ -647,6 +649,8 @@ type
     property splitterScrollSpeed: byte read fSplitterScrollSpeed write setSplitterScsrollSpeed;
     property showBuildDuration: boolean read fShowBuildDuration write fShowBuildDuration default false;
     property globalCompiler: DCompiler write fGlobalCompiler; deprecated;
+    // this only display a button that has for effect to free unused D GC mem.
+    property minimizeDlangMemory: TEditEvent read fMinimizeDlangMemory write setMinimizeDlangMemory stored false;
     // property toolBarScaling: TToolBarScaling read fToolBarScaling write fToolBarScaling stored false;
     // published for IEditableOptions but stored by DCD wrapper since it reloads before MainForm
     property dcdPort: word read fDcdPort write fDcdPort stored false;
@@ -875,6 +879,11 @@ begin
   else if value > 10 then
     value := 10;
   fSplitterScrollSpeed:=value;
+end;
+
+procedure TApplicationOptionsBase.setMinimizeDlangMemory(value: TEditEvent);
+begin
+  minimizeGcHeap(true);
 end;
 
 function TApplicationOptionsBase.getAdditionalPATH: string;
