@@ -1,4 +1,4 @@
-# v3.9.5-dev
+# v3.9.5
 
 ## Enhancements
 
@@ -7,6 +7,7 @@
 ## Regressions
 
 - DUB project: when compiling a DUB project with LDC, LDC was translated to LDMD. (#47, caused by the fix for #43)
+- Options, shortcut editor: The view was empty until something got typed and then deleted in the filter. (#49)
 
 ## Bugs fixed
 
