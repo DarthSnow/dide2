@@ -34,11 +34,11 @@ export extern(C) FpcArray!char* listSymbols(const(char)* src, bool deep)
         errors ~= construct!(AstError)(cast(ErrorType) err, message, line, col);
     }
 
-    scope LexerConfig config;
-    scope RollbackAllocator rba;
-    scope StringCache sCache = StringCache(StringCache.defaultBucketCount);
+    LexerConfig config;
+    RollbackAllocator rba;
+    StringCache sCache = StringCache(StringCache.defaultBucketCount);
 
-    scope mod = src[0 .. src.strlen]
+    auto mod = src[0 .. src.strlen]
                 .getTokensForParser(config, &sCache)
                 .parseModule("", &rba, &handleErrors);
 

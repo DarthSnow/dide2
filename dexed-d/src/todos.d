@@ -10,20 +10,26 @@ import
 
 export extern(C) FpcArray!(char)* todoItems(const(char)* joinedFiles)
 {
-    scope Appender!(char[]) stream;
-    scope LexerConfig config = LexerConfig("", StringBehavior.source);
-    scope StringCache cache  = StringCache(4096);
+    Appender!(char[]) stream;
+    LexerConfig config = LexerConfig("", StringBehavior.source);
+    StringCache cache  = StringCache(4096);
     stream.reserve(32);
     stream.put("object TTodoItems\ritems=<");
     foreach (fname; joinedFilesToFiles(joinedFiles))
     {
         stream.reserve(256);
-        scope source = cast(ubyte[]) std.file.read(fname);
+        auto source = cast(ubyte[]) std.file.read(fname);
         DLexer(source, config, &cache)
             .filter!(a => a.type == tok!"comment")
             .each!(t => analyze(t, fname, stream));
+        destroy(source);
     }
     stream.put(">end");
+    scope (exit)
+    {
+        destroy(stream);
+        destroy(cache);
+    }
     return (FpcArray!char).fromArray(stream.data);
 }
 
