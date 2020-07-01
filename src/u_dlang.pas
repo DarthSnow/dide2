@@ -1100,7 +1100,7 @@ var
   s: integer = 0;
 begin
   result := 0;
-  // got right after the call left paren
+  // go right after the call left paren
   i := getIndexOfTokenAt(tokens, caretPos) + 1;
   j := i;
   while i > 0 do
@@ -1130,7 +1130,7 @@ begin
       if p > 0 then
         continue;
     end;
-    // skip square bracket pairs, if not already skipping paren pairs
+    // skip square bracket pairs, if not already skipping parens pairs
     if (p = 0) then
     begin
       s += byte(t^.Data = '[');
