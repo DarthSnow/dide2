@@ -62,7 +62,7 @@ procedure minimizeGcHeap(const now: boolean = false); cdecl; external libdexedd_
 // noop
 procedure setRtOptions(); cdecl; external libdexedd_name;
 // Demangle a line possibly containing a D mangled name.
-function ddemangle(const text: PChar): PChar; cdecl; external libdexedd_name;
+function ddemangle(const text: PChar): pointer; cdecl; external libdexedd_name;
 // Detects wether the source code for the module `src` contains the main() function.
 function hasMainFun(const src: PChar): Boolean; cdecl; external libdexedd_name;
 // Returns the DDOC template for the declaration location at `caretLine` in the source code `src`.

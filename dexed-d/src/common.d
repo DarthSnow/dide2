@@ -464,12 +464,12 @@ public:
         alias RT    = FpcArray!T;
         enum isChar = is(Unqual!T == char);
         size_t len  = size_t.sizeof * 2 + T.sizeof * array.length + ubyte(isChar);
-        void* mem   = getMem(len);
+        auto mem    = cast(Unqual!T*) getMem(len);
         // init refcount to -1 and length to izArray length
         *cast(size_t*) (mem + 0            ) = -1;
         *cast(size_t*) (mem + size_t.sizeof) = array.length;
         // copy izArray data
-        mem[size_t.sizeof * 2 .. len - ubyte(isChar)] = array.ptr[0.. array.length * T.sizeof];
+        mem[size_t.sizeof * 2 .. len - ubyte(isChar)] = (cast(T*) array.ptr)[0.. array.length * T.sizeof];
         // FreePascal specifies that strings are guaranteed to be zero terminated.
         static if (isChar)
             *cast(char*) (mem + len - 1) = '\0';

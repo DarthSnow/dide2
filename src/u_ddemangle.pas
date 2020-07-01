@@ -24,7 +24,7 @@ begin
     s := pchar(value);
     // note, assign to result has for effect to alloc a FPC string
     // (by implicit convertion) so the D memory is not used.
-    result := ddemangle(s);
+    result := string(ddemangle(s));
     minimizeGcHeap();
   end
   else
@@ -40,7 +40,7 @@ begin
   begin
     value := values[i];
     if pos('_D', value) > 0 then
-    value := demangle(PChar(value));
+      value := demangle(PChar(value));
     output.AddStrings(value);
   end;
 end;
