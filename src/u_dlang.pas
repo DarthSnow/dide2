@@ -1095,14 +1095,16 @@ function getCurrentParameterIndex(tokens: TLexTokenList; caretPos: TPoint): inte
 var
   t: PLexToken;
   i: integer;
+  j: integer;
   p: integer = 0;
   s: integer = 0;
 begin
-  result := -1;
+  result := 0;
+  // got right after the call left paren
   i := getIndexOfTokenAt(tokens, caretPos) + 1;
+  j := i;
   while i > 0 do
   begin
-    // skip nested ParenExp
     i -= 1;
     t := tokens[i];
     if t^.kind <> TLexTokenKind.ltkSymbol then
@@ -1110,17 +1112,34 @@ begin
     p += byte(t^.Data = ')');
     p -= byte(t^.Data = '(');
     if p = -1 then
-    begin
-      result += 1;
       break;
-    end;
-    if p > 0 then
+  end;
+  p := 0;
+  // count params from left to right
+  while (i <> j) and (i < tokens.Count -1) do
+  begin
+    i += 1;
+    t := tokens[i];
+    if t^.kind <> TLexTokenKind.ltkSymbol then
       continue;
-    // detect IndexExp, SliceExp, etc.
-    s += byte(t^.Data = ']');
-    s -= byte(t^.Data = '[');
-    // add a param if not in opIndex, opSlice, ParenExp
-    result += Byte((t^.Data = ',') and (s = 0) and (p = 0));
+    // skip parens pairs, if not already skipping square bracket pairs
+    if (s = 0) then
+    begin
+      p += byte(t^.Data = '(');
+      p -= byte(t^.Data = ')');
+      if p > 0 then
+        continue;
+    end;
+    // skip square bracket pairs, if not already skipping paren pairs
+    if (p = 0) then
+    begin
+      s += byte(t^.Data = '[');
+      s -= byte(t^.Data = ']');
+      if s > 0 then
+        continue;
+    end;
+    if (s = 0) and (p = 0) and (t^.Data = ',') then
+      result += 1;
   end;
 end;
 
