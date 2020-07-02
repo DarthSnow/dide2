@@ -353,7 +353,7 @@ inherited GdbWidget: TGdbWidget
       end
       object button4: TDexedToolButton[2]
         Left = 205
-        Height = 28
+        Height = 5
         Top = 0
         AutoSize = True
         Caption = 'button4'

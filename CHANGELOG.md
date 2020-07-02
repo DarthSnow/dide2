@@ -1,5 +1,9 @@
 # v3.9.6-dev
 
+## Enhancements
+
+- GDB commander: added the _macCallStackDepth_ option. It prevents slowdown when on automatic break caused by a stack overflow.
+
 ## Bugs fixed
 
 - Editor: wrong position indicated in the call tips when starting to type an array literal, a slice or any other expression involving the square brackets. (#51)

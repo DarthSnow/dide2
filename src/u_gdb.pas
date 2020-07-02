@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, RegExpr, ComCtrls,
   PropEdits, GraphPropEdits, RTTIGrids, Dialogs, ExtCtrls, Menus, Buttons,
   StdCtrls, process, fpjson, typinfo, Unix, ListViewFilterEdit, SynEdit,
-  ObjectInspector,
+  ObjectInspector, math,
   u_common, u_interfaces, u_widget, u_processes, u_observer, u_synmemo,
   u_sharedres, u_stringrange, u_dsgncontrols, u_dialogs, u_dbgitf,
   u_ddemangle, u_writableComponent, EditBtn, strutils, u_controls;
@@ -315,10 +315,12 @@ type
     fHideCpuView: boolean;
     fDlangBreakpoints: TDlangBreakpoints;
     fCurrentEvalKind: TGdbEvalKind;
+    fMaxCallStackDepth: integer;
     procedure setIgnoredSignals(value: TStringList);
     procedure setCommandsHistory(value: TStringList);
     procedure setCustomEvalHistory(value: TStringList);
     procedure setShortcuts(value: TDebugShortcuts);
+    procedure setMaxCallStackDepth(value: integer);
     procedure cleanInvalidHistoryEntries;
   published
     property asmSyntax: TAsmSyntax read fAsmSyntax write fAsmSyntax;
@@ -335,6 +337,7 @@ type
     property hideCpuView: boolean read fHideCpuView write fHideCpuView default false;
     property ignoredSignals: TStringList read fIgnoredSignals write setIgnoredSignals;
     property keepRedirectedStreams: boolean read fKeepRedirectedStreams write fKeepRedirectedStreams default false;
+    property maxCallStackDepth: integer read fMaxCallStackDepth write setMaxCallStackDepth default 100;
     property shortcuts: TDebugShortcuts read fShortcuts write setShortcuts;
     property showGdbOutput: boolean read fShowGdbOutput write fShowGdbOutput;
     property showRawMiOutput: boolean read fShowRawMiOutput write fShowRawMiOutput;
@@ -679,6 +682,7 @@ var
   d: TDlangBreakpoint;
 begin
   inherited;
+  fMaxCallStackDepth := 100;
   fAutoDemangle := true;
   fAutoGetCallStack:= true;
   fAutoGetRegisters:= true;
@@ -747,6 +751,13 @@ end;
 procedure TDebugOptionsBase.setShortcuts(value: TDebugShortcuts);
 begin
   fShortcuts.assign(value);
+end;
+
+procedure TDebugOptionsBase.setMaxCallStackDepth(value: integer);
+begin
+  value := max(1, value);
+  value := min(1000, value);
+  fMaxCallStackDepth := value;
 end;
 
 procedure TDebugOptionsBase.assign(source: TPersistent);
@@ -2796,7 +2807,7 @@ end;
 
 procedure TGdbWidget.infoStack;
 begin
-  gdbCommand('-stack-list-frames', @gdboutJsonize);
+  gdbCommand('-stack-list-frames 0 ' + intToStr(fOptions.maxCallStackDepth - 1), @gdboutJsonize);
 end;
 
 procedure TGdbWidget.infoVariables;
