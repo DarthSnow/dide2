@@ -44,7 +44,7 @@ The _setup.zip_ archives contain a command line program that installs to predefi
 The _deb_ and the _rpm_ packages are for those who prefer the official setup system of their linux systems.
 FreeBSD (all archs), Linux (32 bit) and Windows (all archs) versions must be [built manually](https://basile.b.gitlab.io/dexed/build.html).
 
-[**See this page**](https://basile-z.github.io/dexed/setup.html) for more information about the setup.
+[**See this page**](https://basile.b.gitlab.io/dexed/setup.html) for more information about the setup.
 
 ## Building
 
