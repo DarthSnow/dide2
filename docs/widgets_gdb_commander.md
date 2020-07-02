@@ -14,7 +14,7 @@ It allows to debug the project output (if it's an application) but also the [run
 The breakpoints are handled by the editor. Click the gutter to add or to remove a breakpoint.
 After a break, the following icons may be displayed in the gutter:
 
-- ![](icons/other/breaks.png): A breakpoint is reached.
+- ![](icons/other/break_reached.png): A breakpoint is reached.
 - ![](icons/other/camera_go.png): A watch point is reached. For now the only watchpoints supported are those that monitor a variable (see the toolbar description).
 - ![](icons/other/step.png): The program execution stopped here for another reason. It may be caused by step by step execution or because an unexpected signal has been received.
 
