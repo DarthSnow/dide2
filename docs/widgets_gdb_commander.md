@@ -37,10 +37,10 @@ Note that for now SSE registers are not supported by the inspector.
 
 ## Toolbar
 
-- ![](icons/other/power.png): Starts debugging. By default the project output is launched. It should be compiled with the debug info generation. A context menu at the right allows to debug the [runnable](features_runnables.html) binary produced for the editor that has the selection.
-- ![](icons/other/stop.png): Stops the debugging cession.
-- ![](icons/other/play.png): Resume the debugging cession.
-- ![](icons/other/pause.png): Pauses the debugging cession.
+- ![](icons/other/power.png): Starts debugging. By default the project output is launched. It should be compiled with the debug info generation. A context menu at the right allows to debug the [runnable](features_runnables.html) binary produced for the editor that has the selection or even a custom executable, not necessarily programmed in D.
+- ![](icons/other/stop.png): Stops the debugging session.
+- ![](icons/other/play.png): Resume the debugging session.
+- ![](icons/other/pause.png): Pauses the debugging session.
 - ![](icons/arrow/go_down.png): Steps to the next instruction, including inside functions. A context menu at the right allows to define if stepping is done at the source level (line by line) or at the hardware level (instruction by instruction).
 - ![](icons/arrow/go_jump.png): Steps to the next instruction, excluding functions calls. A context menu at the right allows to define if stepping is done at the source level (line by line) or at the hardware level (instruction by instruction).
 - ![](icons/other/processor.png): Updates the CPU inspector.

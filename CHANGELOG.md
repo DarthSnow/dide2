@@ -2,7 +2,7 @@
 
 ## Enhancements
 
-- GDB commander: added the _macCallStackDepth_ option. It prevents slowdown when on automatic break caused by a stack overflow.
+- GDB commander: added the _maxCallStackDepth_ option. It prevents slowdowns, especially after an automatic break caused by a stack overflow.
 
 ## Bugs fixed
 
