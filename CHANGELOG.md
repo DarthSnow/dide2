@@ -2,7 +2,8 @@
 
 ## Enhancements
 
-- GDB commander: added the _maxCallStackDepth_ option. It prevents slowdowns, especially after an automatic break caused by a stack overflow.
+- D highlighter: added option to highlights function calls and function definition. Use options window: _Editor/HighlighterDlang/calls_ to test it as by default the same properties as identifiers are used.
+- GDB commander: added the _maxCallStackDepth_ option. It prevents slowdowns, especially after an automatic break got SEGFAULT caused by a stack overflow.
 
 ## Bugs fixed
 

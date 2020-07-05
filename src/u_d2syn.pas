@@ -12,7 +12,7 @@ uses
 type
 
   TTokenKind = (tkCommt, tkIdent, tkKeywd, tkStrng, tkBlank, tkSymbl, tkNumbr,
-    tkDDocs, tkSpecK, tkError, tkAsmbl, tkAttri, tkLost,  tkTypes);
+    tkDDocs, tkSpecK, tkError, tkAsmbl, tkAttri, tkLost,  tkTypes, tkCall);
 
   TRangeKind = (rkString1, rkString2, rkBlockCom1, rkBlockCom2,
     rkBlockDoc1, rkBlockDoc2, rkAsm, rkAttrib,
@@ -63,6 +63,7 @@ type
     fAttriAttrib: TSynHighlighterAttributes;
     fLost_Attrib: TSynHighlighterAttributes;
     fTypesAttrib: TSynHighlighterAttributes;
+    fFCallAttrib: TSynHighlighterAttributes;
     fLineBuf: string;
     fTokStart, fTokStop: Integer;
     fTokKind: TTokenKind;
@@ -84,6 +85,7 @@ type
     procedure setErrorAttrib(value: TSynHighlighterAttributes);
     procedure setAttriAttrib(value: TSynHighlighterAttributes);
     procedure setTypesAttrib(value: TSynHighlighterAttributes);
+    procedure setFCallAttrib(value: TSynHighlighterAttributes);
     procedure doAttribChange(sender: TObject);
     procedure doChanged;
   protected
@@ -105,6 +107,7 @@ type
     property errors:      TSynHighlighterAttributes read fErrorAttrib write setErrorAttrib stored true;
     property attributes:  TSynHighlighterAttributes read fAttriAttrib write setAttriAttrib stored true;
     property types:       TSynHighlighterAttributes read fTypesAttrib write setTypesAttrib stored true;
+    property calls:       TSynHighlighterAttributes read fFCallAttrib write setFCallAttrib stored true;
     property DefaultFilter stored false;
     property enabled stored false;
 	public
@@ -217,6 +220,7 @@ begin
   fErrorAttrib := TSynHighlighterAttributes.Create('Error','Error');
   fAttriAttrib := TSynHighlighterAttributes.Create('Attri','Attri');
   fTypesAttrib := TSynHighlighterAttributes.Create('Types','Types');
+  fFCallAttrib := TSynHighlighterAttributes.Create('Calls','Calls');
   fLost_Attrib := TSynHighlighterAttributes.Create('Lost','Lost');
 
   fNumbrAttrib.Foreground := $000079F2;
@@ -231,6 +235,7 @@ begin
   fLost_Attrib.Foreground := clLime;
   fDDocsAttrib.Foreground := clTeal;
   fTypesAttrib.Foreground := clBlack;
+  fFCallAttrib.Foreground := clBlack;
 
   fLost_Attrib.Background := clBlack;
 
@@ -260,6 +265,7 @@ begin
   AddAttribute(fErrorAttrib);
   AddAttribute(fAttriAttrib);
   AddAttribute(fTypesAttrib);
+  AddAttribute(fFCallAttrib);
 
   fAttribLut[TTokenKind.tkident] := fIdentAttrib;
   fAttribLut[TTokenKind.tkBlank] := fWhiteAttrib;
@@ -275,6 +281,7 @@ begin
   fAttribLut[TTokenKind.tkAttri] := fAttriAttrib;
   fAttribLut[TTokenKind.tkTypes] := fTypesAttrib;
   fAttribLut[TTokenKind.tkLost]  := fLost_Attrib;
+  fAttribLut[TTokenKind.tkCall]  := fFCallAttrib;
 
   SetAttributesOnChange(@doAttribChange);
   fTokStop := 1;
@@ -393,6 +400,11 @@ end;
 procedure TSynD2Syn.setTypesAttrib(value: TSynHighlighterAttributes);
 begin
   fTypesAttrib.Assign(value);
+end;
+
+procedure TSynD2Syn.setFCallAttrib(value: TSynHighlighterAttributes);
+begin
+  fFCallAttrib.Assign(value);
 end;
 
 procedure TSynD2Syn.setLine(const NewValue: string; LineNumber: Integer);
@@ -1142,6 +1154,8 @@ begin
       fTokKind := tkSpecK
     else if fPhobosStyleType and ('A' <= fLineBuf[FTokStart]) and (fLineBuf[FTokStart] <= 'Z') then
       fTokKind:= tkTypes
+    else if reader^ = '(' then
+      fTokKind:= tkCall
     else if rkAsm in fCurrRange.rangeKinds then
       fTokKind:=tkAsmbl;
     exit;

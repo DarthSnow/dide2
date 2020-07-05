@@ -384,6 +384,8 @@ begin
     getHl.types.Foreground:=clBlack;
     getHl.types.Style:=[fsBold];
     getHl.phobosStyleType := True;
+    //
+    getHl.calls.Assign(getHl.identifiers);
   end;
   with fPresets.insertPreset(1) do
   begin
@@ -429,6 +431,7 @@ begin
     selection.Foreground := clNone;
     selection.BackPriority:= 2;
     getHl.phobosStyleType := True;
+    getHl.calls.Assign(getHl.identifiers);
   end;
   with fPresets.insertPreset(2) do
   begin
@@ -471,6 +474,7 @@ begin
     selection.Foreground := clNone;
     selection.BackPriority := 1;
     getHl.phobosStyleType := True;
+    getHl.calls.Assign(getHl.identifiers);
   end;
   with fPresets.insertPreset(3) do
   begin
@@ -508,6 +512,7 @@ begin
     selection.Foreground := clNone;
     selection.BackPriority := 10;
     getHl.phobosStyleType := True;
+    getHl.calls.Assign(getHl.identifiers);
   end;
   with fPresets.insertPreset(4) do
   begin
@@ -545,6 +550,7 @@ begin
     selection.Background := 12837345;
     selection.Foreground := clNone;
     getHl.phobosStyleType := True;
+    getHl.calls.Assign(getHl.identifiers);
   end;
   with fPresets.insertPreset(5) do
   begin
@@ -587,6 +593,7 @@ begin
     mouseLink.Style := [fsBold, fsUnderline];
     selection.Background := $9DAABC;
     selection.Foreground := clNone;
+    getHl.calls.Assign(getHl.identifiers);
   end;
 
   fEditor := TSynEdit.Create(self);
