@@ -371,7 +371,7 @@ begin
     exit;
 
   pge := TDexedPage(fPages[index]);
-  if (fSplittedPageIndex = -1) or (index = fSplittedPageIndex) then
+  if fSplittedPageIndex.equals(-1) or index.equals(fSplittedPageIndex) then
     pge.Align:=alClient;
   pge.Visible:=true;
   pge.Repaint;
@@ -390,14 +390,14 @@ begin
   if (index < 0) then
       exit;
 
-  if (fSplittedPageIndex = -1) or (index = fSplittedPageIndex) then
+  if fSplittedPageIndex.equals(-1) or index.equals(fSplittedPageIndex) then
   begin
     hidePage(fPageIndex);
     fPageIndex := index;
     showPage(fPageIndex);
     fSplitter.Visible:= false;
   end
-  else if (fSplittedPageIndex <> -1)  then
+  else if not fSplittedPageIndex.equals(-1)  then
   begin
     hidePage(fPageIndex);
     fPageIndex := index;
@@ -506,7 +506,7 @@ end;
 
 function TDexedPageControl.getSplitPage: TDexedPage;
 begin
-  if fSplittedPageIndex = -1 then
+  if fSplittedPageIndex.equals(-1) then
     exit(nil)
   else
     exit(getPage(fSplittedPageIndex));

@@ -153,11 +153,7 @@ end;
 {$REGION config. things --------------------------------------------------------}
 procedure TProjectConfigurationWidget.selConfChange(Sender: TObject);
 begin
-  if fProj.isNil then
-    exit;
-  if Updating then
-    exit;
-  if selConf.ItemIndex = -1 then
+  if fProj.isNil or Updating or selConf.ItemIndex.equals(-1) then
     exit;
 
   beginImperativeUpdate;
@@ -188,7 +184,7 @@ var
   i: Integer;
 begin
   i := fSynchroItem.IndexOf(Item);
-  if i = -1 then
+  if i.equals(-1) then
     exit('');
   result := fSynchroValue[i];
 end;
@@ -214,7 +210,7 @@ begin
     exit;
   if inspector.TIObject.isNil then
     exit;
-  if inspector.ItemIndex = -1 then
+  if inspector.ItemIndex.equals(-1) then
     exit;
 
   storage := nil;
@@ -385,7 +381,7 @@ end;
 
 function TProjectConfigurationWidget.getGridTarget: TPersistent;
 begin
-  if fProj.isNil or (fProj.ConfigurationIndex = -1) or Tree.Selected.isNil then
+  if fProj.isNil or fProj.ConfigurationIndex.equals(-1) or Tree.Selected.isNil then
     exit(nil);
   // Warning: TTreeNode.StateIndex is usually made for the images...it's not a tag
   case Tree.Selected.StateIndex of

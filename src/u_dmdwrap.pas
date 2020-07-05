@@ -924,7 +924,7 @@ begin
       list.Add('-gc');
     if fGenMap then
       list.Add('-map');
-    if fGenFrame and (list.IndexOf('-gs') = -1) then
+    if fGenFrame and list.IndexOf('-gs').equals(-1) then
       list.Add('-gs');
   end else
   begin
@@ -946,7 +946,7 @@ begin
       list.Add('-gc');
     if baseopt.fGenMap or fGenMap then
       list.Add('-map');
-    if (baseopt.fGenFrame or fGenFrame) and (list.IndexOf('-gs') = -1) then
+    if (baseopt.fGenFrame or fGenFrame) and list.IndexOf('-gs').equals(-1) then
       list.Add('-gs');
   end;
 end;

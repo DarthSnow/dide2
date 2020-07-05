@@ -524,7 +524,7 @@ begin
   proj := TNativeProject(fProj.getProject);
   fname := Tree.Selected.Text;
   i := proj.Sources.IndexOf(fname);
-  if i = -1 then
+  if i.equals(-1) then
     exit;
   fname := fProj.sourceAbsolute(i);
   dir := fname.extractFilePath;

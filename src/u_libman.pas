@@ -523,7 +523,7 @@ procedure TLibraryManager.getLibFiles(aliases, list: TStrings);
           if (x = 'app.d') or (x = 'main.d') then
             continue;
           e := f.extractFileExt;
-          if ((e = libExt) or (e = '.d')) and (list.IndexOf(f) = -1) then
+          if ((e = libExt) or (e = '.d')) and list.IndexOf(f).equals(-1) then
             list.Add(f);
         end;
       finally
@@ -669,7 +669,7 @@ begin
     if b.isNotNil and b.enabled then
     begin
       s := b.libFile;
-      if (opts.IndexOf(s) = -1) and (not s.isEmpty) then
+      if opts.IndexOf(s).equals(-1) and not s.isEmpty then
       begin
         opts.Add(s);
         opts.Add('-I' + b.libSourcePath);

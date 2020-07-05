@@ -241,7 +241,7 @@ begin
   	for i := 0 to fProj.importsPathCount-1 do
   	begin
     	fold := fProj.importPath(i);
-      if fold.dirExists and (folds.IndexOf(fold) = -1) then
+      if fold.dirExists and folds.IndexOf(fold).equals(-1) then
         folds.Add(fold);
     end;
     addImportFolders(folds);
@@ -628,7 +628,7 @@ begin
   processOutputToStrings(fClient, fTempLines);
   while fClient.Running do ;
   len := fTempLines.Count-1;
-  if len = -1 then
+  if len.equals(-1) then
     updateServerlistening;
   for i := 0 to len do
   begin
@@ -678,7 +678,7 @@ begin
     if str.isNotEmpty then
     begin
       i := Pos(#9, str);
-      if i = -1 then
+      if i.equals(-1) then
         exit;
       loc := str[i+1..str.length];
       fname := TrimFilename(str[1..i-1]);

@@ -758,7 +758,7 @@ procedure TD2SynPresetsLoaderForm.btnCloneClick(sender: TObject);
 var
   old: TD2SynPreset;
 begin
-  if fList.ItemIndex = -1 then
+  if fList.ItemIndex.equals(-1) then
     exit;
   old := fPresets[fList.ItemIndex];
   btnAddClick(nil);
@@ -789,7 +789,7 @@ procedure TD2SynPresetsLoaderForm.updateEditor;
 var
   p: TD2SynPreset;
 begin
-  if fList.ItemIndex = -1 then
+  if fList.ItemIndex.equals(-1) then
     exit;
   p := fPresets[fList.ItemIndex];
   fEditor.Color := p.background;

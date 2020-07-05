@@ -463,7 +463,7 @@ var
   rel: string;
   lst: TStringList;
 begin
-  if fConfIx = -1 then
+  if fConfIx.equals(-1) then
     exit;
   exc := TStringList.Create;
   try

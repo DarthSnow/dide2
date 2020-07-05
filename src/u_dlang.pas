@@ -1082,7 +1082,7 @@ begin
       continue;
     p += byte(t^.Data = ')');
     p -= byte(t^.Data = '(');
-    if p = -1 then
+    if p.equals(-1) then
     begin
       result := t^.position;
       result.x += 2;
@@ -1111,7 +1111,7 @@ begin
       continue;
     p += byte(t^.Data = ')');
     p -= byte(t^.Data = '(');
-    if p = -1 then
+    if p.equals(-1) then
       break;
   end;
   p := 0;
@@ -1278,7 +1278,7 @@ begin
       itm := ''
     else if (tok^.Data = ';') or (tok^.Data = ':') or (tok^.Data = ',') then
     begin
-      if (length(itm) <> 0) and (imports.IndexOf(itm) = -1) then
+      if not length(itm).equals(0) and imports.IndexOf(itm).equals(-1) then
         imports.Add(itm);
       itm := '';
       if (tok^.Data = ';') or (tok^.Data = ':') then

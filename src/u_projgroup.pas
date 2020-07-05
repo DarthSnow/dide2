@@ -667,7 +667,7 @@ procedure TProjectGroupWidget.btnAsyncClick(Sender: TObject);
 var
   prj: TProjectGroupItem;
 begin
-  if lstProj.ItemIndex = -1 then
+  if lstProj.ItemIndex.equals(-1) then
     exit;
   prj := projectGroup.item[lstProj.ItemIndex];
   case prj.asyncMode of
@@ -679,7 +679,7 @@ end;
 
 procedure TProjectGroupWidget.btnMoveDownClick(Sender: TObject);
 begin
-  if (lstProj.ItemIndex = -1) or (lstProj.ItemIndex = lstProj.Items.Count-1) then
+  if lstProj.ItemIndex.equals(-1) or lstProj.ItemIndex.equals(lstProj.Items.Count-1) then
     exit;
   projectGroup.items.Exchange(lstProj.ItemIndex, lstProj.ItemIndex + 1);
   lstProj.Items.Exchange(lstProj.ItemIndex, lstProj.ItemIndex + 1);
@@ -699,7 +699,7 @@ end;
 
 procedure TProjectGroupWidget.btnRemProjClick(Sender: TObject);
 begin
-  if lstProj.ItemIndex = -1 then
+  if lstProj.ItemIndex.equals(-1) then
     exit;
   projectGroup.items.Delete(lstProj.Selected.Index);
   updateList;
@@ -707,7 +707,7 @@ end;
 
 procedure TProjectGroupWidget.lstProjDblClick(Sender: TObject);
 begin
-  if lstProj.ItemIndex = -1 then
+  if lstProj.ItemIndex.equals(-1) then
     exit;
   TProjectGroupItem(lstProj.Selected.Data).lazyLoad;
   subjProjFocused(fProjSubj, TProjectGroupItem(lstProj.Selected.Data).project);
@@ -737,7 +737,7 @@ var
   asc: TProjectAsyncMode;
 begin
   idx := lstProj.ItemIndex;
-  if idx = -1 then
+  if idx.equals(-1) then
   begin
     btnMoveDown.Enabled:= false;
     btnMoveUp.Enabled:= false;
@@ -746,8 +746,8 @@ begin
   end
   else
   begin
-    btnMoveDown.Enabled:= idx <> projectGroup.projectCount-1;
-    btnMoveUp.Enabled:= idx <> 0;
+    btnMoveDown.Enabled:= not idx.equals(projectGroup.projectCount-1);
+    btnMoveUp.Enabled:= not idx.equals(0);
     btnRemProj.Enabled:= true;
     btnAsync.Enabled:= true;
     asc := projectGroup.item[idx].asyncMode;

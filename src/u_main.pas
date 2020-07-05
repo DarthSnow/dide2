@@ -1101,7 +1101,7 @@ begin
     grp := getProjectGroup;
     if fProjectGroup.isNotEmpty and fProjectGroup.fileExists then
       grp.openGroup(fProjectGroup);
-    if (fProjectIndex = -1) and assigned(dst.fFreeProj) then
+    if fProjectIndex.equals(-1) and assigned(dst.fFreeProj) then
       dst.fFreeProj.activate
     else if (fProjectIndex >= 0) and (grp.projectCount > 0)
       and (fProjectIndex < grp.projectCount) then

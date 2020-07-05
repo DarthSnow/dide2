@@ -731,7 +731,7 @@ procedure TMiniExplorerWidget.lstFilesFileAdded(Sender: TObject;
   Item: TListItem);
 begin
   Item.ImageIndex:=0;
-  if lstFiles.SortColumn = -1 then
+  if lstFiles.SortColumn.equals(-1) then
     lstFIles.SortColumn := 0;
   lstFiles.Sort;
 end;

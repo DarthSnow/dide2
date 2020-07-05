@@ -1544,7 +1544,7 @@ begin
   if (fDoc.fileName <> newdocPageCaption) then
   begin
     fSynchronizingBreakpoints:= true;
-    if fSynchronizedDocuments.IndexOf(document.fileName) = -1 then
+    if fSynchronizedDocuments.IndexOf(document.fileName).equals(-1) then
     begin
       fSynchronizedDocuments.Add(document.fileName);
       for i:= 0 to fBreakPoints.count-1 do
@@ -2941,7 +2941,7 @@ const
 var
   nme: string;
 begin
-  if lstVariables.ItemIndex = -1 then
+  if lstVariables.ItemIndex.equals(-1) then
     exit;
   nme := lstVariables.Items[lstVariables.ItemIndex].Caption;
   gdbCommand(cmd[fAddWatchPointKind] + nme);
@@ -2997,7 +2997,7 @@ begin
     exit;
   lne := StrToIntDef(lstThreads.Selected.SubItems[5], -1);
   nme := lstThreads.Selected.SubItems[4];
-  if not nme.fileExists or (lne = -1) then
+  if not nme.fileExists or lne.equals(-1) then
     exit;
   fDocHandler.openDocument(nme);
   doc := fDocHandler.findDocument(nme);
@@ -3061,7 +3061,7 @@ begin
   cmd := edit1.Text;
   if cmd.isEmpty then
     exit;
-  if edit1.Items.IndexOf(cmd) = -1 then
+  if edit1.Items.IndexOf(cmd).equals(-1) then
     edit1.Items.Add(cmd);
   cmd := fSyms.expand(cmd);
   if (cmd.length > 1) and (cmd[1] = '>') and assigned(fInput) then

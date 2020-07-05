@@ -94,14 +94,14 @@ end;
 procedure TToolsEditorWidget.lstToolsSelectionChange(Sender: TObject;
   User: boolean);
 begin
-  if lstTools.ItemIndex = -1 then
+  if lstTools.ItemIndex.equals(-1) then
     exit;
   propsEd.TIObject := CustomTools[lstTools.ItemIndex];
 end;
 
 procedure TToolsEditorWidget.propsEdModified(Sender: TObject);
 begin
-  if propsEd.ItemIndex = -1 then
+  if propsEd.ItemIndex.equals(-1) then
     exit;
   case propsEd.Rows[propsEd.ItemIndex].Name of
     'toolAlias': updateToolList;
@@ -123,7 +123,7 @@ procedure TToolsEditorWidget.btnCloneClick(Sender: TObject);
 var
   itm: TToolItem;
 begin
-  if lstTools.ItemIndex = -1 then
+  if lstTools.ItemIndex.equals(-1) then
     exit;
 
   itm := CustomTools.addTool;
@@ -159,7 +159,7 @@ procedure TToolsEditorWidget.btnKillClick(Sender: TObject);
 var
   p: TDexedProcess;
 begin
-  if lstTools.ItemIndex = -1 then
+  if lstTools.ItemIndex.equals(-1) then
     exit;
 
   p := CustomTools.tool[lstTools.ItemIndex].process;
@@ -169,7 +169,7 @@ end;
 
 procedure TToolsEditorWidget.btnRemToolClick(Sender: TObject);
 begin
-  if lstTools.ItemIndex = -1 then
+  if lstTools.ItemIndex.equals(-1) then
     exit;
 
   clearInspector;
@@ -190,7 +190,7 @@ end;
 
 procedure TToolsEditorWidget.btnMoveDownClick(Sender: TObject);
 begin
-  if (lstTools.ItemIndex = -1) or (lstTools.ItemIndex = lstTools.Items.Count-1) then
+  if lstTools.ItemIndex.equals(-1) or lstTools.ItemIndex.equals(lstTools.Items.Count-1) then
     exit;
 
   CustomTools.tools.Exchange(lstTools.ItemIndex, lstTools.ItemIndex + 1);
@@ -200,7 +200,7 @@ end;
 
 procedure TToolsEditorWidget.executeSelectedTool;
 begin
-  if lstTools.ItemIndex = -1 then
+  if lstTools.ItemIndex.equals(-1) then
     exit;
 
   CustomTools.executeTool(lstTools.ItemIndex);

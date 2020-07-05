@@ -838,7 +838,7 @@ begin
     // - CollapsedLineForFoldAtLine() does not handle the sub-folding.
     // - TextView visibility is increased so this is not the standard way of getting the infos.
     start := fMemo.TextView.CollapsedLineForFoldAtLine(i);
-    if start = -1 then
+    if start.equals(-1) then
       continue;
     if start = prev then
       continue;
@@ -1765,7 +1765,7 @@ begin
       exit;
 
   leftTokIndex := getIndexOfTokenLeftTo(fLexToks, CaretXY);
-  if (leftTokIndex = -1) or (leftTokIndex >= fLexToks.Count) then
+  if leftTokIndex.equals(-1) or (leftTokIndex >= fLexToks.Count) then
     exit;
 
   // goto previous opened brace
@@ -1774,7 +1774,7 @@ begin
     f := fLexToks[i];
     b += Byte((f^.kind = ltkSymbol) and (f^.Data[1] = '}'));
     b -= Byte((f^.kind = ltkSymbol) and (f^.Data[1] = '{'));
-    if b = -1 then
+    if b.equals(-1) then
       break;
   end;
   // retrieve the indent of the opened brace
@@ -2081,7 +2081,7 @@ begin
   for i:= high(locs) downto 0 do
   begin
     loc := locs[i];
-    if loc = -1 then
+    if loc.equals(-1) then
       continue;
     BeginUndoBlock;
     SelStart := loc + 1;
