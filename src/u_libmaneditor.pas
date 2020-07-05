@@ -488,7 +488,7 @@ begin
   finally
     dub.Free;
   end;
-  if err <> 0 then
+  if not err.equals(0) then
   begin
     itf.message('error, failed to fetch the package', nil, amcMisc, amkErr);
     exit;
@@ -539,7 +539,7 @@ begin
   finally
     dub.Free;
   end;
-  if err <> 0 then
+  if not err.equals(0) then
   begin
     // allow "sourceLibrary"
     EntitiesConnector.beginUpdate;

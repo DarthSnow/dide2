@@ -151,7 +151,7 @@ const
 begin
   result := inherited Compare(range);
   assert(range <> nil);
-  if result <> 0 then
+  if not result.equals(0) then
     exit;
 
   if range is TSynD2SynRange then

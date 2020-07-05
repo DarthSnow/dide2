@@ -2963,7 +2963,7 @@ begin
   inph := EntitiesConnector.getSingleService('IProcInputHandler');
   if inph.isNotNil then
     (inph as IProcInputHandler).removeProcess(proc);
-  if (proc.ExitStatus <> 0) then
+  if not proc.ExitStatus.equals(0) then
   begin
     fMsgs.message(format('error: the process (%s) has returned the status %s',
       [proc.Executable, prettyReturnStatus(proc)]), fDoc, amcEdit, amkErr);
@@ -3095,7 +3095,7 @@ begin
       dmdproc.Parameters.Add('-of' + fname + objExt);
     dmdproc.Parameters.Add('-J' + fDoc.fileName.extractFilePath);
     dmdproc.Parameters.AddStrings(fRunnablesOptions.staticSwitches);
-    if lst.isNotNil and (lst.Count <> 0) then
+    if lst.isNotNil and not lst.Count.equals(0) then
       dmdproc.Parameters.AddStrings(lst);
     {$ifdef WINDOWS}
     {$ifdef CPUX86_64}

@@ -2050,7 +2050,7 @@ begin
   cpuViewer.TIObject := fInspState;
   cpuViewer.RefreshPropertyValues;
   // inferior options
-  if o.environmentPaths.Count <> 0 then
+  if not o.environmentPaths.Count.equals(0) then
   begin
     str := '';
     for i:= 0 to o.environmentPaths.Count-1 do
@@ -2060,7 +2060,7 @@ begin
   end;
   if DirectoryExists(fSyms.expand(o.workingDirectory)) then
     gdbCommand('-environment-cd ' + fSyms.expand(o.workingDirectory));
-  if (o.arguments.Count <> 0) or (o.queryArguments) then
+  if not o.arguments.Count.equals(0) or o.queryArguments then
   begin
     str := '';
     if o.queryArguments and not InputQuery('Command line arguments', 'GDB commander', str) then
@@ -2462,7 +2462,7 @@ begin
       sigmean := 'unknown meaning';
       if fJson.findAny('signal-name', val) then
         signame := val.AsString;
-      if (fOptions.ignoredSignals.Count <> 0) and
+      if not fOptions.ignoredSignals.Count.equals(0) and
         (fOptions.ignoredSignals.IndexOf(signame) <> -1) then
       begin
         continueDebugging;

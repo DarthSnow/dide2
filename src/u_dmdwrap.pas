@@ -914,7 +914,7 @@ begin
   begin
     if fDebugConditions then
       list.Add('-debug');
-    if fDbgLevel <> 0 then
+    if not fDbgLevel.equals(0) then
       list.Add('-debug=' + intToStr(fDbgLevel));
     for idt in fDbgIdents do
       list.Add('-debug=' + idt);

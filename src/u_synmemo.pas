@@ -1040,7 +1040,7 @@ end;
 
 procedure TScrollMemo.goToLine(value: integer);
 begin
-  if fMemo.PaintLock <> 0 then
+  if not fMemo.PaintLock.equals(0) then
     exit;
   if value > fMemo.Lines.Count then
     value := fMemo.Lines.Count
@@ -1702,7 +1702,7 @@ begin
     t += byte(result = imTabs);
     s += byte(result = imSpaces);
   end;
-  if (t <> 0) and (s <> 0) then
+  if not t.equals(0) and not s.equals(0) then
     result := imMixed
   else if t.equals(0) then
     result := imSpaces

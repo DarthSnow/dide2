@@ -539,7 +539,7 @@ begin
   begin
     Compare := AnsiCompareStr(item1.SubItems[3], item2.SubItems[3]);
   end
-  else if col <> 0 then
+  else if not col.equals(0) then
   begin
     i1 := item1.SubItems[col-1].ToInt64;
     i2 := item2.SubItems[col-1].ToInt64;

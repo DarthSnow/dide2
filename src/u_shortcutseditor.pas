@@ -371,7 +371,7 @@ procedure TShortcutEditor.btnClearClick(Sender: TObject);
 begin
   if not anItemIsSelected then
     exit;
-  if TShortcutItem(tree.Selected.Data).data <> 0 then
+  if not TShortcutItem(tree.Selected.Data).data <> 0 then
   begin
     TShortcutItem(tree.Selected.Data).data := 0;
     fHasChanged := true;

@@ -283,7 +283,7 @@ begin
         if not o.findAny('path', d) then
           continue;
         p := d.AsString;
-        if (p.length <> 0) and (p[p.length] <> DirectorySeparator) then
+        if not p.length.equals(0) and (p[p.length] <> DirectorySeparator) then
           p += DirectorySeparator;
         if DirectoryExistsUTF8(p) then
           loc.Add(p);
@@ -1143,7 +1143,7 @@ begin
   begin
     fDubProc.Options := fDubProc.Options + [poWaitOnExit, poNewConsole];
   end;
-  if fMetaEnv.Count <> 0 then
+  if not fMetaEnv.Count.equals(0) then
   begin
     for i := 0 to fMetaEnv.Count-1 do
     begin

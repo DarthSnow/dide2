@@ -224,7 +224,7 @@ begin
     fSymbols[CPO] := fProjInterface.outputFilename;
     fSymbols[CPOP]:= fSymbols[CPO].extractFileDir;
     fSymbols[CPR] := fSymbols[CPP];
-    if fProjInterface.sourcesCount <> 0 then
+    if not fProjInterface.sourcesCount.equals(0) then
     begin
       str := TStringList.Create;
       try

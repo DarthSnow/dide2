@@ -957,7 +957,7 @@ begin
     getprocInputHandler.removeProcess(TProcess(sender));
     if proc is TDexedProcess then
       dproc := TDexedProcess(proc);
-    if (proc.ExitStatus <> 0) then
+    if not proc.ExitStatus.equals(0) then
     begin
       fMsgs.message(format('error: the process (%s) has returned the status %s',
         [proc.Executable, prettyReturnStatus(proc)]), fAsProjectItf, amcProj, amkErr);

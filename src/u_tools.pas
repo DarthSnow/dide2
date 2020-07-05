@@ -292,7 +292,7 @@ begin
     if fTerminatedFlag then
       exit;
     fTerminatedFlag := true;
-    if fProcess.ExitStatus <> 0 then
+    if not fProcess.ExitStatus.equals(0) then
     begin
       fMsgs.message(format('error: the tool (%s) has returned the status %s',
         [fProcess.Executable, prettyReturnStatus(fProcess)]), nil, amcMisc, amkErr);
