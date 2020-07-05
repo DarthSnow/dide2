@@ -846,7 +846,7 @@ procedure TLibManEditorWidget.btnMoveUpClick(Sender: TObject);
 var
   i: integer;
 begin
-  if list.Selected.isNil or (list.Selected.Index = 0) then
+  if list.Selected.isNil or list.Selected.Index.equals(0) then
     exit;
 
   i := list.Selected.Index;

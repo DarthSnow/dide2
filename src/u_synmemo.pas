@@ -1704,9 +1704,9 @@ begin
   end;
   if (t <> 0) and (s <> 0) then
     result := imMixed
-  else if t = 0 then
+  else if t.equals(0) then
     result := imSpaces
-  else if s = 0 then
+  else if s.equals(0) then
     result := imTabs
   else
     result := imNone;
@@ -1741,7 +1741,7 @@ begin
   if not fIsDSource and not alwaysAdvancedFeatures then
     exit;
   BeginUndoBlock;
-  if ((CaretX-1) and 1) = 0 then
+  if ((CaretX-1) and 1).equals(0) then
     ExecuteCommand(ecChar, ' ', nil);
   ExecuteCommand(ecChar, c, nil);
   EndUndoBlock;
@@ -1879,7 +1879,7 @@ begin
       if (line.length > 1) and (line[1..2] = '//') then
         numUndo += 1;
     end;
-    if numUndo = 0 then
+    if numUndo.equals(0) then
       mustUndo := false
     else if numUndo = BlockEnd.Y + 1 - BlockBegin.Y then
       mustUndo := true;
@@ -2067,7 +2067,7 @@ begin
       exit;
   old := GetWordAtRowCol(LogicalCaretXY);
   DcdWrapper.getLocalSymbolUsageFromCursor(locs);
-  if length(locs) = 0 then
+  if length(locs).equals(0) then
   begin
     dlgOkInfo('Unknown, ambiguous or non-local symbol for "'+ old +'"');
     exit;
@@ -2839,7 +2839,7 @@ begin
     caretX := caretX + 1;
 
     getCompletionList();
-    if fCompletion.TheForm.ItemList.Count = 0 then
+    if fCompletion.TheForm.ItemList.Count.equals(0) then
     begin
       fCompletion.TheForm.Close;
       exit;
@@ -2950,7 +2950,7 @@ end;
 
 procedure TDexedMemo.AutoDotTimerEvent(sender: TObject);
 begin
-  if (not fCanAutoDot) or (fAutoDotDelay = 0) then
+  if not fCanAutoDot or fAutoDotDelay.equals(0) then
     exit;
 
   fCanAutoDot := false;
@@ -3153,7 +3153,7 @@ begin
     if fHasModuleDeclaration then
       result := getModuleName(fLexToks);
   end;
-  if result.length = 0 then
+  if result.length.equals(0) then
   begin
     if fFilename.length > 0 then
       result := fFilename.extractFileName
@@ -3234,7 +3234,7 @@ begin
       exit(braceCloseInvalid);
     c += byte((tok^.kind = TLexTokenKind.ltkSymbol) and (((tok^.Data = '{')) or (tok^.Data = 'q{')));
     c -= byte((tok^.kind = TLexTokenKind.ltkSymbol) and (tok^.Data = '}'));
-    if bet and (c = 0) then
+    if bet and c.equals(0) then
       exit(braceCloseLessEven);
   end;
   if (tok <> nil) and (tok^.kind = ltkIllegal) then

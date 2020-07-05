@@ -64,7 +64,7 @@ begin
   fname := getDocPath + OptsFname;
   if OptsFname.fileExists then
     fMru.LoadFromFile(fname);
-  if fMru.Count = 0 then
+  if fMru.Count.equals(0) then
     fMru.Insert(0, '(your input here)');
 
   case GetIconScaledSize of
@@ -153,7 +153,7 @@ procedure TProcInputWidget.sendInput;
 var
   inp: string;
 begin
-  if fProc.Input.isNil or (fProc.Input.Handle = 0) then
+  if fProc.Input.isNil or fProc.Input.Handle.equals(0) then
     exit;
 
   fMru.Insert(0,txtInp.Text);

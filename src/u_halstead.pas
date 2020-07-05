@@ -196,7 +196,7 @@ procedure THalsteadMetrics.Measure(document: TDexedMemo);
     if val.isNil then
       exit;
     n1  := val.AsInteger;
-    if n1 = 0 then
+    if n1.equals(0) then
       exit;
 
     val := obj.Find('n1Sum');
@@ -208,7 +208,7 @@ procedure THalsteadMetrics.Measure(document: TDexedMemo);
     if val.isNil then
       exit;
     n2  := val.AsInteger;
-    if n2 = 0 then
+    if n2.equals(0) then
       exit;
 
     val := obj.Find('n2Sum');
@@ -269,7 +269,7 @@ var
   i: integer;
 begin
   if not fShowAllResults
-  and ((maxBugsPerFunction = 0) and (maxBugsPerModule = 0) and (maxVolumePerFunction = 0)) then
+  and (maxBugsPerFunction = 0) and (maxBugsPerModule = 0) and (maxVolumePerFunction = 0) then
     exit;
 
   if not assigned(fMsgs) then

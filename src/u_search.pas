@@ -414,7 +414,7 @@ begin
           c.LoadFromFile(f);
           s += findAll(f, c, false);
         end;
-        if s = 0 then
+        if s.equals(0) then
         begin
           m := getMessageDisplay;
           m.message(format('0 result for the pattern <%s>', [fToFind]),
@@ -435,7 +435,7 @@ begin
           f := h.getDocument(i).fileName;
           s += findAll(f, h.getDocument(i).Lines, false);
         end;
-        if s = 0 then
+        if s.equals(0) then
         begin
           m := getMessageDisplay;
           m.message(format('0 result for the pattern <%s>', [fToFind]),
@@ -585,7 +585,7 @@ begin
     else
       fDoc.CaretX := fDoc.CaretX + 1;
   end;
-  if fDoc.SearchReplace(fToFind, '', getOptions) = 0 then
+  if fDoc.SearchReplace(fToFind, '', getOptions).equals(0) then
   begin
     s := format('the expression cannot be found, restart from the %s ?', [r[chkBack.Checked]]);
     if dlgOkCancel(s) = mrOk then
@@ -668,7 +668,7 @@ begin
   end;
   while(true) do
   begin
-    if fDoc.SearchReplace(fToFind, fReplaceWth, opts) = 0 then
+    if fDoc.SearchReplace(fToFind, fReplaceWth, opts).equals(0) then
       break;
     if fCancelAll then
     begin

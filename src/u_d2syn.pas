@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Graphics,
   SynEditHighlighter, SynEditHighlighterFoldBase, SynEditTypes,
-  u_dlangutils,u_dlangmaps;
+  u_dlangutils, u_dlangmaps, u_common;
 
 type
 
@@ -444,7 +444,7 @@ begin
   readerReset;
 
   // script line
-  if (LineIndex = 0) and (fTokStart = 1) and readDelim(reader, fTokStop, '#!') then
+  if LineIndex.equals(0) and fTokStart.equals(1) and readDelim(reader, fTokStop, '#!') then
   begin
     fTokKind := tkCommt;
     readLine(reader, fTokStop);
@@ -613,11 +613,11 @@ begin
         end else readerNext;
       end;
     end;
-    if fCurrRange.nestedCommentsCount = 0 then
+    if fCurrRange.nestedCommentsCount.equals(0) then
     begin
-      if (fTokKind = tkCommt) then
+      if fTokKind = tkCommt then
         EndCodeFoldBlock(fkComments2 in fFoldKinds)
-      else if (fTokKind = tkDDocs) then
+      else if fTokKind = tkDDocs then
         EndCodeFoldBlock(fkDDoc in fFoldKinds);
       fCurrRange.rangeKinds -= [rkBlockDoc2, rkBlockCom2];
     end;
@@ -741,7 +741,7 @@ begin
     if readUntil(reader, fTokStop, ')"') then
     begin
       fCurrRange.nestedQParensStrings -= 1;
-      if fCurrRange.nestedQParensStrings = 0 then
+      if fCurrRange.nestedQParensStrings.equals(0) then
       begin
         readDelim(reader, fTokStop, stringPostfixes);
         exit;
@@ -757,7 +757,7 @@ begin
     if readUntil(reader, fTokStop, ')"') then
     begin
       fCurrRange.nestedQParensStrings -= 1;
-      if fCurrRange.nestedQParensStrings = 0 then
+      if fCurrRange.nestedQParensStrings.equals(0) then
       begin
         readDelim(reader, fTokStop, stringPostfixes);
         fCurrRange.rangeKinds -= [rkStringQParen];
@@ -776,7 +776,7 @@ begin
     if readUntil(reader, fTokStop, ']"') then
     begin
       fCurrRange.nestedQSquareStrings -= 1;
-      if fCurrRange.nestedQSquareStrings = 0 then
+      if fCurrRange.nestedQSquareStrings.equals(0) then
       begin
         readDelim(reader, fTokStop, stringPostfixes);
         exit;
@@ -792,7 +792,7 @@ begin
     if readUntil(reader, fTokStop, ']"') then
     begin
       fCurrRange.nestedQSquareStrings -= 1;
-      if fCurrRange.nestedQSquareStrings = 0 then
+      if fCurrRange.nestedQSquareStrings.equals(0) then
       begin
         readDelim(reader, fTokStop, stringPostfixes);
         fCurrRange.rangeKinds -= [rkStringQSquare];
@@ -811,7 +811,7 @@ begin
     if readUntil(reader, fTokStop, '>"') then
     begin
       fCurrRange.nestedQGeStrings -= 1;
-      if fCurrRange.nestedQGeStrings = 0 then
+      if fCurrRange.nestedQGeStrings.equals(0) then
       begin
         readDelim(reader, fTokStop, stringPostfixes);
         exit;
@@ -827,7 +827,7 @@ begin
     if readUntil(reader, fTokStop, ')"') then
     begin
       fCurrRange.nestedQGeStrings -= 1;
-      if fCurrRange.nestedQGeStrings = 0 then
+      if fCurrRange.nestedQGeStrings.equals(0) then
       begin
         readDelim(reader, fTokStop, stringPostfixes);
         fCurrRange.rangeKinds -= [rkStringQGe];
@@ -846,7 +846,7 @@ begin
     if readUntil(reader, fTokStop, '}"') then
     begin
       fCurrRange.nestedQCurlyStrings -= 1;
-      if fCurrRange.nestedQCurlyStrings = 0 then
+      if fCurrRange.nestedQCurlyStrings.equals(0) then
       begin
         readDelim(reader, fTokStop, stringPostfixes);
         exit;
@@ -862,7 +862,7 @@ begin
     if readUntil(reader, fTokStop, '}"') then
     begin
       fCurrRange.nestedQCurlyStrings -= 1;
-      if fCurrRange.nestedQCurlyStrings = 0 then
+      if fCurrRange.nestedQCurlyStrings.equals(0) then
       begin
         readDelim(reader, fTokStop, stringPostfixes);
         fCurrRange.rangeKinds -= [rStringQCurly];
@@ -1023,7 +1023,7 @@ begin
         if rkAttrib in fCurrRange.rangeKinds then
         begin
           fCurrRange.attribParenCount -= 1;
-          if fCurrRange.attribParenCount = 0 then
+          if fCurrRange.attribParenCount.equals(0) then
           begin
             fCurrRange.rangeKinds -= [rkAttrib];
             fTokKind := tkAttri;

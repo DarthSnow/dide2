@@ -723,7 +723,7 @@ end;
 procedure TRunnableOptions.afterLoad;
 begin
   inherited;
-  if fStaticSwitches.Count = 0 then
+  if fStaticSwitches.Count.equals(0) then
     setDefaultSwitches
   else
     sanitizeSwitches;
@@ -2978,7 +2978,7 @@ var
   form: TForm;
   memo: TMemo;
 begin
-  if fRunnablesOptions.fStaticSwitches.Count = 0 then
+  if fRunnablesOptions.fStaticSwitches.Count.equals(0) then
     fRunnablesOptions.setDefaultSwitches;
   form := TForm.Create(nil);
   form.BorderIcons:= [biSystemMenu];
@@ -3021,7 +3021,7 @@ begin
   result := false;
   fMsgs.clearByData(fDoc);
   FreeRunnableProc;
-  if fDoc.isNil or (fDoc.Lines.Count = 0) then
+  if fDoc.isNil or fDoc.Lines.Count.equals(0) then
     exit;
 
   firstlineFlags := fDoc.Lines[0];
@@ -3071,7 +3071,7 @@ begin
       fDoc.saveTempFile;
     fname := runnableExename.stripFileExt;
 
-    if fRunnablesOptions.staticSwitches.Count = 0 then
+    if fRunnablesOptions.staticSwitches.Count.equals(0) then
       fRunnablesOptions.setDefaultSwitches;
     {$IFDEF RELEASE}
     dmdProc.ShowWindow := swoHIDE;
@@ -3168,7 +3168,7 @@ begin
 
     if not asObj then
       sysutils.DeleteFile(fname + objExt);
-    if (dmdProc.ExitStatus = 0) then
+    if dmdProc.ExitStatus.equals(0) then
     begin
       result := true;
       fMsgs.message(shortenPath(fDoc.fileName, 25) + ' successfully compiled',
@@ -3250,7 +3250,7 @@ const
   ic : array[boolean] of TAppMessageKind = (amkWarn, amkInf);
 begin
   asyncprocTerminate(sender);
-  if fCovModUt and assigned(fRunProc) and (fRunProc.ExitStatus = 0) then
+  if fCovModUt and assigned(fRunProc) and fRunProc.ExitStatus.equals(0) then
   begin
     fname   := fDoc.fileName.stripFileExt;
     fullcov := true;
@@ -3587,7 +3587,7 @@ begin
   if sender.isNil then
     exit;
   act := TAction(sender);
-  if act.Tag = 0 then
+  if act.Tag.equals(0) then
     exit;
 
   widg := TDexedWidget(act.Tag);
@@ -4310,7 +4310,7 @@ var
 begin
   if checkProjectLock then
     exit;
-  if fProjectGroup.projectCount = 0 then
+  if fProjectGroup.projectCount.equals(0) then
     exit;
   fProjBeforeGroup := fProj;
   fGroupCompilationCnt := 0;

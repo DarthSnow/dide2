@@ -852,7 +852,7 @@ begin
       m.Caption := d[i];
       m.OnClick := @mnuDriveItemClick;
       mnuDrives.Items.Add(m);
-      if i = 0 then
+      if i.equals(0) then
         treeFolders.Root:= m.Caption;
     end;
     m := Tmenuitem.Create(self);

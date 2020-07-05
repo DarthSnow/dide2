@@ -185,9 +185,9 @@ begin
   fReaderHead := text;
   while (LineAnColumn <> colAndLine) do
     Next;
-  //
+
   // editor not 0 based ln index
-  if fLineIndex = 0 then
+  if fLineIndex.equals(0) then
     fLineIndex := 1;
 end;
 
@@ -848,7 +848,7 @@ begin
       begin
         tokenStringBraceBalance -= Byte(reader.head^ = '}');
         tokenStringBraceBalance += Byte(reader.head^ = '{');
-        if tokenStringBraceBalance = 0 then
+        if tokenStringBraceBalance.equals(0) then
         begin
           if (reader.head^ = '}') and ((reader.head + 1)^  in stringPostfixes) and not
             isIdentifier((reader.head + 2)^) then
@@ -1123,7 +1123,7 @@ begin
     if t^.kind <> TLexTokenKind.ltkSymbol then
       continue;
     // skip parens pairs, if not already skipping square bracket pairs
-    if (s = 0) then
+    if s.equals(0) then
     begin
       p += byte(t^.Data = '(');
       p -= byte(t^.Data = ')');
@@ -1131,14 +1131,14 @@ begin
         continue;
     end;
     // skip square bracket pairs, if not already skipping parens pairs
-    if (p = 0) then
+    if p.equals(0) then
     begin
       s += byte(t^.Data = '[');
       s -= byte(t^.Data = ']');
       if s > 0 then
         continue;
     end;
-    if (s = 0) and (p = 0) and (t^.Data = ',') then
+    if s.equals(0) and p.equals(0) and (t^.Data = ',') then
       result += 1;
   end;
 end;
@@ -1179,13 +1179,13 @@ begin
     p += Byte((t^.kind = TLexTokenKind.ltkSymbol) and (t^.Data = ')'));
     p -= Byte((t^.kind = TLexTokenKind.ltkSymbol) and (t^.Data = '('));
     //  (a.(b).c|.d)  ->  a.(b).c
-    if p = 0 then
+    if p.equals(0) then
     begin
       li := i+1;
       break;
     end;
   end;
-  if (li <> -1) and (ri >= li) then
+  if not li.equals(-1) and (ri >= li) then
   begin
     for i := li to ri do
       result += tokens[i]^.Data;

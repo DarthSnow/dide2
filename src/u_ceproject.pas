@@ -582,7 +582,7 @@ var
     src: string;
     i: Integer;
   begin
-    if fSrcs.Count = 0 then
+    if fSrcs.Count.equals(0) then
       exit;
     allMissing := true;
     for i:= 0 to fSrcs.Count-1 do
@@ -783,7 +783,7 @@ begin
       processOutputToStrings(prc, lst);
       while prc.Running do
         sleep(1);
-      com := prc.ExitStatus = 0;
+      com := prc.ExitStatus.equals(0);
       for j := 0 to lst.Count -1 do
         fMsgs.message(lst[j], fAsProjectItf, amcProj, amkAuto);
     finally
@@ -818,7 +818,7 @@ begin
       if poUsePipes in prc.Options then
         runProcOutput(prc);
   finally
-    result := prc.ExitStatus = 0;
+    result := prc.ExitStatus.equals(0);
     prc.Free;
   end;
 end;
@@ -862,7 +862,7 @@ begin
   if not runPrePostProcess(config.preBuildProcess) then
     fMsgs.message('warning: pre-compilation process or commands not properly executed',
       fAsProjectItf, amcProj, amkWarn);
-  if (Sources.Count = 0) and (config.pathsOptions.extraSources.Count = 0) then
+  if Sources.Count.equals(0) and config.pathsOptions.extraSources.Count.equals(0) then
     exit;
 
   prjname := shortenPath(filename, 25);
@@ -991,7 +991,7 @@ var
 begin
   compProcOutput(proc);
   prjname := shortenPath(filename);
-  fCompiled := fCompilProc.ExitStatus = 0;
+  fCompiled := fCompilProc.ExitStatus.equals(0);
   updateOutFilename;
   if fCompiled then
     fMsgs.message(prjname + ' has been successfully compiled',

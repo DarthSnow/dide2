@@ -422,7 +422,7 @@ var
     if not fOptions.hideAttributes then
       exit;
     p := pos('(', idt);
-    if p = 0 then
+    if p.equals(0) then
       p := integer.MaxValue;
     for s in a do
     begin
@@ -450,7 +450,7 @@ begin
     free;
   end;
 
-  if log.length = 0 then
+  if log.length.equals(0) then
     exit;
 
   // ======== Timer Is 35.... ============

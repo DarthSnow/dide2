@@ -434,7 +434,7 @@ begin
   c := getContext;
   case c of
     tcNone: exit;
-    tcProject: if (fProj = nil) or (fProj.sourcesCount = 0) then
+    tcProject: if (fProj = nil) or fProj.sourcesCount.equals(0) then
       exit;
     tcFile: if fDoc = nil then
       exit;
@@ -613,7 +613,7 @@ var
   col: Integer;
 begin
   col := lstItems.SortColumn;
-  if col = 0 then
+  if col.equals(0) then
   begin
     txt1 := item1.Caption;
     txt2 := item2.Caption;

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, ComCtrls, ExtCtrls, buttons, Graphics,
-  Menus, Clipbrd;
+  Menus, Clipbrd, u_common;
 
 type
   TPageControlButton = (pbClose, pbMoveLeft, pbMoveRight, pbAdd, pbSplit);
@@ -410,7 +410,7 @@ begin
 
     leftp := getPage(fPageIndex);
     leftp.Align := alLeft;
-    if fOldSplitPos = 0 then
+    if fOldSplitPos.equals(0) then
       leftp.Width:= (fContent.Width - fSplitter.Width) div 2
     else
       leftp.Width:= fOldSplitPos;
@@ -469,7 +469,7 @@ begin
     {$POP}
   end;
 
-  if fPages.Count = 0 then
+  if fPages.Count.equals(0) then
     fPageIndex:=-1;
 
   updateButtonsState;
@@ -744,7 +744,7 @@ begin
     exit;
 
   c := getColumnIndex;
-  if c = 0 then
+  if c.equals(0) then
     s := fList.Selected.Caption
   else
     s := fList.Selected.SubItems[c-1];
@@ -778,7 +778,7 @@ begin
     exit;
 
   c := getColumnIndex;
-  if c = 0 then
+  if c.equals(0) then
   begin
     for i := 0 to fList.Items.Count - 1 do
       s += fList.Items[i].Caption + LineEnding;

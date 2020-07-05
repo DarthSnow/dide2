@@ -846,7 +846,7 @@ var
   dc1: TDexedMemo = nil;
   dc2: TDexedMemo = nil;
 begin
-  if page.isNil or (page.ControlCount = 0) then
+  if page.isNil or page.ControlCount.equals(0) then
     exit;
   if pageControl.splitPage.isNotNil and
     (page <> pageControl.splitPage) then

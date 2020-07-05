@@ -113,9 +113,9 @@ var
   i: integer;
 begin
   i := indexOf(value);
-  if i = -1 then
+  if i.equals(-1) then
     exit(true);
-  if i = 0 then
+  if i.equals(0) then
     exit(false);
   if Count < 2 then
     exit(false);

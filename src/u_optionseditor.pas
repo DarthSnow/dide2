@@ -124,7 +124,7 @@ var
 begin
   if assigned(observer) then
   begin
-    if selCat.Items.Count = 0 then
+    if selCat.Items.Count.equals(0) then
       updateCategories;
     n := selCat.Items.FindNodeWithText(observer.optionedWantCategory());
     if n.isNotNil then

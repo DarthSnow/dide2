@@ -1203,7 +1203,7 @@ begin
     p := projectByIndex[i];
     if not p.filename.fileExists or p.filename.isEmpty then
       fProjects.Delete(i)
-    else if (p.arguments.Count = 0) and (p.environmentPaths.Count = 0) and
+    else if p.arguments.Count.equals(0) and p.environmentPaths.Count.equals(0) and
       (p.workingDirectory = '') and (p.queryArguments = false) then
         fProjects.Delete(i);
   end;
@@ -1754,7 +1754,7 @@ begin
       end;
       '{':
       begin
-        if t = 0 then
+        if t.equals(0) then
           writeIndent()
         else
           newLineAndIndent();
@@ -2268,7 +2268,7 @@ var
   rng: TStringRange = (ptr: nil; pos: 0; len: 0);
 begin
   json.Clear;
-  if str.length = 0 then
+  if str.length.equals(0) then
     exit;
   rng.init(str);
   json.Arrays['OUT'] := TJSONArray.Create;
@@ -2867,7 +2867,7 @@ begin
   case fEvalKind of
     gekCustom:
     begin
-      if fOptions.customEvalHistory.Count = 0 then
+      if fOptions.customEvalHistory.Count.equals(0) then
         fOptions.customEvalHistory.Add('<enter a custom expression to evaluate>');
       e := InputComboEx('Evaluate', 'Expression', fOptions.customEvalHistory, true);
       if not e.isBlank then

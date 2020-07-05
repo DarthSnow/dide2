@@ -507,7 +507,7 @@ begin
   fTempLines.Clear;
   processOutputToStrings(fClient, fTempLines);
   while fClient.Running do ;
-  if fTempLines.Count = 0 then
+  if fTempLines.Count.equals(0) then
   begin
     updateServerlistening;
     exit;
@@ -559,7 +559,7 @@ begin
   fTempLines.Clear;
   processOutputToStrings(fClient, fTempLines);
   while fClient.Running do ;
-  if fTempLines.Count = 0 then
+  if fTempLines.Count.equals(0) then
   begin
     updateServerlistening;
     exit;
@@ -611,7 +611,7 @@ begin
     exit;
 
   i := fDoc.MouseBytePosition;
-  if i = 0 then
+  if i.equals(0) then
     exit;
 
   terminateClient;

@@ -239,7 +239,7 @@ end;
 function TShortcutEditor.anItemIsSelected: boolean;
 begin
   result := true;
-  if tree.Selected.isNil or (tree.Selected.Level = 0) or tree.Selected.Data.isNil then
+  if tree.Selected.isNil or tree.Selected.Level.equals(0) or tree.Selected.Data.isNil then
     result := false;
 end;
 {$ENDREGION}

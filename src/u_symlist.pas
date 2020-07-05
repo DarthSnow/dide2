@@ -738,7 +738,7 @@ begin
     exit;
   if fDoc.isNil then
     exit;
-  if (fDoc.Lines.Count = 0) or not fDoc.isDSource then
+  if fDoc.Lines.Count.equals(0) or not fDoc.isDSource then
   begin
     clearTree;
     updateVisibleCat;

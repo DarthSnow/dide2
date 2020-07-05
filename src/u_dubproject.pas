@@ -448,7 +448,7 @@ begin
             break;
           end;
         end;
-        if (j = 0) then
+        if j.equals(0) then
           continue;
 
         n := s[1..j-1];
@@ -1085,7 +1085,7 @@ begin
     fCompiled := fDubProc.ExitStatus = 0;
   // note: fCompiled is also used to indicate if there's something produced
   // so the 'or' RHS is there for fNextTerminatedCommand <> dcBuild;
-  if fCompiled or (fDubProc.ExitStatus = 0) then
+  if fCompiled or fDubProc.ExitStatus.equals(0) then
   begin
     fMsgs.message(n + ' has been successfully ' +
       dubCmd2PostMsg[fNextTerminatedCommand], fAsProjectItf, amcProj, amkInf)
@@ -1593,7 +1593,7 @@ procedure TDubProject.updateImportPathsFromJson;
             Parameters.Add(n);
             Execute;
             while Running do ;
-            if ExitStatus = 0 then
+            if ExitStatus.equals(0) then
             begin
               TDubLocalPackages.setNeedUpdate;
               TDubLocalPackages.update();
@@ -1652,7 +1652,7 @@ procedure TDubProject.updateImportPathsFromJson;
               Parameters.Add('--version=' + p);
               Execute;
               while Running do ;
-              if ExitStatus = 0 then
+              if ExitStatus.equals(0) then
               begin
                 TDubLocalPackages.setNeedUpdate;
                 TDubLocalPackages.update();

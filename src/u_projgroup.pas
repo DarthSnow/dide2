@@ -689,7 +689,7 @@ end;
 
 procedure TProjectGroupWidget.btnMoveUpClick(Sender: TObject);
 begin
-  if (lstProj.ItemIndex = -1) or (lstProj.ItemIndex = 0) then
+  if lstProj.ItemIndex.equals(-1) or lstProj.ItemIndex.equals(0) then
     exit;
   projectGroup.items.Exchange(lstProj.ItemIndex, lstProj.ItemIndex - 1);
   lstProj.Items.Exchange(lstProj.ItemIndex, lstProj.ItemIndex - 1);

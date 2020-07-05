@@ -685,12 +685,12 @@ begin
       chd := nil;
       fld := rng.takeUntil(['/','\']).yield;
       chd := itm.FindNode(fld);
-      if chd.isNil and ((rng.empty and (j = 1)) or (not rng.empty and (j = 0))) then
+      if chd.isNil and ((rng.empty and j.equals(1)) or (not rng.empty and j.equals(0))) then
         chd := Tree.Items.AddChild(itm, fld);
       if chd.isNotNil then
         itm := chd;
       // reached fname
-      if rng.empty and (j = 1) then
+      if rng.empty and j.equals(1) then
       begin
         itm.Data:= NewStr(fProj.sourceAbsolute(i));
         itm.ImageIndex := 2;

@@ -246,14 +246,14 @@ begin
     end;
     deleteDups(lst);
     // issue 300 when no moduleDeclaration lst can be empty
-    if (lst.Count = 0) and (project.sourcesCount > 0) then
+    if lst.Count.equals(0) and not project.sourcesCount.equals(0) then
     begin
       for i := 0 to project.sourcesCount-1 do
         lst.Add(project.sourceAbsolute(i));
       result := commonFolder(lst);
       result := result.extractFileDir;
     end
-    else if (project.sourcesCount = 0) then
+    else if project.sourcesCount.equals(0) then
       result := ''
     else
     begin

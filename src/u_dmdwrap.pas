@@ -749,7 +749,7 @@ begin
       list.Add('-main');
     if baseopt.fRelease or fRelease then
       list.Add('-release');
-    if (fVerIds.Count = 0) then
+    if fVerIds.Count.equals(0) then
       for str in baseopt.fVerIds do
     begin
       if not isStringDisabled(str) then
@@ -931,11 +931,11 @@ begin
     baseopt := TDebugOpts(base);
     if baseopt.fDebugConditions or fDebugConditions then
       list.Add('-debug');
-    if (baseopt.fDbgLevel <> 0) and (fDbgLevel = 0) then
+    if not baseopt.fDbgLevel.equals(0) and fDbgLevel.equals(0) then
       list.Add('-debug=' + intToStr(baseopt.fDbgLevel))
-    else if fDbgLevel <> 0 then
+    else if not fDbgLevel.equals(0) then
       list.Add('-debug=' + intToStr(fDbgLevel));
-    if fDbgIdents.Count = 0 then
+    if fDbgIdents.Count.equals(0) then
       for idt in baseopt.fDbgIdents do
         list.Add('-debug=' + idt)
     else for idt in fDbgIdents do
@@ -1154,7 +1154,7 @@ begin
   end else
   begin
     baseopt := TPathsOpts(base);
-    if fExtraSrcs.Count = 0 then
+    if fExtraSrcs.Count.equals(0) then
       rightList := baseopt.fExtraSrcs
     else
       rightList := fExtraSrcs;
@@ -1175,8 +1175,8 @@ begin
     finally
       exts.Free;
     end;
-    //
-    if fImpMod.Count = 0 then
+
+    if fImpMod.Count.equals(0) then
       rightList := baseopt.fImpMod
     else
         rightList := fImpMod;
@@ -1189,8 +1189,8 @@ begin
         str := c + str;
       list.Add('-I'+ fSymStringExpander.expand(str));
     end;
-    //
-    if fImpStr.Count = 0 then
+
+    if fImpStr.Count.equals(0) then
       rightList := baseopt.fImpStr
     else
       rightList := fImpStr;
@@ -1389,7 +1389,7 @@ begin
   end else
   begin
     baseopt := TOtherOpts(base);
-    if fCustom.Count = 0 then
+    if fCustom.Count.equals(0) then
       rightList := baseopt.fCustom
     else
       rightList := fCustom;
@@ -1439,17 +1439,17 @@ begin
     baseopt := TOtherOpts(base);
     case compiler of
       dmd:
-        if fDmdOthers.Count = 0 then
+        if fDmdOthers.Count.equals(0) then
           lst := baseopt.fDmdOthers
         else
           lst := fDmdOthers;
       ldc, ldmd:
-        if fLdcOthers.Count = 0 then
+        if fLdcOthers.Count.equals(0) then
           lst := baseopt.fLdcOthers
         else
           lst := fLdcOthers;
       gdc, gdmd:
-        if fGdcOthers.Count = 0 then
+        if fGdcOthers.Count.equals(0) then
           lst := baseopt.fGdcOthers
         else
           lst := fGdcOthers;

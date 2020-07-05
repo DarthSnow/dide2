@@ -470,9 +470,9 @@ var
 begin
   if fSelectedNode.isNil then
     exit;
-  if fSelectedNode.Level = 0 then
+  if fSelectedNode.Level.equals(0) then
     exit;
-  if (fSelectedNode.Text = 'name') and (fSelectedNode.Level = 0) then
+  if (fSelectedNode.Text = 'name') and fSelectedNode.Level.equals(0) then
     exit;
   if fSelectedNode.Data.isNil then
     exit;

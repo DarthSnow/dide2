@@ -93,6 +93,14 @@ type
     function normalizePath: string;
   end;
 
+  TDexedInt64Helper = type helper for Int64
+    function equals(const value: integer): boolean; inline;
+  end;
+
+  TDexedLongIntHelper = type helper(TIntegerHelper) for LongInt
+    function equals(const value: integer): boolean; inline;
+  end;
+
   TStringsHelper = class helper for TStrings
     // Same as text but without the additional line terminator.
     function strictText: string;
@@ -521,12 +529,21 @@ begin
   exit(TrimFilename(self));
 end;
 
+function TDexedInt64Helper.equals(const value: integer): boolean; inline;
+begin
+  result := value = self;
+end;
+
+function TDexedLongIntHelper.equals(const value: integer): boolean; inline;
+begin
+  result := value = self;
+end;
+
 function TStringsHelper.strictText: string;
 begin
   result := self.Text;
   setLength(result, result.length - self.LineBreak.length);
 end;
-
 
 function TJSONObjectHelper.findObject(const key: TJSONStringType; out value: TJSONObject): boolean;
 var
