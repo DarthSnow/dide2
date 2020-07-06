@@ -1,4 +1,4 @@
-# v3.9.6-dev
+# v3.9.6
 
 ## Enhancements
 

@@ -24,19 +24,19 @@ Dexed, the _D Extended EDitor_, is an IDE for the [D programming language](https
 
 ## Project information
 
-- :bookmark: latest release: version 3.9.5, Sun 14 Jun 2020.
+- :bookmark: latest release: version 3.9.6, Mon 6 Jul 2020.
 - :scroll: licensed under the terms of the Boost software license.
 - :dollar: Development can be supported with [Paypal donations](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AQDJVC39PJF7J).
 
-## Download version 3.9.5
+## Download version 3.9.6
 
-[Download](https://gitlab.com/basile.b/dexed/-/releases/v3.9.5) the zipped binaries or the zip that contains the setup program for you platform.
+[Download](https://gitlab.com/basile.b/dexed/-/releases/v3.9.6) the zipped binaries or the zip that contains the setup program for you platform.
 
 <!--
-- :package: [setup program for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.9.5/downloads/binaries/dexed.3.9.5.linux64.setup.zip)
-- :package: [binaries for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.9.5/downloads/binaries/dexed.3.9.5.linux64.zip)
-- :package: [rpm for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.9.5/downloads/binaries/dexed-3.9.5-0.x86_64.rpm)
-- :package: [deb for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.9.5/downloads/binaries/dexed-3.9.5.amd64.deb)
+- :package: [setup program for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.9.6/downloads/binaries/dexed.3.9.6.linux64.setup.zip)
+- :package: [binaries for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.9.6/downloads/binaries/dexed.3.9.6.linux64.zip)
+- :package: [rpm for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.9.6/downloads/binaries/dexed-3.9.6-0.x86_64.rpm)
+- :package: [deb for Linux 64 bit](https://gitlab.com/basile.b/dexed/releases/v3.9.6/downloads/binaries/dexed-3.9.6.amd64.deb)
 -->
 
 The _zip_ archives allow to move freely the files.
