@@ -3,12 +3,12 @@
 ## Enhancements
 
 - D highlighter: added option to highlights function calls and function definition. Use options window: _Editor/HighlighterDlang/calls_ to test it as by default the same properties as identifiers are used.
-- GDB commander: added the _maxCallStackDepth_ option. It prevents slowdowns, especially after an automatic break got SEGFAULT caused by a stack overflow.
+- GDB commander: added the _maxCallStackDepth_ option. It prevents slowdowns, especially after an automatic break on SEGFAULT caused by a stack overflow.
 
 ## Bugs fixed
 
 - Editor: wrong position indicated in the call tips when starting to type an array literal, a slice or any other expression involving the square brackets. (#51)
-- Project Menu, Git: active branch was not updated when after an external checkout.
+- Project Menu, Git: active branch was not updated after an external checkout.
 
 # v3.9.5
 
