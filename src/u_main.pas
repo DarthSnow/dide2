@@ -331,6 +331,7 @@ type
     procedure ApplicationProperties1Activate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormResize(Sender: TObject);
+    procedure mnuGitBranchClick(Sender: TObject);
     procedure mnuItemAboutClick(Sender: TObject);
     procedure mnuItemCheckUpdClick(Sender: TObject);
     procedure mnuItemManualClick(Sender: TObject);
@@ -2116,6 +2117,11 @@ end;
 procedure TMainForm.FormResize(Sender: TObject);
 begin
   snapTopSplitterToMenu;
+end;
+
+procedure TMainForm.mnuGitBranchClick(Sender: TObject);
+begin
+  actProjGitBranchesUpd.Execute;
 end;
 
 procedure TMainForm.mnuItemAboutClick(Sender: TObject);

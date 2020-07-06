@@ -8,6 +8,7 @@
 ## Bugs fixed
 
 - Editor: wrong position indicated in the call tips when starting to type an array literal, a slice or any other expression involving the square brackets. (#51)
+- Project Menu, Git: active branch was not updated when after an external checkout.
 
 # v3.9.5
 
