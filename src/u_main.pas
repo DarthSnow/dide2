@@ -2803,6 +2803,17 @@ begin
   end;
 end;
 
+{procedure TMainForm.ActionsExecute(AAction: TBasicAction; var Handled: Boolean);
+var
+  HintAction: TCustomHintAction absolute AAction;
+begin
+  if (AAction is TCustomHintAction) and
+    string(HintAction.Hint).StartsWith(<magic string>) then
+  begin
+    // here attempt to show TMenuItem.Hint can be detected
+  end;
+end;}
+
 procedure TMainForm.actLayoutResetExecute(Sender: TObject);
 begin
   InitDocking(true);
@@ -4162,6 +4173,7 @@ procedure TMainForm.actProjGitBranchesUpdExecute(Sender: TObject);
 var
   p: TProcess;
   r: TStringList;
+  c: TStringList;
   i: integer;
   m: TMenuItem;
   a: boolean;
@@ -4176,6 +4188,7 @@ begin
     exit;
   p := TProcess.Create(nil);
   r := TStringList.Create;
+  c := TStringList.create;
   try
     p.Executable := exeFullName('git' + exeExt);
     if p.Executable.fileExists then
@@ -4195,6 +4208,11 @@ begin
         mnuGitBranch.Add(m);
         mnuGitBranch.AddSeparator;
       end;
+      c.LoadFromStream(p.Stderr);
+      for i := 0 to c.Count-1 do
+        fMsgs.message(c[i], fProj, amcProj, amkAuto);
+      p.Parameters.Clear();
+      p.Parameters.AddStrings(['log', '--format=%B', '-n', '1', '<branch...>']);
       for i:= 0 to r.Count-1 do
       begin
         m := TMenuItem.Create(mnuGitBranch);
@@ -4208,16 +4226,21 @@ begin
           m.Checked:= true;
         end
         else m.Caption:= Trim(r[i][1..r[i].length]);
+        c.Clear;
+        p.Parameters.Delete(4);
+        p.Parameters.AddStrings(m.Caption);
+        p.Execute();
+        processOutputToStrings(p, c);
+        while p.Running do ;
+        if not c.Count.equals(0) then
+          m.caption := m.caption + '  [last commit: ' + c[0] + ' ]';
         mnuGitBranch.Add(m);
       end;
-      r.Clear;
-      r.LoadFromStream(p.Stderr);
-      for i := 0 to r.Count-1 do
-        fMsgs.message(r[i], fProj, amcProj, amkAuto);
     end;
   finally
     p.Free;
     r.Free;
+    c.Free;
   end;
 end;
 

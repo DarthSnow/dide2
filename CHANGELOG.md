@@ -1,3 +1,9 @@
+# v3.9.7-dev
+
+## Enhancements
+
+- Project menu, git: add the last commit as additional infor attached to the list of branches. (#53)
+
 # v3.9.6
 
 ## Enhancements

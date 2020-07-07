@@ -11,7 +11,6 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnResize = FormResize
   ShowHint = True
-  LCLVersion = '2.0.8.0'
   object mainMenu: TMainMenu
     top = 1
     object MenuItem1: TMenuItem
