@@ -4146,7 +4146,7 @@ begin
     exit;
   p := TProcess.Create(nil);
   r := TStringList.Create;
-  b := TMenuItem(sender).Caption;
+  b := TMenuItem(sender).Hint;
   try
     p.Executable := exeFullName('git' + exeExt);
     if p.Executable.fileExists then
@@ -4222,18 +4222,18 @@ begin
         m.OnClick:= @gitBranchMenuItemClick;
         if r[i][1] = '*' then
         begin
-          m.Caption:= Trim(r[i][2..r[i].length]);
+          m.Hint:= Trim(r[i][2..r[i].length]);
           m.Checked:= true;
         end
-        else m.Caption:= Trim(r[i][1..r[i].length]);
+        else m.Hint:= Trim(r[i][1..r[i].length]);
         c.Clear;
         p.Parameters.Delete(4);
-        p.Parameters.AddStrings(m.Caption);
+        p.Parameters.AddStrings(m.Hint);
         p.Execute();
         processOutputToStrings(p, c);
         while p.Running do ;
         if not c.Count.equals(0) then
-          m.caption := m.caption + '  [last commit: ' + c[0] + ' ]';
+          m.caption := m.Hint + '  [last commit: ' + c[0] + ' ]';
         mnuGitBranch.Add(m);
       end;
     end;
