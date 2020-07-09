@@ -1250,8 +1250,7 @@ begin
   Result := 0;
   proc := tprocess.Create(nil);
   proc.Executable := 'ps';
-  proc.Parameters.Add('-C');
-  proc.Parameters.Add(ExeName);
+  proc.Parameters.AddStrings(['-C', Exename]);
   proc.Options := [poUsePipes, poWaitonexit];
   try
     proc.Execute;

@@ -132,10 +132,7 @@ begin
     fServer.ShowWindow := swoHIDE;
     {$ENDIF}
     if fCurrentSessionPortNum <> 0 then
-    begin
-      fServer.Parameters.Add('--tcp');
-      fServer.Parameters.Add(fPortAsProcParam);
-    end;
+      fServer.Parameters.AddStrings(['--tcp', fPortAsProcParam]);
   end;
   fTempLines := TStringList.Create;
   fImportCache := TStringHashSet.Create;
@@ -349,9 +346,7 @@ begin
   try
     prc.Options:= [poUsePipes, poNoConsole];
     prc.Executable := 'netstat';
-    prc.Parameters.Add('-o');
-    prc.Parameters.Add('-a');
-    prc.Parameters.Add('-n');
+    prc.Parameters.AddStrings(['-o', '-a', '-n']);
     prc.Execute;
     lst := TStringList.Create;
     try
@@ -377,10 +372,7 @@ end;
 procedure TDcdWrapper.tryAddTcpParams;
 begin
   if fCurrentSessionPortNum <> 0 then
-  begin
-    fClient.Parameters.Add('--tcp');
-    fClient.Parameters.Add(fPortAsProcParam);
-  end;
+    fClient.Parameters.AddStrings(['--tcp', fPortAsProcParam]);
 end;
 
 procedure TDcdWrapper.killServer;
@@ -499,8 +491,7 @@ begin
   terminateClient;
   fClient.Parameters.Clear;
   tryAddTcpParams;
-  fClient.Parameters.Add('-c');
-  fClient.Parameters.Add(intToStr(fDoc.SelStart - 1));
+  fClient.Parameters.AddStrings(['-c', intToStr(fDoc.SelStart - 1)]);
   fClient.Execute;
   writeSourceToInput;
 
@@ -551,8 +542,7 @@ begin
   terminateClient;
   fClient.Parameters.Clear;
   tryAddTcpParams;
-  fClient.Parameters.Add('-c');
-  fClient.Parameters.Add(intToStr(fDoc.SelStart - 1));
+  fClient.Parameters.AddStrings(['-c', intToStr(fDoc.SelStart - 1)]);
   fClient.Execute;
   writeSourceToInput;
 
@@ -617,9 +607,7 @@ begin
   terminateClient;
   fClient.Parameters.Clear;
   tryAddTcpParams;
-  fClient.Parameters.Add('-d');
-  fClient.Parameters.Add('-c');
-  fClient.Parameters.Add(intToStr(i - 1));
+  fClient.Parameters.AddStrings(['-d', '-c', intToStr(i - 1)]);
   fClient.Execute;
   writeSourceToInput;
 
@@ -663,9 +651,7 @@ begin
   terminateClient;
   fClient.Parameters.Clear;
   tryAddTcpParams;
-  fClient.Parameters.Add('-l');
-  fClient.Parameters.Add('-c');
-  fClient.Parameters.Add(intToStr(fDoc.SelStart));
+  fClient.Parameters.AddStrings(['-l', '-c', intToStr(fDoc.SelStart)]);
   fClient.Execute;
   writeSourceToInput;
 
@@ -700,9 +686,7 @@ begin
   terminateClient;
   fClient.Parameters.Clear;
   tryAddTcpParams;
-  fClient.Parameters.Add('-u');
-  fClient.Parameters.Add('-c');
-  fClient.Parameters.Add(intToStr(fDoc.SelStart - 1));
+  fClient.Parameters.AddStrings(['-u', '-c', intToStr(fDoc.SelStart - 1)]);
   fClient.Execute;
   writeSourceToInput;
 

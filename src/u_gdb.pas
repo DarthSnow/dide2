@@ -1981,8 +1981,7 @@ begin
   fGdb := TDexedProcess.create(nil);
   fGdb.Executable:= gdb;
   fgdb.Options:= [poUsePipes, poStderrToOutPut];
-  fgdb.Parameters.Add(fExe);
-  fgdb.Parameters.Add('--interpreter=mi');
+  fgdb.Parameters.AddStrings([fExe, '--interpreter=mi']);
   fGdb.OnReadData:= @gdboutQuiet;
   fGdb.OnTerminate:= @gdboutJsonize;
   fgdb.execute;

@@ -1103,8 +1103,7 @@ begin
   fDscanner.Options:=[poUsePipes];
   fDscanner.ShowWindow:=swoHIDE;
   fDscanner.OnTerminate:=@dscannerTerminate;
-  fDscanner.Parameters.add('-S');
-  fDscanner.Parameters.add('stdin');
+  fDscanner.Parameters.AddStrings(['-S', 'stdin']);
   fDscannerResults:= TDscannerResults.create;
   fKnowsDscanner := fDscanner.Executable.fileExists;
 

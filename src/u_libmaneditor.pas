@@ -468,8 +468,7 @@ begin
     dub.Executable:= 'dub';
     dub.Options:= [poUsePipes, poStderrToOutPut];
     dub.ShowWindow:= swoHIDE;
-    dub.Parameters.Add('fetch');
-    dub.Parameters.Add(nme);
+    dub.Parameters.AddStrings(['fetch', nme]);
     if ver = 'master' then
       dub.Parameters.Add('--version=~master')
     else
@@ -520,9 +519,7 @@ begin
     dub.Executable:= 'dub';
     dub.ShowWindow:= swoHIDE;
     dub.Options:= [poUsePipes, poStderrToOutPut];
-    dub.Parameters.Add('build');
-    dub.Parameters.Add('--build=release');
-    dub.Parameters.Add('--force');
+    dub.Parameters.AddStrings(['build', '--build=release', '--force']);
     dub.Parameters.Add('--compiler=' + getCompilerSelector.getCompilerPath(DubCompiler, false));
     dub.CurrentDirectory:= pth;
     dub.Execute;

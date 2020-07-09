@@ -1589,8 +1589,7 @@ procedure TDubProject.updateImportPathsFromJson;
             Executable := exeFullName('dub' + exeExt);
             Options := Options + [poUsePipes];
             ShowWindow:= swoHIDE;
-            Parameters.Add('fetch');
-            Parameters.Add(n);
+            Parameters.AddStrings(['fetch', n]);
             Execute;
             while Running do ;
             if ExitStatus.equals(0) then
@@ -1647,9 +1646,7 @@ procedure TDubProject.updateImportPathsFromJson;
               Executable := exeFullName('dub' + exeExt);
               Options := Options + [poUsePipes];
               ShowWindow:= swoHIDE;
-              Parameters.Add('fetch');
-              Parameters.Add(n);
-              Parameters.Add('--version=' + p);
+              Parameters.AddStrings(['fetch', n, '--version=' + p]);
               Execute;
               while Running do ;
               if ExitStatus.equals(0) then
@@ -1827,16 +1824,7 @@ begin
     dub.Executable := 'dub' + exeExt;
     dub.Options := [poUsePipes{$IFDEF WINDOWS}, poNewConsole{$ENDIF}];
     dub.ShowWindow := swoHIDE;
-    dub.CurrentDirectory:= filename.extractFilePath;
-
-    // need to move because it looks like DUB doesn't use
-    // the cd specified for the process we launch here.
-    chdir(dub.CurrentDirectory);
-
-    dub.Parameters.Add('convert');
-    dub.Parameters.Add('-s');
-    dub.Parameters.Add('-f');
-    dub.Parameters.Add('json');
+    dub.Parameters.AddStrings(['convert', '-s', '-f', 'json', '--root='+ filename.extractFilePath]);
     dub.Execute;
     processOutputToStrings(dub, str);
     while dub.Running do;

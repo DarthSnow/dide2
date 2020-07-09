@@ -3396,8 +3396,7 @@ begin
     prc.Executable:=pth;
     prc.Options := [poUsePipes, poStderrToOutPut {$IFDEF WINDOWS}, poNewConsole{$ENDIF}];
     prc.ShowWindow:= swoHIDE;
-    prc.Parameters.Add(fDoc.fileName);
-    prc.Parameters.Add('-S');
+    prc.Parameters.AddStrings([fDoc.fileName, '-S']);
     if not fDscanUnittests then
       prc.Parameters.Add('--skipTests');
     prc.Execute;
@@ -3488,8 +3487,7 @@ begin
     fMsgs.message('check menu `Options`, `Compilers Paths`', fDoc, amcEdit, amkHint);
     exit;
   end;
-  fRunProc.Parameters.add('--compiler=' + d);
-  fRunProc.Parameters.Add(fDoc.fileName);
+  fRunProc.Parameters.AddStrings(['--compiler=' + d, fDoc.fileName]);
   fRunProc.execute;
 end;
 
@@ -4118,10 +4116,7 @@ begin
         fMsgs.message(r[i], fProj, amcProj, amkAuto);
       while p.Running do ;
       p.Parameters.Clear;
-      p.Parameters.Add('submodule');
-      p.Parameters.Add('update');
-      p.Parameters.Add('--init');
-      p.Parameters.Add('--recursive');
+      p.Parameters.AddStrings(['submodule', 'update', '--init', '--recursive']);
       p.Execute;
       processOutputToStrings(p,r);
       while p.Running do ;
@@ -4153,8 +4148,7 @@ begin
     begin
       p.Options := [poUsePipes, poNoConsole, poStderrToOutPut];
       p.ShowWindow:= swoHIDE;
-      p.Parameters.Add('checkout');
-      p.Parameters.Add(b);
+      p.Parameters.AddStrings(['checkout', b]);
       p.CurrentDirectory:= fProj.basePath;
       p.Execute;
       processOutputToStrings(p,r);
@@ -4195,8 +4189,7 @@ begin
     begin
       p.Options := [poUsePipes, poNoConsole];
       p.ShowWindow:= swoHIDE;
-      p.Parameters.Add('branch');
-      p.Parameters.Add('--list');
+      p.Parameters.AddStrings(['branch', '--list']);
       p.CurrentDirectory:= fProj.basePath;
       p.Execute;
       processOutputToStrings(p,r);
