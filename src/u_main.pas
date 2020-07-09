@@ -3144,14 +3144,10 @@ begin
       if fCovModUt then
         dmdproc.Parameters.Add('-cov');
       // NOTE: see #258, allows to test easily a module when hacking phobos.
-      dmdproc.Parameters.Add('-version=StdUnittest');
-      dmdproc.Parameters.Add('-version=test_single_module');
+      dmdproc.Parameters.AddStrings(['-version=StdUnittest', '-version=test_single_module']);
     end
     else
-    begin
-      dmdproc.Parameters.Add('-version=runnable_module');
-      dmdproc.Parameters.Add('-version=run_single_module');
-    end;
+      dmdproc.Parameters.AddStrings(['-version=runnable_module', '-version=run_single_module']);
 
     if fRunnablesOptions.detectLibraries then
       LibMan.getLibsForSource(fDoc.Lines, dmdproc.Parameters, dmdproc.Parameters)

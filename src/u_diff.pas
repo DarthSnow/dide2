@@ -53,9 +53,7 @@ begin
 
     if exeInSysPath(p.Executable) then
     begin
-      p.Parameters.Add('-u');
-      p.Parameters.Add(fname1);
-      p.Parameters.Add(fname2);
+      p.Parameters.AddStrings(['-u', fname1, fname2]);
       p.Options:= [poUsePipes];
       p.ShowWindow:= swoHIDE;
       p.Execute;
