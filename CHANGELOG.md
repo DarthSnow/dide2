@@ -2,7 +2,7 @@
 
 ## Enhancements
 
-- Project menu, git: add the last commit as additional infor attached to the list of branches. (#53)
+- Project menu, git: add the first line of last commit message as additional information, between square brackets, to the items of the list of branches. (#53)
 
 # v3.9.6
 
