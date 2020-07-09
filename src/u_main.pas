@@ -3896,7 +3896,7 @@ begin
     newNativeProj
   else
   begin
-    dlgOkError('Unknown project extesion : ' + ext);
+    dlgOkError('Unknown project extension : ' + ext);
     exit;
   end;
 
