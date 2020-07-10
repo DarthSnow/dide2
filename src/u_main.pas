@@ -2470,7 +2470,7 @@ begin
   else if project = fFreeProj then
     fFreeProj := nil;
 
-  if assigned(fProj) then
+  if assigned(fProj) and mnuGitBranch.Count.equals(0) then
     actProjGitBranchesUpdExecute(nil);
 
   showProjTitle;
@@ -4120,7 +4120,6 @@ begin
         fMsgs.message(r[i], fProj, amcProj, amkAuto);
     end;
   finally;
-    actProjGitBranchesUpd.Execute;
     p.Free;
     r.Free;
   end;
