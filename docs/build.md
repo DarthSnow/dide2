@@ -8,7 +8,7 @@ Dexed is mostly programmed in Object Pascal, using the the [Lazarus development 
 ## Pre-requisites
 
 * Git
-* [Download](http://lazarus.freepascal.org/index.php?page=downloads) and setup the latest Lazarus version (>= 2.0.6) and  FPC + FPC sources (= 3.0.4) for your platform.
+* [Download](http://lazarus.freepascal.org/index.php?page=downloads) and setup the latest Lazarus version (>= 2.0.10) and  FPC + FPC sources (= 3.2.0) for your platform.
     * Windows: the three packages are bundled in an installer.
     * Linux: the three packages must be downloaded and setup individually. It's recommended to download the packages from _SourceForge_ and not from the official repository of the distribution because they don't always propose the latest version.
 * [Download](https://github.com/ldc-developers/ldc/releases) and setup LDC2, the LLVM-based D compiler. It is used to compile the part of the IDE that's written in D, a library called _libdexed-d_. LDC2 binaries must be visible in the system PATH variable. Note that building _libdexed-d_ is automatic.
