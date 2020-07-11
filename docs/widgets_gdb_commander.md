@@ -92,6 +92,7 @@ The text following the symbol is written to the input stream, with an implicit n
 - **hideCpuView**: When checked the CPU inspector is not visible anymore.
 - **ignoredSignals**: Sets the signals that won't break the execution.
 - **keepRedirectedStream**: Sets if the files that contain the inferior I/O history are kept on the disk. These files stands in the target directory with the extensions _.inferiorin_ and _.inferiorout_.
+- **maxCallStackDepth**: Limits the call stack to the last N entries. This prevent slowdowns with certain kind of bugs.
 - **shortcuts**: Allows to define a shortcut for each button in the toolbar.
 - **showGdbOutput**: For debugging the widget. When checked the raw GDB output (before being interpreted) is displayed in [the messages](widgets_messages.html).
 - **showOutput**: Displays the target output in [the messages](widgets_messages.html). May be deactivated for a GUI program.
