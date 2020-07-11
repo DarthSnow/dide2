@@ -208,7 +208,7 @@ begin
   if isDockable then
   begin
     win := DockMaster.GetAnchorSite(self);
-    if win <> nil then
+    if win.isAssigned then
     begin
       win.Show;
       win.BringToFront;

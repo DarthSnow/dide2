@@ -190,7 +190,7 @@ begin
   fNeedUpdate := false;
 
   hasNativeProj := fProj.isAssigned;
-  hasProjItf := fProjInterface <> nil;
+  hasProjItf := fProjInterface.isAssigned;
   hasDoc := fDoc.isAssigned;
   if fExp.isNotAssigned then
     fExp := getExplorer;

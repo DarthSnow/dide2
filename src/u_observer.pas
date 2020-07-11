@@ -174,7 +174,7 @@ end;
 
 procedure TEntitiesConnector.addSubject(subject: TObject);
 begin
-  if (subject as ISubject) = nil then
+  if (subject as ISubject).isNotAssigned then
     exit;
   if fSubjects.IndexOf(subject) <> -1 then
     exit;
@@ -188,7 +188,7 @@ var
 begin
   fObservers.Remove(observer);
   for i := 0 to fSubjects.Count - 1 do
-    if fSubjects[i] <> nil then
+    if fSubjects[i].isAssigned then
       (fSubjects[i] as ISubject).removeObserver(observer);
   tryUpdate;
 end;

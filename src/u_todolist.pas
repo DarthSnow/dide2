@@ -434,9 +434,9 @@ begin
   c := getContext;
   case c of
     tcNone: exit;
-    tcProject: if (fProj = nil) or fProj.sourcesCount.equals(0) then
+    tcProject: if fProj.isNotAssigned or fProj.sourcesCount.equals(0) then
       exit;
-    tcFile: if fDoc = nil then
+    tcFile: if fDoc.isNotAssigned then
       exit;
   end;
 

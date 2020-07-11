@@ -561,7 +561,7 @@ var
   lib: TLibraryItem;
   i: Integer;
 begin
-  if fMsgs = nil then
+  if fMsgs.isNotAssigned then
     fMsgs := getMessageDisplay;
   // no selector = all libs
   if aliases.isNotAssigned then
@@ -599,7 +599,7 @@ var
   dep: TLibraryItem;
   sel: TLibraryList;
 begin
-  if fMsgs = nil then
+  if fMsgs.isNotAssigned then
     fMsgs := getMessageDisplay;
   imp := TStringList.Create;
   sel := TLibraryList.create;

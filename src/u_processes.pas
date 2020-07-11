@@ -102,7 +102,7 @@ implementation
 
 procedure killProcess(var proc: TDexedProcess);
 begin
-  if proc = nil then
+  if proc.isNotAssigned then
     exit;
   if proc.Running then
     proc.Terminate(0);
@@ -217,7 +217,7 @@ procedure TDexedProcess.fillOutputStack;
     c: integer;
   begin
     s := outStr.size;
-    while (inStr <> nil) and (inStr.NumBytesAvailable > 0) do
+    while inStr.isAssigned and (inStr.NumBytesAvailable > 0) do
     begin
       outStr.SetSize(s + 1024);
       c := inStr.Read((outStr.Memory + s)^, 1024);

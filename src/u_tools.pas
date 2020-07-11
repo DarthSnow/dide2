@@ -219,11 +219,11 @@ begin
   u_processes.killProcess(fProcess);
   fTerminatedFlag := false;
 
-  if fMsgs = nil then
+  if fMsgs.isNotAssigned then
     fMsgs := getMessageDisplay;
   if fClearMessages then
     fMsgs.clearByContext(amcMisc);
-  if fSymStringExpander = nil then
+  if fSymStringExpander.isNotAssigned then
     fSymStringExpander:= getSymStringExpander;
 
   if askConfirmation and (dlgOkCancel(format(confSpec, [toolAlias])) <> mrOk) then

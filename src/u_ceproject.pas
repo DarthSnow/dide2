@@ -706,7 +706,7 @@ begin
   // field is specified
   if fOutputFilename.isNotEmpty then
   begin
-    if (fSymStringExpander <> nil) then
+    if fSymStringExpander.isAssigned then
       fOutputFilename := fSymStringExpander.expand(fOutputFilename);
     fOutputFilename := expandFilenameEx(fBasePath, fOutputFilename);
     {$IFDEF WINDOWS}

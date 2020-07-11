@@ -3921,7 +3921,7 @@ begin
       exit;
   fProjectGroup.closeGroup;
   fProjectGroup.openGroup(TMenuItem(Sender).Hint);
-  if (fProj = nil) and (fProjectGroup.getProjectIndex < fProjectGroup.projectCount) then
+  if fProj.isNotAssigned and (fProjectGroup.getProjectIndex < fProjectGroup.projectCount) then
     fProjectGroup.getProject(fProjectGroup.getProjectIndex).activate();
 end;
 
@@ -4053,7 +4053,7 @@ var
   s1: string;
   s2: string;
 begin
-  if fProj = nil then
+  if fProj.isNotAssigned then
     exit;
 
   pth := exeFullName('dscanner' + exeExt);
@@ -4249,7 +4249,7 @@ begin
   finally
     free;
   end;
-  if (fProj = nil) and (fProjectGroup.getProjectIndex < fProjectGroup.projectCount) then
+  if fProj.isNotAssigned and (fProjectGroup.getProjectIndex < fProjectGroup.projectCount) then
     fProjectGroup.getProject(fProjectGroup.getProjectIndex).activate();
 end;
 

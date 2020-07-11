@@ -225,7 +225,7 @@ begin
   fProj.beginUpdate;
   try
     src_prop := src_list.Find(propstr);
-    if src_prop = nil then
+    if src_prop <> nil then
       exit;
     storage.AObject := getGridTarget;
     storage.StoreAnyProperty(src_prop);

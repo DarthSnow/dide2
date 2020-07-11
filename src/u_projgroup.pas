@@ -212,13 +212,13 @@ end;
 
 procedure TProjectGroup.projClosing(project: ICommonProject);
 begin
-  if (project <> nil) and (project = fFreeStanding) then
+  if project.isAssigned and (project = fFreeStanding) then
     fFreeStanding := nil;
 end;
 
 procedure TProjectGroup.projFocused(project: ICommonProject);
 begin
-  if (project <> nil) and not project.inGroup then
+  if project.isAssigned and not project.inGroup then
     fFreeStanding := project;
 end;
 
@@ -490,25 +490,24 @@ end;
 
 procedure TProjectGroupItem.lazyLoad;
 begin
-  if fProj = nil then
-  begin
+  if fProj.isAssigned then
+    exit;
 
-    //setActiveConfigurationIndex changes the project
-    //modified flag
-    projectGroup.saveModified;
+  //setActiveConfigurationIndex changes the project
+  //modified flag
+  projectGroup.saveModified;
 
-    fProj := loadProject(absoluteFilename, true);
-    fProj.inGroup(true);
-    if fProj.getFormat = pfDUB then
-      fProj.setActiveConfigurationIndex(fConfigIndex);
+  fProj := loadProject(absoluteFilename, true);
+  fProj.inGroup(true);
+  if fProj.getFormat = pfDUB then
+    fProj.setActiveConfigurationIndex(fConfigIndex);
 
-    projectGroup.restoreModified;
-  end;
+  projectGroup.restoreModified;
 end;
 
 destructor TProjectGroupItem.destroy;
 begin
-  if fProj <> nil then
+  if fProj.isAssigned then
     fProj.getProject.free;
   fProj := nil;
   inherited;
@@ -634,7 +633,7 @@ begin
       exit;
     for fname in Files do
     begin
-      if projectGroup.findProject(fname.normalizePath) <> nil then
+      if projectGroup.findProject(fname.normalizePath).isAssigned then
         continue;
       projectGroup.addItem(fname.normalizePath);
       added := true;
@@ -648,15 +647,13 @@ end;
 
 procedure TProjectGroupWidget.btnFreeFocusClick(Sender: TObject);
 begin
-  if fFreeProj <> nil then
+  if fFreeProj.isAssigned then
     subjProjFocused(fProjSubj, fFreeProj);
 end;
 
 procedure TProjectGroupWidget.btnAddUnfocusedClick(Sender: TObject);
 begin
-  if fFreeProj = nil then
-    exit;
-  if not fFreeProj.filename.fileExists then
+  if fFreeProj.isNotAssigned or not fFreeProj.filename.fileExists then
     exit;
   projectGroup.addProject(fFreeProj);
   fFreeProj := nil;
@@ -806,7 +803,7 @@ begin
     lstProj.ItemIndex:= i;
   end;
   lstProj.EndUpdate;
-  if fFreeProj <> nil then
+  if fFreeProj.isAssigned then
   begin
     if fFreeProj.filename.fileExists then
       case fFreeProj.getFormat of

@@ -1684,7 +1684,7 @@ var
   fe: boolean;
   i: integer;
 begin
-  if (base = nil) or (base = self) then
+  if base.isNotAssigned or (base = self) then
   begin
     fDocOpts.getOpts(list);
     fDebugOpts.getOpts(list);

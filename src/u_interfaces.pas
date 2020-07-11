@@ -597,7 +597,7 @@ end;
 {$REGION ISingleService getters ----------------------------------------------}
 function getMessageDisplay(var obj: IMessagesDisplay): IMessagesDisplay;
 begin
-  if obj = nil then
+  if obj.isNotAssigned then
     obj := EntitiesConnector.getSingleService('IMessagesDisplay') as IMessagesDisplay;
   exit(obj);
 end;
@@ -609,7 +609,7 @@ end;
 
 function getprocInputHandler(var obj: IProcInputHandler): IProcInputHandler;
 begin
-  if obj = nil then
+  if obj.isNotAssigned then
     obj := EntitiesConnector.getSingleService('IProcInputHandler') as IProcInputHandler;
   exit(obj);
 end;
@@ -621,7 +621,7 @@ end;
 
 function getMultiDocHandler(var obj: IMultiDocHandler): IMultiDocHandler;
 begin
-  if obj = nil then
+  if obj.isNotAssigned then
     obj := EntitiesConnector.getSingleService('IMultiDocHandler') as IMultiDocHandler;
   exit(obj);
 end;

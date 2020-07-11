@@ -259,12 +259,12 @@ inherited SearchWidget: TSearchWidget
     end
   end
   inherited contextMenu: TPopupMenu
-    left = 216
-    top = 16
+    Left = 216
+    Top = 16
   end
   object imgList: TImageList[2]
-    left = 248
-    top = 16
+    Left = 248
+    Top = 16
     Bitmap = {
       4C690200000010000000100000007B7977007B7977007B7977FF73716FFF6D6B
       69FF696665FF625F5EFF615E5D007E7C7A007B7977FF73716FFF6D6B69FF6966

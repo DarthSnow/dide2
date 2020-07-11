@@ -208,7 +208,7 @@ begin
   end else
   begin
     dt := PCategoryData(selCat.Selected.Data);
-    if dt^.container.isNotAssigned or (dt^.observer = nil) then
+    if dt^.container.isNotAssigned or dt^.observer.isNotAssigned then
       exit;
     if dt^.observer.optionedOptionsModified() then
     begin

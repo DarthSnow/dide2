@@ -390,8 +390,8 @@ var
   h: IMultiDocHandler;
 begin
   if (fDoc.isNotAssigned and (fFindScope <> scProj)) or
-     ((fProj = nil) and (fFindScope = scProj)) then
-      exit;
+     (fProj.isNotAssigned and (fFindScope = scProj)) then
+        exit;
 
   fSearchMru.Insert(0,fToFind);
   cbToFind.Items.Assign(fSearchMru);
@@ -829,7 +829,7 @@ var
   hasTxt: boolean;
 begin
   canAll := ((fDoc.isAssigned and (fFindScope <> scProj)) or
-            ((fFindScope = scProj) and (fProj <> nil)));
+            ((fFindScope = scProj) and fProj.isAssigned));
   hasTxt := fToFind.isNotEmpty and not fToFind.isBlank;
   btnFind.Enabled := fDoc.isAssigned and hasTxt;
   btnFindAll.Enabled := canAll and hasTxt;

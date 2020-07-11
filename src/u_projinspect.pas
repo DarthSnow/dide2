@@ -238,7 +238,7 @@ end;
 
 procedure TProjectInspectWidget.actBuildExecute(sender: TObject);
 begin
-  if fProj <> nil then
+  if fProj.isAssigned then
   begin
     actOpenFileExecute(sender);
     fProj.compile;

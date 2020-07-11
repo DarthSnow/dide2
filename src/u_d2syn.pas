@@ -1203,7 +1203,7 @@ end;
 
 procedure TSynD2Syn.ResetRange;
 begin
-  if fCurrRange = nil then
+  if fCurrRange.isNotAssigned then
     fCurrRange := TSynD2SynRange.Create(nil)
   else
     fCurrRange.Clear;

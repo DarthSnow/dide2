@@ -64,8 +64,8 @@ type
 
   // sugar for classes
   TObjectHelper = class helper for TObject
-    function isNotAssigned: boolean;
-    function isAssigned: boolean;
+    function isNotAssigned: boolean; inline;
+    function isAssigned: boolean; inline;
   end;
 
   IDexedBaseInterface = interface
@@ -73,8 +73,8 @@ type
 
   // sugar for interfaces
   TDexedInterfaceHelper = type helper for IDexedBaseInterface
-    function isNotAssigned: boolean;
-    function isAssigned: boolean;
+    function isNotAssigned: boolean; inline;
+    function isAssigned: boolean; inline;
   end;
 
   // maybe one day, sugar for events
@@ -85,8 +85,8 @@ type
 
   // sugar for pointers
   TPointerHelper = type helper for Pointer
-    function isNotAssigned: boolean;
-    function isAssigned: boolean;
+    function isNotAssigned: boolean; inline;
+    function isAssigned: boolean; inline;
   end;
 
   // sugar for strings
@@ -956,7 +956,7 @@ begin
       listFiles(files, pth, true);
       for fname in files do
       begin
-        if exts = nil then
+        if exts.isNotAssigned then
           list.Add(fname)
         else
         begin

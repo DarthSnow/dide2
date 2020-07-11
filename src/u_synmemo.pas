@@ -1065,7 +1065,7 @@ begin
   fScrollMemo := TScrollMemo.construct(self);
 
   i := getLifeTimeManager();
-  if (i <> nil) then
+  if i.isAssigned then
     fLifeTimeManager := i.asObject;
 
   OnShowHint:= @showHintEvent;

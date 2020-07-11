@@ -113,7 +113,7 @@ procedure TLibManEditorWidget.updateButtonsState;
 var
   i: TIconScaledSize;
 begin
-  btnReg.Enabled := (fProj <> nil) and fProj.Filename.fileExists;
+  btnReg.Enabled := fProj.isAssigned and fProj.Filename.fileExists;
   btnOpenProj.Enabled := List.Selected.isAssigned and
     List.Selected.SubItems[2].fileExists;
   i := GetIconScaledSize;
@@ -152,7 +152,7 @@ end;
 
 procedure TLibManEditorWidget.projChanged(project: ICommonProject);
 begin
-  if fProj = nil then
+  if fProj.isNotAssigned then
     exit;
   if fProj <> project then
     exit;
@@ -688,7 +688,7 @@ var
   row: TListItem;
   itf: IMessagesDisplay;
 begin
-  if fProj = nil then
+  if fProj.isNotAssigned then
     exit;
 
   fname := fProj.outputFilename;

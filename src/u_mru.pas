@@ -238,7 +238,7 @@ procedure TMRUProjectList.projClosing(project: ICommonProject);
 var
   fname: string;
 begin
-  if project = nil then
+  if project.isNotAssigned then
     exit;
 
   fname := project.filename;

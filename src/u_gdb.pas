@@ -1921,7 +1921,7 @@ const
   asmFlavorStr: array[TAsmSyntax] of string = ('intel','att');
 begin
   clearDisplays;
-  if (fDebugTargetKind = dtkProject) and (fProj = nil) then
+  if (fDebugTargetKind = dtkProject) and fProj.isNotAssigned then
   begin
     dlgOkInfo('No project to debug', 'GDB commander');
     exit;
@@ -2084,7 +2084,7 @@ begin
   dbgeeOptsEd.ItemIndex:=-1;
   dbgeeOptsEd.TIObject := nil;
   case fDebugTargetKind of
-    dtkProject  : if fProj <> nil then
+    dtkProject  : if fProj.isAssigned then
       nme := fProj.filename;
     dtkRunnable : if fDoc.isAssigned then
       nme := fDoc.filename;
@@ -2727,7 +2727,7 @@ procedure TGdbWidget.gdboutJsonize(sender: TObject);
 var
   str: string;
 begin
-  if fMsg = nil then
+  if fMsg.isNotAssigned then
     exit;
 
   fLog.Clear;

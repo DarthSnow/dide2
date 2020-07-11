@@ -776,7 +776,7 @@ begin
       clearbyContext(fCtxt);
     amcEdit: if fDoc.isAssigned then
       clearbyData(fDoc);
-    amcProj: if fProj <> nil then
+    amcProj: if fProj.isAssigned then
       clearbyData(fProj);
   end;
 end;
@@ -1293,7 +1293,7 @@ begin
         getMultiDocHandler.openDocument(ident);
         exit(true);
       end;
-      if fProj <> nil then
+      if fProj.isAssigned then
       begin
         // if fname relative to project path
         absName := expandFilenameEx(fProj.filename.extractFileDir + DirectorySeparator, ident);
