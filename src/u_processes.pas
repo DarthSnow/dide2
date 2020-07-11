@@ -5,7 +5,7 @@ unit u_processes;
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls, process, asyncprocess, pipes;
+  Classes, SysUtils, ExtCtrls, process, asyncprocess, pipes, u_common;
 
 type
 
@@ -240,9 +240,9 @@ begin
   if not (poUsePipes in Options) then
     exit;
 
-  if assigned(Output) then
+  if Output.isAssigned then
     fill(Output, StdoutEx);
-  if assigned(Stderr) then
+  if Stderr.isAssigned then
     fill(Stderr, stderrEx);
 end;
 
@@ -342,7 +342,7 @@ procedure TDexedProcess.checkTerminated(sender: TObject);
 begin
   if Running then
   begin
-    if assigned(Output) and assigned(StdErr) then
+    if Output.isAssigned and StdErr.isAssigned then
       if Output.NumBytesAvailable + Stderr.NumBytesAvailable > 0 then
         internalDoOnReadData(self);
     exit;

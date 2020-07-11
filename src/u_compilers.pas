@@ -568,7 +568,7 @@ begin
           DCDWrapper.relaunch;
           updateDCD;
           LibMan.updateDCD;
-          if assigned(fProj) then
+          if fProj.isAssigned then
             fProj.activate;
         end;
       end;

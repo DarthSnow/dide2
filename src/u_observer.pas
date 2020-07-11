@@ -15,7 +15,7 @@ type
    * is mostly designed to avoid messy uses clauses or to limit
    * the visibility of the implementer methods.
    *)
-  ISingleService = interface
+  ISingleService = interface(IDexedBaseInterface)
     function singleServiceName: string;
   end;
 
@@ -59,7 +59,7 @@ type
   (**
    * Interface for a subject. Basically designed to hold a list of observer
    *)
-  ISubject = interface
+  ISubject = interface(IDexedBaseInterface)
     // an observer is proposed. anObserver is not necessarly compatible.
     procedure addObserver(observer: TObject);
     // anObserver must be removed.
@@ -71,7 +71,7 @@ type
    * Base type used as constraint for an interface that contains
    * the methods called by a ISubject.
    *)
-  IObserverType = interface
+  IObserverType = interface(IDexedBaseInterface)
   end;
 
   (**

@@ -305,7 +305,7 @@ var
   majv: byte = 0;
   minv: byte = 4;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if not exeInSysPath('dfmt') then
     exit;
@@ -351,7 +351,7 @@ end;
 
 procedure TDfmtWidget.doCancel(sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   fDoc.Lines.Assign(fBackup);
 end;

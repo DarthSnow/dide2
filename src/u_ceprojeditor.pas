@@ -111,7 +111,7 @@ end;
 
 procedure TProjectConfigurationWidget.projClosing(project: ICommonProject);
 begin
-  if fProj.isNil or (fProj <> project.getProject) then
+  if fProj.isNotAssigned or (fProj <> project.getProject) then
     exit;
   inspector.TIObject := nil;
   inspector.ItemIndex := -1;
@@ -123,7 +123,7 @@ end;
 
 procedure TProjectConfigurationWidget.projChanged(project: ICommonProject);
 begin
-  if fProj.isNil or (fProj <> project.getProject) then
+  if fProj.isNotAssigned or (fProj <> project.getProject) then
     exit;
   if Visible then
     updateImperative;
@@ -153,7 +153,7 @@ end;
 {$REGION config. things --------------------------------------------------------}
 procedure TProjectConfigurationWidget.selConfChange(Sender: TObject);
 begin
-  if fProj.isNil or Updating or selConf.ItemIndex.equals(-1) then
+  if fProj.isNotAssigned or Updating or selConf.ItemIndex.equals(-1) then
     exit;
 
   beginImperativeUpdate;
@@ -165,7 +165,7 @@ procedure TProjectConfigurationWidget.TreeChange(Sender: TObject;
   Node: TTreeNode);
 begin
   inspector.TIObject := getGridTarget;
-  selconf.Enabled := (inspector.TIObject <> fProj) and fProj.isNotNil;
+  selconf.Enabled := (inspector.TIObject <> fProj) and fProj.isAssigned;
 end;
 
 procedure TProjectConfigurationWidget.setSyncroMode(value: boolean);
@@ -204,11 +204,11 @@ var
   trg_obj: TPersistent;
   i: Integer;
 begin
-  if fProj.isNil then
+  if fProj.isNotAssigned then
     exit;
   if not fSyncroMode then
     exit;
-  if inspector.TIObject.isNil then
+  if inspector.TIObject.isNotAssigned then
     exit;
   if inspector.ItemIndex.equals(-1) then
     exit;
@@ -280,7 +280,7 @@ var
   nme: string;
   cfg: TCompilerConfiguration;
 begin
-  if fProj.isNil then
+  if fProj.isNotAssigned then
     exit;
   nme := '';
   beginImperativeUpdate;
@@ -294,7 +294,7 @@ end;
 
 procedure TProjectConfigurationWidget.btnDelConfClick(Sender: TObject);
 begin
-  if fProj.isNil or (fProj.OptionsCollection.Count = 1) then
+  if fProj.isNotAssigned or (fProj.OptionsCollection.Count = 1) then
     exit;
 
   beginImperativeUpdate;
@@ -311,7 +311,7 @@ var
   nme: string;
   trg, src: TCompilerConfiguration;
 begin
-  if fProj.isNil then
+  if fProj.isNotAssigned then
     exit;
   nme := '';
   beginImperativeUpdate;
@@ -330,7 +330,7 @@ procedure TProjectConfigurationWidget.btnSyncEditClick(Sender: TObject);
 begin
   fSynchroValue.Clear;
   fSynchroItem.Clear;
-  if fProj.isNil then
+  if fProj.isNotAssigned then
     exit;
   syncroMode := not syncroMode;
 end;
@@ -338,7 +338,7 @@ end;
 procedure TProjectConfigurationWidget.GridFilter(Sender: TObject; aEditor: TPropertyEditor;
   var aShow: boolean);
 begin
-  if fProj.isNil then
+  if fProj.isNotAssigned then
     exit;
   // filter TComponent things.
   if getGridTarget = fProj then
@@ -381,7 +381,7 @@ end;
 
 function TProjectConfigurationWidget.getGridTarget: TPersistent;
 begin
-  if fProj.isNil or fProj.ConfigurationIndex.equals(-1) or Tree.Selected.isNil then
+  if fProj.isNotAssigned or fProj.ConfigurationIndex.equals(-1) or Tree.Selected.isNotAssigned then
     exit(nil);
   // Warning: TTreeNode.StateIndex is usually made for the images...it's not a tag
   case Tree.Selected.StateIndex of
@@ -406,8 +406,8 @@ var
 begin
   selConf.ItemIndex:= -1;
   selConf.Clear;
-  selconf.Enabled := (inspector.TIObject <> fProj) and fProj.isNotNil;
-  if fProj.isNil then
+  selconf.Enabled := (inspector.TIObject <> fProj) and fProj.isAssigned;
+  if fProj.isNotAssigned then
     exit;
 
   for i:= 0 to fProj.OptionsCollection.Count-1 do

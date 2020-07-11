@@ -93,23 +93,23 @@ var
   trv: TTreeView;
 begin
   result := '';
-  if src.isNil then
+  if src.isNotAssigned then
     exit;
   // from mini-explorer
   if src is TShellListView then
   begin
     lst := TShellListView(src);
-    if lst.Selected.isNotNil then
+    if lst.Selected.isAssigned then
       result := lst.GetPathFromItem(lst.Selected);
   end
   // from CE/DUB project inspector
   else if src is TTreeView then
   begin
     trv := TTreeView(src);
-    if trv.Selected.isNotNil then
+    if trv.Selected.isAssigned then
     begin
       result := trv.Selected.Text;
-      if not result.fileExists and assigned(fProj) then
+      if not result.fileExists and fProj.isAssigned then
         result := fProj.filename.extractFilePath + result;
     end;
   end;
@@ -133,7 +133,7 @@ var
   fname: string;
   fmt: TProjectFileFormat;
 begin
-  if Source.isNil then
+  if Source.isNotAssigned then
     exit;
   fname := getFilename(Source);
   if not fname.fileExists then
@@ -142,7 +142,7 @@ begin
   fmt := projectFormat(fname);
   if fmt in [pffDexed, pffDub] then
   begin
-    if assigned(fFreeProj) then
+    if fFreeProj.isAssigned then
     begin
       if fFreeProj.modified and (dlgFileChangeClose(fFreeProj.filename, UnsavedProj) = mrCancel) then
         exit;
@@ -160,7 +160,7 @@ end;
 
 function ddHandler: TDDHandler;
 begin
-  if fDdHandler.isNil then
+  if fDdHandler.isNotAssigned then
     fDdHandler:= TDDHandler.create;
   result := fDdHandler;
 end;

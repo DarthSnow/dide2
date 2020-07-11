@@ -195,7 +195,7 @@ end;
 
 procedure TDubProjectPropAddPanel.selTypeChanged(sender: TObject);
 begin
-  if fJson.isNotNil then
+  if fJson.isAssigned then
     fEdName.Enabled := fJson.JSONType <> TJSONtype.jtArray;
 end;
 
@@ -308,7 +308,7 @@ end;
 
 procedure TDubProjectEditorWidget.projChanged(project: ICommonProject);
 begin
-  if fProj.isNil then
+  if fProj.isNotAssigned then
     exit;
   if project.getProject <> fProj then
     exit;
@@ -320,7 +320,7 @@ end;
 
 procedure TDubProjectEditorWidget.projClosing(project: ICommonProject);
 begin
-  if fProj.isNil then
+  if fProj.isNotAssigned then
     exit;
   if project.getProject <> fProj then
     exit;
@@ -374,13 +374,13 @@ begin
   btnDelProp.Enabled := false;
   btnAddProp.Enabled := false;
   btnCloneObject.Enabled := false;
-  if propTree.Selected.isNil then
+  if propTree.Selected.isNotAssigned then
     exit;
 
   fSelectedNode := propTree.Selected;
   tpe := TJSONData(fSelectedNode.Data).JSONType;
   btnDelProp.Enabled := (fSelectedNode.Level > 0) and (fSelectedNode.Text <> 'name')
-    and fSelectedNode.data.isNotNil;
+    and fSelectedNode.data.isAssigned;
   btnAddProp.Enabled := tpe in [jtObject, jtArray];
   btnCloneObject.Enabled := (tpe = jtObject) and (fSelectedNode.Level > 0);
   updateValueEditor;
@@ -393,7 +393,7 @@ end;
 
 procedure TDubProjectEditorWidget.btnAcceptPropClick(Sender: TObject);
 begin
-  if fSelectedNode.isNil then
+  if fSelectedNode.isNotAssigned then
     exit;
   setJsonValueFromEditor;
   propTree.FullExpand;
@@ -403,7 +403,7 @@ procedure TDubProjectEditorWidget.btnAddPropClick(Sender: TObject);
 var
   pnl: TDubProjectPropAddPanel;
 begin
-  if fSelectedNode.isNil then
+  if fSelectedNode.isNotAssigned then
     exit;
   pnl := TDubProjectPropAddPanel.construct(@addProp, TJSONData(fSelectedNode.Data));
   pnl.ShowModal;
@@ -420,7 +420,7 @@ var
   obj: TJSONObject;
   nod: TTreeNode;
 begin
-  if fSelectedNode.isNil then
+  if fSelectedNode.isNotAssigned then
     exit;
   dat := TJSONData(fSelectedNode.Data);
   if dat.JSONType = jtObject then
@@ -454,9 +454,9 @@ begin
   fProj.endModification;
   propTree.FullExpand;
   nod := propTree.Items.FindNodeWithText('<value>');
-  if nod.isNil then
+  if nod.isNotAssigned then
     nod := propTree.Items.FindNodeWithText(propName);
-  if nod.isNotNil then
+  if nod.isAssigned then
   begin
     propTree.Selected := nod;
     propTree.MakeSelectionVisible;
@@ -468,15 +468,15 @@ var
   prt: TJSONData;
   sel: TTreeNode;
 begin
-  if fSelectedNode.isNil then
+  if fSelectedNode.isNotAssigned then
     exit;
   if fSelectedNode.Level.equals(0) then
     exit;
   if (fSelectedNode.Text = 'name') and fSelectedNode.Level.equals(0) then
     exit;
-  if fSelectedNode.Data.isNil then
+  if fSelectedNode.Data.isNotAssigned then
     exit;
-  if fSelectedNode.Parent.Data.isNil then
+  if fSelectedNode.Parent.Data.isNotAssigned then
     exit;
 
   fProj.beginModification;
@@ -486,11 +486,11 @@ begin
   else if prt.JSONType = jtArray then
     TJSONArray(prt).Delete(fSelectedNode.Index);
   sel := fSelectedNode.GetPrevSibling;
-  if sel.isNil then
+  if sel.isNotAssigned then
     sel := fSelectedNode.GetNextSibling;
-  if sel.isNil then
+  if sel.isNotAssigned then
       sel := fSelectedNode.Parent;
-  if sel.isNotNil then
+  if sel.isAssigned then
     sel.Selected:=true;
   fProj.endModification;
 
@@ -501,16 +501,16 @@ procedure TDubProjectEditorWidget.btnRefreshClick(Sender: TObject);
 var
   f: string;
 begin
-  if assigned(fProj) then
-  begin
-    f := fProj.filename;
-    if not f.fileExists then
-      exit;
-    if fProj.modified and
-      (dlgYesNo('The project seems to be modified, save before reloading') = mrYes) then
-        fProj.saveToFile(f);
-    fProj.loadFromFile(f);
-  end;
+  if fProj.isNotAssigned then
+    exit;
+
+  f := fProj.filename;
+  if not f.fileExists then
+    exit;
+  if fProj.modified and
+    (dlgYesNo('The project seems to be modified, save before reloading') = mrYes) then
+      fProj.saveToFile(f);
+  fProj.loadFromFile(f);
 end;
 
 procedure TDubProjectEditorWidget.btnCloneObjectClick(Sender: TObject);
@@ -523,8 +523,8 @@ var
   inm: string;
   idx: integer = 0;
 begin
-  if fSelectedNode.isNil or fSelectedNode.Data.isNil or fProj.isNil or
-    fSelectedNode.Parent.Data.isNil then
+  if fSelectedNode.isNotAssigned or fSelectedNode.Data.isNotAssigned or fProj.isNotAssigned or
+    fSelectedNode.Parent.Data.isNotAssigned then
       exit;
 
   dat := TJSONData(fSelectedNode.Data);
@@ -561,7 +561,7 @@ end;
 
 procedure TDubProjectEditorWidget.MenuItem1Click(Sender: TObject);
 begin
-  if fProj.isNil or not fProj.filename.fileExists then
+  if fProj.isNotAssigned or not fProj.filename.fileExists then
     exit;
   fProj.loadFromFile(fProj.filename);
 end;
@@ -574,7 +574,7 @@ var
   vInt64: int64;
   vBool: boolean;
 begin
-  if fSelectedNode.isNil or fSelectedNode.Data.isNil or fProj.isNil then
+  if fSelectedNode.isNotAssigned or fSelectedNode.Data.isNotAssigned or fProj.isNotAssigned then
     exit;
 
   fProj.beginModification;
@@ -606,7 +606,7 @@ var
   dat: TJSONData;
 begin
   edProp.Clear;
-  if fSelectedNode.isNil or fSelectedNode.Data.isNil then
+  if fSelectedNode.isNotAssigned or fSelectedNode.Data.isNotAssigned then
     exit;
 
   dat := TJSONData(fSelectedNode.Data);
@@ -676,12 +676,12 @@ var
   rcl: TTreeNode;
 begin
 
-  if propTree.Selected.isNotNil then
+  if propTree.Selected.isAssigned then
     str := propTree.Selected.GetTextPath;
 
   propTree.Items.Clear;
   edProp.Clear;
-  if fProj.isNil or fProj.json.isNil then
+  if fProj.isNotAssigned or fProj.json.isNotAssigned then
     exit;
 
   propTree.BeginUpdate;
@@ -689,7 +689,7 @@ begin
   if str.isNotEmpty then
   begin
     rcl := propTree.Items.FindNodeWithTextPath(str);
-    if rcl.isNotNil then
+    if rcl.isAssigned then
     begin
       rcl.Selected := true;
       rcl.MakeVisible;

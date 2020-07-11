@@ -120,18 +120,18 @@ begin
 
   // TODO-cfeature: process list, imply that each TDexedMemo must have its own runnable TProcess
   // currently they share the CEMainForm.fRunProc variable.
-  if fProc.isNotNil then
+  if fProc.isAssigned then
     if fProc.Running then
       fProc.Terminate(0);
 
   txtExeName.Caption := 'no process';
   fProc := nil;
-  if process.isNil then
+  if process.isNotAssigned then
     exit;
   if not (poUsePipes in process.Options) then
     exit;
   fProc := process;
-  if fProc.isNotNil then
+  if fProc.isAssigned then
       Panel1.Enabled:=true;
   txtExeName.Caption := shortenPath(fProc.Executable);
 end;
@@ -153,7 +153,7 @@ procedure TProcInputWidget.sendInput;
 var
   inp: string;
 begin
-  if fProc.Input.isNil or fProc.Input.Handle.equals(0) then
+  if fProc.Input.isNotAssigned or fProc.Input.Handle.equals(0) then
     exit;
 
   fMru.Insert(0,txtInp.Text);
@@ -168,20 +168,20 @@ end;
 
 procedure TProcInputWidget.btnSendClick(Sender: TObject);
 begin
-  if fProc.isNotNil then
+  if fProc.isAssigned then
     sendInput;
 end;
 
 procedure TProcInputWidget.btnCloseClick(Sender: TObject);
 begin
-  if fProc.isNotNil and fProc.Input.isNotNil and
+  if fProc.isAssigned and fProc.Input.isAssigned and
     (fProc.Input.Handle <> 0) then
       fProc.CloseInput;
 end;
 
 procedure TProcInputWidget.btnKillClick(Sender: TObject);
 begin
-  if fProc.isNotNil then
+  if fProc.isAssigned then
     fProc.Terminate(0);
 end;
 
@@ -190,7 +190,7 @@ procedure TProcInputWidget.txtInpKeyDown(Sender: TObject; var Key: Word;
 begin
   case Key of
     VK_RETURN:
-      if fProc.isNotNil then
+      if fProc.isAssigned then
         sendInput;
     VK_UP: begin
       fMruPos += 1;

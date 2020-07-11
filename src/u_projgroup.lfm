@@ -169,7 +169,7 @@ inherited ProjectGroupWidget: TProjectGroupWidget
     end
   end
   inherited contextMenu: TPopupMenu
-    left = 272
-    top = 56
+    Left = 272
+    Top = 56
   end
 end

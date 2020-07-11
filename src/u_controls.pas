@@ -709,7 +709,7 @@ var
   i: integer;
 begin
   result := '';
-  if not assigned(item) then
+  if item.isNotAssigned then
     exit;
 
   result := item.Caption;
@@ -727,7 +727,7 @@ var
   i: integer;
 begin
   result := '';
-  if not assigned(item) then
+  if item.isNotAssigned then
     exit;
 
   result := item.Caption;
@@ -740,7 +740,7 @@ var
   s: string = '';
   c: integer;
 begin
-  if not assigned(fList) or not assigned(fList.Selected) then
+  if fList.isNotAssigned or fList.Selected.isNotAssigned then
     exit;
 
   c := getColumnIndex;
@@ -754,7 +754,7 @@ end;
 
 procedure TListViewCopyMenu.copyLine(sender: TObject);
 begin
-  if not assigned(fList) or not assigned(fList.Selected) then
+  if fList.isNotAssigned or fList.Selected.isNotAssigned then
     exit;
 
   Clipboard.AsText := getLine(fList.Selected);
@@ -762,7 +762,7 @@ end;
 
 procedure TListViewCopyMenu.copyLineAsList(sender: TObject);
 begin
-  if not assigned(fList) or not assigned(fList.Selected) then
+  if fList.isNotAssigned or fList.Selected.isNotAssigned then
     exit;
 
   Clipboard.AsText := getLineAsList(fList.Selected);
@@ -774,7 +774,7 @@ var
   c: integer;
   i: integer;
 begin
-  if not assigned(fList) or not assigned(fList.Selected) then
+  if fList.isNotAssigned or fList.Selected.isNotAssigned then
     exit;
 
   c := getColumnIndex;

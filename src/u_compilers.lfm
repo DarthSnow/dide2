@@ -6,6 +6,7 @@ object CompilersPathsEditor: TCompilersPathsEditor
   Caption = 'CompilersPathsEditor'
   ClientHeight = 900
   ClientWidth = 460
+  LCLVersion = '2.0.10.0'
   object ScrollBox1: TScrollBox
     Left = 0
     Height = 900
@@ -26,8 +27,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'DMD'
-      ClientHeight = 168
-      ClientWidth = 443
+      ClientHeight = 167
+      ClientWidth = 441
       TabOrder = 0
       object selDMDexe: TFileNameEdit
         Left = 2
@@ -120,8 +121,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'GDC'
-      ClientHeight = 168
-      ClientWidth = 443
+      ClientHeight = 167
+      ClientWidth = 441
       TabOrder = 1
       object selGDCexe: TFileNameEdit
         Left = 2
@@ -216,8 +217,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'LDC'
-      ClientHeight = 168
-      ClientWidth = 443
+      ClientHeight = 167
+      ClientWidth = 441
       TabOrder = 2
       object selLDCexe: TFileNameEdit
         Left = 2
@@ -312,8 +313,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'User 1'
-      ClientHeight = 168
-      ClientWidth = 443
+      ClientHeight = 167
+      ClientWidth = 441
       TabOrder = 3
       object selUSER1exe: TFileNameEdit
         Left = 2
@@ -406,8 +407,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'User 2'
-      ClientHeight = 168
-      ClientWidth = 443
+      ClientHeight = 167
+      ClientWidth = 441
       TabOrder = 4
       object selUSER2exe: TFileNameEdit
         Left = 2
@@ -500,8 +501,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'Compiler paths used for intellisense'
-      ClientHeight = 40
-      ClientWidth = 443
+      ClientHeight = 39
+      ClientWidth = 441
       TabOrder = 5
       object selDefault: TComboBox
         Left = 4
@@ -524,8 +525,8 @@ object CompilersPathsEditor: TCompilersPathsEditor
       Align = alTop
       AutoSize = True
       Caption = 'Compiler selected as "global"'
-      ClientHeight = 40
-      ClientWidth = 443
+      ClientHeight = 39
+      ClientWidth = 441
       TabOrder = 6
       object selGlobal: TComboBox
         Left = 4

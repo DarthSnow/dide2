@@ -200,6 +200,6 @@ inherited LibManEditorWidget: TLibManEditorWidget
     end
   end
   inherited contextMenu: TPopupMenu
-    left = 400
+    Left = 400
   end
 end

@@ -472,12 +472,12 @@ inherited GdbWidget: TGdbWidget
     ResizeAnchor = akTop
   end
   inherited contextMenu: TPopupMenu[2]
-    left = 56
-    top = 64
+    Left = 56
+    Top = 64
   end
   object mnuProjRunnable: TPopupMenu[3]
-    left = 56
-    top = 112
+    Left = 56
+    Top = 112
     object mnuSelProj: TMenuItem
       AutoCheck = True
       Caption = 'Debug project'
@@ -496,8 +496,8 @@ inherited GdbWidget: TGdbWidget
     end
   end
   object mnuWatch: TPopupMenu[4]
-    left = 56
-    top = 160
+    Left = 56
+    Top = 160
     object mnuReadW: TMenuItem
       AutoCheck = True
       Caption = 'On read'
@@ -516,24 +516,24 @@ inherited GdbWidget: TGdbWidget
     end
   end
   object mnuNext: TPopupMenu[5]
-    left = 152
-    top = 112
+    Left = 152
+    Top = 112
     object mnuNextMachine: TMenuItem
       AutoCheck = True
       Caption = 'machine instruction'
     end
   end
   object mnuStep: TPopupMenu[6]
-    left = 152
-    top = 160
+    Left = 152
+    Top = 160
     object mnuStepMachine: TMenuItem
       AutoCheck = True
       Caption = 'machine instruction'
     end
   end
   object mnuEval: TPopupMenu[7]
-    left = 216
-    top = 168
+    Left = 216
+    Top = 168
     object mnuEvalSelected: TMenuItem
       AutoCheck = True
       Caption = 'Evaluate selected variable'

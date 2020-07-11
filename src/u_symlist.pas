@@ -523,7 +523,7 @@ end;
 
 procedure TSymbolListWidget.actCopyIdentExecute(Sender: TObject);
 begin
-  if Tree.Selected.isNotNil then
+  if Tree.Selected.isAssigned then
     Clipboard.AsText:= Tree.Selected.Text;
 end;
 {$ENDREGION}
@@ -630,7 +630,7 @@ end;
 
 procedure TSymbolListWidget.updateVisibleCat;
 begin
-  if fDoc.isNotNil and fDoc.isDSource then
+  if fDoc.isAssigned and fDoc.isDSource then
   begin
     ndAlias.Visible := ndAlias.Count > 0;
     ndClass.Visible := ndClass.Count > 0;
@@ -697,7 +697,7 @@ begin
 
   if TreeFilterEdit1.Filter.isNotEmpty then
     tree.FullExpand
-  else if tree.Selected.isNil then
+  else if tree.Selected.isNotAssigned then
     tree.FullCollapse
   else tree.MakeSelectionVisible;
   result := false;
@@ -721,7 +721,7 @@ procedure TSymbolListWidget.TreeDblClick(Sender: TObject);
 var
   line: PtrUInt;
 begin
-  if fDoc.isNil or Tree.Selected.isNil or Tree.Selected.Data.isNil then
+  if fDoc.isNotAssigned or Tree.Selected.isNotAssigned or Tree.Selected.Data.isNotAssigned then
     exit;
 
   {$PUSH}{$WARNINGS OFF}{$HINTS OFF}
@@ -736,7 +736,7 @@ procedure TSymbolListWidget.getSymbols;
 begin
   if fLockThreadedParsing then
     exit;
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if fDoc.Lines.Count.equals(0) or not fDoc.isDSource then
   begin
@@ -760,7 +760,7 @@ procedure TSymbolListWidget.threadedParsingFinished(sender: TObject);
     function newCat(const aCat: string): TTreeNode;
     begin
       result := node.FindNode(aCat);
-      if result.isNil then
+      if result.isNotAssigned then
         result := node.TreeNodes.AddChild(node, aCat);
       case stype of
         _alias    : begin result.ImageIndex:=0; result.SelectedIndex:=0; end;
@@ -782,7 +782,7 @@ procedure TSymbolListWidget.threadedParsingFinished(sender: TObject);
 
   begin
     result := nil;
-    if node.isNil then
+    if node.isNotAssigned then
       case stype of
       _alias    : exit(ndAlias);
       _class    : exit(ndClass);
@@ -841,10 +841,10 @@ var
   n: TTreeNode;
 begin
   fLockThreadedParsing := false;
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
 
-  if fTreeDataFromThread.isEmpty or ndAlias.isNil then
+  if fTreeDataFromThread.isEmpty or ndAlias.isNotAssigned then
     exit;
 
   tree.BeginUpdate;
@@ -893,9 +893,9 @@ var
     for i := 0 to root.Count-1 do
     begin
       n := root.Items[i];
-      if n.Data.isNil then
+      if n.Data.isNotAssigned then
         continue;
-      if n.Parent.isNil then
+      if n.Parent.isNotAssigned then
         continue;
       if (n.Parent = ndAlias)
       or (n.Parent = ndEnum)
@@ -916,13 +916,13 @@ var
   end;
 
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
 
   target := fDoc.CaretY;
   for i := 0 to tree.Items.Count-1 do
     look(tree.Items[i]);
-  if toExpand.isNotNil then
+  if toExpand.isAssigned then
   begin
     tree.Selected := toExpand;
     toExpand.MakeVisible;

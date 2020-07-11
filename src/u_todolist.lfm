@@ -99,8 +99,8 @@ inherited TodoListWidget: TTodoListWidget
     end
   end
   inherited contextMenu: TPopupMenu
-    left = 40
-    top = 72
+    Left = 40
+    Top = 72
     object mnuAutoRefresh: TMenuItem[0]
       AutoCheck = True
       Caption = 'Auto resfresh'

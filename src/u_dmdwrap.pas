@@ -409,7 +409,7 @@ procedure TDocOpts.getOpts(list: TStrings; base: TOptsGroup = nil);
 var
   baseopt: TDocOpts;
 begin
-  if base.isNil then
+  if base.isNotAssigned then
   begin
     if fGenDoc then
       list.Add('-D');
@@ -518,7 +518,7 @@ var
 const
   DepStr : array[TDepHandling] of string = ('-d', '', '-de');
 begin
-  if base.isNil then
+  if base.isNotAssigned then
   begin
     dep := DepStr[fDepHandling];
     if dep.isNotEmpty then
@@ -671,7 +671,7 @@ const
   binKindStr: array[TProjectBinaryKind] of string = ('', '-lib', '-shared', '-c');
   bchKindStr: array[TBoundCheckKind] of string = ('on', 'safeonly', 'off');
 begin
-  if base.isNil then
+  if base.isNotAssigned then
   begin
     str := binKindStr[fBinKind];
     if str.isNotEmpty then
@@ -910,7 +910,7 @@ var
   idt: string;
   baseopt: TDebugOpts;
 begin
-  if base.isNil then
+  if base.isNotAssigned then
   begin
     if fDebugConditions then
       list.Add('-debug');
@@ -1100,7 +1100,7 @@ var
   c: string;
 begin
   c := fSymStringExpander.expand('<CPR>') + DirectorySeparator;
-  if base.isNil then
+  if base.isNotAssigned then
   begin
     exts := TStringList.Create;
     try
@@ -1371,7 +1371,7 @@ var
   baseopt: TOtherOpts;
   rightList: TStringList;
 begin
-  if base.isNil then
+  if base.isNotAssigned then
   begin
     for i := 0 to fCustom.Count-1 do
     begin
@@ -1417,14 +1417,14 @@ var
   baseopt: TOtherOpts;
   lst: TStringList = nil;
 begin
-  if base.isNil then
+  if base.isNotAssigned then
   begin
     case compiler of
       dmd: lst := fDmdOthers;
       ldc, ldmd: lst := fLdcOthers;
       gdc, gdmd: lst := fGdcOthers;
     end;
-    if lst.isNotNil then
+    if lst.isAssigned then
       for i := 0 to lst.Count-1 do
     begin
       str := lst[i];
@@ -1454,7 +1454,7 @@ begin
         else
           lst := fGdcOthers;
     end;
-    if lst.isNotNil then
+    if lst.isAssigned then
       for i := 0 to lst.Count-1 do
     begin
       str := lst[i];

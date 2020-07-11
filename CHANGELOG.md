@@ -1,5 +1,9 @@
 # v3.9.7-dev
 
+## Other
+
+- compilation: FPC 3.2.0 now required to compile dexed.
+
 ## Enhancements
 
 - Project menu, git: add the first line of last commit message as additional information, between square brackets, to the items of the list of branches. (#53)

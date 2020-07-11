@@ -153,7 +153,7 @@ end;
 
 procedure TSymbolExpander.docFocused(document: TDexedMemo);
 begin
-  if (document.isNotNil) and (fDoc = document) then
+  if document.isAssigned and (fDoc = document) then
     exit;
   fDoc := document;
   fNeedUpdate := true;
@@ -189,16 +189,16 @@ begin
     exit;
   fNeedUpdate := false;
 
-  hasNativeProj := fProj.isNotNil;
+  hasNativeProj := fProj.isAssigned;
   hasProjItf := fProjInterface <> nil;
-  hasDoc := fDoc.isNotNil;
-  if not assigned(fExp) then
+  hasDoc := fDoc.isAssigned;
+  if fExp.isNotAssigned then
     fExp := getExplorer;
 
   for e := FirstVariableSymbol to high(TExpandableSymbol) do
     fSymbols[e] := na;
 
-  if assigned(fExp) then
+  if fExp.isAssigned then
     fSymbols[MEP] := fExp.currentLocation;
 
   // document

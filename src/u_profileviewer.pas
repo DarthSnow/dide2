@@ -291,7 +291,7 @@ procedure TProfileViewerWidget.btnProjClick(Sender: TObject);
 var
   fname: string;
 begin
-  if assigned(fProj) then
+  if fProj.isAssigned then
   begin
     fname := fProj.outputFilename.extractFileDir + DirectorySeparator + 'trace.log';
     if fileExists(fname) then

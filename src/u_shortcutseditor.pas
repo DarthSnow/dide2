@@ -239,7 +239,7 @@ end;
 function TShortcutEditor.anItemIsSelected: boolean;
 begin
   result := true;
-  if tree.Selected.isNil or tree.Selected.Level.equals(0) or tree.Selected.Data.isNil then
+  if tree.Selected.isNotAssigned or tree.Selected.Level.equals(0) or tree.Selected.Data.isNotAssigned then
     result := false;
 end;
 {$ENDREGION}
@@ -336,7 +336,7 @@ begin
     for j := 0 to n.Count-1 do
     begin
       o := n.Items[j];
-      if o.Data.isNil then
+      if o.Data.isNotAssigned then
         continue;
       if TShortcutItem(o.Data).data = s then
       begin
@@ -352,12 +352,12 @@ begin
     if i = tree.Selected.Index then
       continue;
     o := tree.Selected.Parent.Items[i];
-    if o.Data.isNil then
+    if o.Data.isNotAssigned then
       continue;
     if TShortcutItem(o.Data).data = s then
       d := TShortcutItem(o.Data);
   end;
-  if d.isNotNil then
+  if d.isAssigned then
     dlgOkInfo(format(m2,[t, d.identifier]))
   else if TShortcutItem(tree.Selected.Data).data <> s then
   begin
@@ -395,11 +395,11 @@ begin
     exit(true);
 
   // keep categories
-  if ItemNode.Parent.isNil then
+  if ItemNode.Parent.isNotAssigned then
     exit(true);
 
   b := AnsiContainsText(ItemNode.Text, fltItems.Filter);
-  if ItemNode.Data.isNil then
+  if ItemNode.Data.isNotAssigned then
     exit(b);
   s := TShortcutItem(ItemNode.Data);
   result := AnsiContainsText(s.combination, fltItems.Filter) or b;
@@ -469,7 +469,7 @@ var
     if item.category.isEmpty or item.identifier.isEmpty then
       exit;
     prt := findCategory(item.category, o);
-    if prt.isNil then
+    if prt.isNotAssigned then
       prt := tree.Items.AddObject(nil, item.category, o);
     // item as child
     s             := TShortcutItem(fShortcuts.items.Add);
@@ -511,7 +511,7 @@ begin
     s := fShortcuts[i];
     d := s.declarator;
     c := findCategory(s);
-    if not assigned(d) or c.isEmpty() then
+    if d.isNotAssigned or c.isEmpty() then
       continue;
     n.identifier:= s.identifier;
     n.category  := c;

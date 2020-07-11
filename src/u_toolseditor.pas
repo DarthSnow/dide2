@@ -163,7 +163,7 @@ begin
     exit;
 
   p := CustomTools.tool[lstTools.ItemIndex].process;
-  if p.isNotNil and p.Running then
+  if p.isAssigned and p.Running then
     p.Terminate(1);
 end;
 

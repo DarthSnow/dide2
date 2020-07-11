@@ -131,7 +131,7 @@ inherited ProjectInspectWidget: TProjectInspectWidget
     end
   end
   inherited contextMenu: TPopupMenu
-    left = 128
-    top = 48
+    Left = 128
+    Top = 48
   end
 end

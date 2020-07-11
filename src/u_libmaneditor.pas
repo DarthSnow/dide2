@@ -114,10 +114,10 @@ var
   i: TIconScaledSize;
 begin
   btnReg.Enabled := (fProj <> nil) and fProj.Filename.fileExists;
-  btnOpenProj.Enabled := List.Selected.isNotNil and
+  btnOpenProj.Enabled := List.Selected.isAssigned and
     List.Selected.SubItems[2].fileExists;
   i := GetIconScaledSize;
-  if List.Selected.isNotNil and itemForRow(List.Selected).isNotNil and
+  if List.Selected.isAssigned and itemForRow(List.Selected).isAssigned and
     itemForRow(List.Selected).enabled then
   begin
     case i of
@@ -194,7 +194,7 @@ end;
 
 procedure TLibManEditorWidget.ListEdited(Sender: TObject; Item: TListItem; var value: string);
 begin
-  if Item.isNotNil then
+  if Item.isAssigned then
     RowToLibrary(item);
 end;
 
@@ -332,10 +332,10 @@ end;
 
 procedure TDubPackageQueryForm.getList(sender: TObject);
 begin
-  if assigned(fList) then
+  if fList.isAssigned then
     fList.free;
   simpleGet('https://code.dlang.org/api/packages/search', fList);
-  if assigned(fList) then
+  if fList.isAssigned then
     fillList
   else
     dlgOkError('could not get the package list, ' + simpleGetErrMsg);
@@ -347,14 +347,14 @@ var
   i: integer;
 begin
   cbb.Clear;
-  if fList.isNotNil and (fList.JSONType = jtArray) then
+  if fList.isAssigned and (fList.JSONType = jtArray) then
     for i := 0 to fList.Count -1 do
   begin
     itm := fList.Items[i].FindPath('version');
-    if itm.isNil then
+    if itm.isNotAssigned then
       continue;
     itm := fList.Items[i].FindPath('name');
-    if itm.isNil then
+    if itm.isNotAssigned then
       continue;
     cbb.Items.AddObject(itm.AsString, fList.Items[i]);
   end;
@@ -373,8 +373,8 @@ begin
   if not fGetLatestTag then
     exit;
   // list is updated
-  if fList.isNotNil and (cbb.ItemIndex <> -1) and
-    cbb.Items.Objects[cbb.ItemIndex].isNotNil then
+  if fList.isAssigned and (cbb.ItemIndex <> -1) and
+    cbb.Items.Objects[cbb.ItemIndex].isAssigned then
   begin
     jsn := TJSONData(cbb.Items.Objects[cbb.ItemIndex]);
     jsn := jsn.FindPath('version');
@@ -395,11 +395,11 @@ procedure TDubPackageQueryForm.updateHint(sender: TObject);
 var
   jsn: TJSONData;
 begin
-  if (cbb.ItemIndex <> -1) and cbb.Items.Objects[cbb.ItemIndex].isNotNil then
+  if (cbb.ItemIndex <> -1) and cbb.Items.Objects[cbb.ItemIndex].isAssigned then
   try
     jsn := TJSONData(cbb.Items.Objects[cbb.ItemIndex]);
     jsn := jsn.FindPath('description');
-    if jsn.isNotNil then
+    if jsn.isAssigned then
       cbb.Hint:= jsn.AsString;
   except
   end;
@@ -543,13 +543,13 @@ begin
     prj := TDubProject.create(nil);
     try
       prj.loadFromFile(dfn);
-      if prj.json.isNotNil and TJSONObject(prj.json).Find('targetType').isNotNil
+      if prj.json.isAssigned and TJSONObject(prj.json).Find('targetType').isAssigned
         and (TJSONObject(prj.json).Find('targetType').AsString = 'sourceLibrary')
       then
       begin
         if (ovw and not List.items.findCaption(nme, row)) or not ovw then
           row := List.Items.Add;
-        if row.Data.isNil then
+        if row.Data.isNotAssigned then
           row.Data := fLibman.libraries.Add;
         row.Caption:= nme;
         row.SubItems.Clear;
@@ -582,7 +582,7 @@ begin
     begin
       if (ovw and not List.items.findCaption(nme, row)) or not ovw then
         row := List.Items.Add;
-      if row.Data.isNil then
+      if row.Data.isNotAssigned then
         row.Data := fLibman.libraries.Add;
       row.Caption := nme;
       row.SubItems.Clear;
@@ -616,7 +616,7 @@ var
   al: string;
   i: integer;
 begin
-  if List.Selected.isNil then
+  if List.Selected.isNotAssigned then
     exit;
 
   al := List.Selected.Caption;
@@ -638,7 +638,7 @@ end;
 
 procedure TLibManEditorWidget.btnEnabledClick(Sender: TObject);
 begin
-  if List.Selected.isNil then
+  if List.Selected.isNotAssigned then
     exit;
 
   if List.Selected.SubItems[3] = 'true' then
@@ -654,7 +654,7 @@ var
   fname: string;
   fmt: TProjectFileFormat;
 begin
-  if List.Selected.isNil then
+  if List.Selected.isNotAssigned then
     exit;
   fname := List.Selected.SubItems[2];
   if not fname.fileExists then
@@ -663,7 +663,7 @@ begin
   fmt := projectFormat(fname);
   if fmt in [pffDexed, pffDub] then
   begin
-    if assigned(fFreeProj) then
+    if fFreeProj.isAssigned then
     begin
       if fFreeProj.modified and (dlgFileChangeClose(fFreeProj.filename, UnsavedProj) = mrCancel) then
         exit;
@@ -747,7 +747,7 @@ end;
 
 procedure TLibManEditorWidget.btnRemLibClick(Sender: TObject);
 begin
-  if List.Selected.isNil then
+  if List.Selected.isNotAssigned then
     exit;
 
   flibman.libraries.Delete(List.Selected.Index);
@@ -759,7 +759,7 @@ procedure TLibManEditorWidget.btnSelProjClick(Sender: TObject);
 var
   ini: string;
 begin
-  if List.Selected.isNil then
+  if List.Selected.isNotAssigned then
     exit;
 
   ini := List.Selected.SubItems[2];
@@ -779,7 +779,7 @@ procedure TLibManEditorWidget.btnSelFileClick(Sender: TObject);
 var
   ini: string = '';
 begin
-  if List.Selected.isNil then
+  if List.Selected.isNotAssigned then
     exit;
 
   ini := List.Selected.SubItems[0];
@@ -809,7 +809,7 @@ procedure TLibManEditorWidget.btnSelfoldOfFilesClick(Sender: TObject);
 var
   dir, outdir: string;
 begin
-  if List.Selected.isNil then
+  if List.Selected.isNotAssigned then
     exit;
 
   dir := List.Selected.SubItems[0];
@@ -822,7 +822,7 @@ procedure TLibManEditorWidget.btnSelRootClick(Sender: TObject);
 var
   dir: string;
 begin
-  if List.Selected.isNil then
+  if List.Selected.isNotAssigned then
     exit;
 
   dir := List.Selected.SubItems[1];
@@ -843,7 +843,7 @@ procedure TLibManEditorWidget.btnMoveUpClick(Sender: TObject);
 var
   i: integer;
 begin
-  if list.Selected.isNil or list.Selected.Index.equals(0) then
+  if list.Selected.isNotAssigned or list.Selected.Index.equals(0) then
     exit;
 
   i := list.Selected.Index;
@@ -855,7 +855,7 @@ procedure TLibManEditorWidget.btnMoveDownClick(Sender: TObject);
 var
   i: integer;
 begin
-  if list.Selected.isNil or (list.Selected.Index = list.Items.Count - 1) then
+  if list.Selected.isNotAssigned or (list.Selected.Index = list.Items.Count - 1) then
     exit;
 
   i := list.Selected.Index;
@@ -896,7 +896,7 @@ var
   itm: TLibraryItem;
 begin
   itm := itemForRow(row);
-  if itm.isNil then
+  if itm.isNotAssigned then
     exit;
 
   itm.libAlias      := row.Caption;

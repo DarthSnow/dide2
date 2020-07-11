@@ -147,7 +147,7 @@ begin
   r.patch := 10;
   fCanRemove := fVersion > r;
 
-  if fServer.isNotNil then
+  if fServer.isAssigned then
   begin
     fServer.Execute;
     while true do
@@ -183,7 +183,7 @@ end;
 
 function TDcdWrapper.getIfLaunched: boolean;
 begin
-  result := fServer.isNotNil;
+  result := fServer.isAssigned;
 end;
 
 procedure TDcdWrapper.updateServerlistening;
@@ -198,9 +198,9 @@ begin
   saveToFile(getDocPath + optsname);
   EntitiesConnector.removeObserver(self);
   fImportCache.Free;
-  if fTempLines.isNotNil then
+  if fTempLines.isAssigned then
     fTempLines.Free;
-  if fServer.isNotNil then
+  if fServer.isAssigned then
   begin
     if not fServerWasRunning then
     begin
@@ -227,7 +227,7 @@ var
   fold: string;
   folds: TStringList;
 begin
-  if not assigned(fProj) then
+  if fProj.isNotAssigned then
     exit;
 
   folds := TStringList.Create;
@@ -254,7 +254,7 @@ end;
 
 procedure TDcdWrapper.projChanged(project: ICommonProject);
 begin
-  if (fProj = nil) or (fProj <> project) then
+  if fProj.isNotAssigned or (fProj <> project) then
     exit;
   updateImportPathsFromProject();
 end;
@@ -485,7 +485,7 @@ end;
 
 procedure TDcdWrapper.getCallTip(out tips: string);
 begin
-  if not fAvailable or not fServerListening or fDoc.isNil then
+  if not fAvailable or not fServerListening or fDoc.isNotAssigned then
     exit;
 
   terminateClient;
@@ -536,7 +536,7 @@ var
   item: string;
   kindObj: TObject = nil;
 begin
-  if not fAvailable or not fServerListening or fDoc.isNil then
+  if not fAvailable or not fServerListening or fDoc.isNotAssigned then
     exit;
 
   terminateClient;
@@ -597,7 +597,7 @@ var
   len: Integer;
   str: string;
 begin
-  if not fAvailable or not fServerListening or fDoc.isNil then
+  if not fAvailable or not fServerListening or fDoc.isNotAssigned then
     exit;
 
   i := fDoc.MouseBytePosition;
@@ -645,7 +645,7 @@ var
    i: Integer;
    str, loc: string;
 begin
-  if not fAvailable or not fServerListening or fDoc.isNil then
+  if not fAvailable or not fServerListening or fDoc.isNotAssigned then
     exit;
 
   terminateClient;
@@ -680,7 +680,7 @@ var
    i: Integer;
    str: string;
 begin
-  if not fAvailable or not fServerListening or fDoc.isNil then
+  if not fAvailable or not fServerListening or fDoc.isNotAssigned then
     exit;
 
   terminateClient;
@@ -709,7 +709,7 @@ end;
 
 function DCDWrapper: TDcdWrapper;
 begin
-  if fDcdWrapper.isNil then
+  if fDcdWrapper.isNotAssigned then
     fDcdWrapper := TDcdWrapper.create(nil);
   exit(fDcdWrapper);
 end;

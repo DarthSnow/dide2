@@ -153,7 +153,7 @@ var
 constructor TNativeProject.create(aOwner: TComponent);
 begin
   inherited create(aOwner);
-  if not assigned (fCompilerSelector) then
+  if fCompilerSelector.isNotAssigned then
     fCompilerSelector := getCompilerSelector;
   fAsProjectItf := self as ICommonProject;
   fSymStringExpander := getSymStringExpander;
@@ -698,7 +698,7 @@ begin
   fOutputFilename := currentConfiguration.pathsOptions.outputFilename;
   fe := currentConfiguration.pathsOptions.forceExtension;
   if currentConfiguration.isOverriddenConfiguration and fOutputFilename.isEmpty and
-    fBaseConfig.isNotNil then
+    fBaseConfig.isAssigned then
   begin
     fOutputFilename := fBaseConfig.pathsOptions.outputFilename;
     fe := fBaseConfig.pathsOptions.forceExtension;
@@ -830,7 +830,7 @@ end;
 
 procedure TNativeProject.stopCompilation;
 begin
-  if fCompilProc.isNotNil and fCompilProc.Running then
+  if fCompilProc.isAssigned and fCompilProc.Running then
     fCompilProc.Terminate(1);
 end;
 
@@ -840,7 +840,7 @@ var
   prjpath: string;
   prjname: string;
 begin
-  if fCompilProc.isNotNil and fCompilProc.Active then
+  if fCompilProc.isAssigned and fCompilProc.Active then
   begin
     fMsgs.message('the project is already being compiled',
       fAsProjectItf, amcProj, amkWarn);
@@ -849,7 +849,7 @@ begin
   killProcess(fCompilProc);
   fCompiled := false;
   config := currentConfiguration;
-  if config.isNil then
+  if config.isNotAssigned then
   begin
     fMsgs.message('unexpected project error: no active configuration',
       fAsProjectItf, amcProj, amkErr);
@@ -961,7 +961,7 @@ begin
     begin
       fMsgs.message(format('error: the process (%s) has returned the status %s',
         [proc.Executable, prettyReturnStatus(proc)]), fAsProjectItf, amcProj, amkErr);
-      if dproc.isNotNil and dproc.autoKilled then
+      if dproc.isAssigned and dproc.autoKilled then
         fMsgs.message(format('the process was autokilled because the size of its output exceeded %d',
           [dproc.autoKillProcThreshold]), nil, amcProj, amkWarn);
     end;
@@ -1150,7 +1150,6 @@ var
   sel: ICompilerSelector;
 begin
   sel := getCompilerSelector;
-  assert(assigned(sel));
   if value = gdc then
     value := gdmd
   else if value = ldc then

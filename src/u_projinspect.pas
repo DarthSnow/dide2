@@ -279,7 +279,7 @@ end;
 
 procedure TProjectInspectWidget.projClosing(project: ICommonProject);
 begin
-  if not assigned(fProj)  then
+  if fProj.isNotAssigned then
     exit;
   if project <> fProj then
     exit;
@@ -301,7 +301,7 @@ end;
 
 procedure TProjectInspectWidget.projChanged(project: ICommonProject);
 begin
-  if not assigned(fProj)  then
+  if fProj.isNotAssigned  then
     exit;
   if fProj <> project then
     exit;
@@ -359,7 +359,7 @@ end;
 
 procedure TProjectInspectWidget.TreeClick(Sender: TObject);
 begin
-  if Tree.Selected.isNotNil then
+  if Tree.Selected.isAssigned then
   begin
     Tree.MultiSelect := Tree.Selected.Parent = fFileNode;
     if not (Tree.Selected.Parent = fFileNode) then
@@ -379,14 +379,14 @@ end;
 procedure TProjectInspectWidget.TreeDeletion(Sender: TObject; Node: TTreeNode
   );
 begin
-  if Node.isNotNil and Node.Data.isNotNil then
+  if Node.isAssigned and Node.Data.isAssigned then
     dispose(PString(Node.Data));
 end;
 
 procedure TProjectInspectWidget.TreeSelectionChanged(Sender: TObject);
 begin
   actUpdate(sender);
-  if not assigned(fProj) or Tree.Selected.isNil then
+  if fProj.isNotAssigned or Tree.Selected.isNotAssigned then
     exit;
   if (Tree.Selected.Parent = fFileNode) then
     fLastFileOrFolder := expandFilenameEx(fProj.basePath,tree.Selected.Text)
@@ -399,12 +399,12 @@ var
   fname: string;
   i: integer;
 begin
-  if not assigned(fProj) or Tree.Selected.isNil then
+  if fProj.isNotAssigned or Tree.Selected.isNotAssigned then
     exit;
 
   if Tree.Selected.Parent <> fConfNode then
   begin
-    if Tree.Selected.Data.isNotNil then
+    if Tree.Selected.Data.isAssigned then
     begin
       fname := PString(Tree.Selected.Data)^;
       if isEditable(fname.extractFileExt) and fname.fileExists then
@@ -424,7 +424,7 @@ begin
   fActSelConf.Enabled := false;
   fActOpenFile.Enabled := false;
   fActBuildConf.Enabled:= false;
-  if Tree.Selected.isNil then
+  if Tree.Selected.isNotAssigned then
     exit;
   fActSelConf.Enabled := Tree.Selected.Parent = fConfNode;
   fActBuildConf.Enabled := Tree.Selected.Parent = fConfNode;
@@ -434,9 +434,9 @@ end;
 procedure TProjectInspectWidget.DetectNewDubSources(const document: TDexedMemo
   );
 begin
-  if not assigned(fProj) or (fProj.getFormat <> pfDUB) then
+  if fProj.isNotAssigned or (fProj.getFormat <> pfDUB) then
     exit;
-  if document.isNotNil then
+  if document.isAssigned then
   begin
     if document.fileName.contains(fProj.basePath) then
       TDubProject(fProj.getProject).updateSourcesList;
@@ -450,7 +450,7 @@ var
   fname: string;
   proj: TNativeProject;
 begin
-  if not assigned(fProj) or (fProj.getFormat = pfDUB) then
+  if fProj.isNotAssigned or (fProj.getFormat = pfDUB) then
     exit;
 
   proj := TNativeProject(fProj.getProject);
@@ -481,7 +481,7 @@ var
   proj: TNativeProject;
   i: integer;
 begin
-  if not assigned(fProj) or (fProj.getFormat = pfDUB) then
+  if fProj.isNotAssigned or (fProj.getFormat = pfDUB) then
     exit;
 
   dir := '';
@@ -517,8 +517,8 @@ var
   proj: TNativeProject;
   i: Integer;
 begin
-  if not assigned(fProj) or (fProj.getFormat = pfDUB)
-  or Tree.Selected.isNil or (Tree.Selected.Parent <> fFileNode) then
+  if fProj.isNotAssigned or (fProj.getFormat = pfDUB)
+  or Tree.Selected.isNotAssigned or (Tree.Selected.Parent <> fFileNode) then
     exit;
 
   proj := TNativeProject(fProj.getProject);
@@ -547,16 +547,16 @@ procedure TProjectInspectWidget.btnReloadClick(Sender: TObject);
 var
   f: string;
 begin
-  if assigned(fProj) then
-  begin
-    f := fProj.filename;
-    if not f.fileExists then
-      exit;
-    if fProj.modified and
-      (dlgYesNo('The project seems to be modified, save before reloading') = mrYes) then
-        fProj.saveToFile(f);
-    fProj.loadFromFile(f);
-  end;
+  if fProj.isNotAssigned then
+    exit;
+
+  f := fProj.filename;
+  if not f.fileExists then
+    exit;
+  if fProj.modified and
+    (dlgYesNo('The project seems to be modified, save before reloading') = mrYes) then
+      fProj.saveToFile(f);
+  fProj.loadFromFile(f);
 end;
 
 procedure TProjectInspectWidget.btnRemFileClick(Sender: TObject);
@@ -565,8 +565,8 @@ var
   proj: TNativeProject;
   i, j: integer;
 begin
-  if not assigned(fProj) or (fProj.getFormat = pfDUB)
-  or Tree.Selected.isNil or (Tree.Selected.Parent <> fFileNode) then
+  if fProj.isNotAssigned or (fProj.getFormat = pfDUB)
+  or Tree.Selected.isNotAssigned or (Tree.Selected.Parent <> fFileNode) then
     exit;
 
   proj := TNativeProject(fProj.getProject);
@@ -612,7 +612,7 @@ begin
     getMultiDocHandler.openDocument(value);
 end;
 begin
-  if not assigned(fProj) or (fProj.getFormat = pfDUB) then
+  if fProj.isNotAssigned or (fProj.getFormat = pfDUB) then
     exit;
 
   proj := TNativeProject(fProj.getProject);
@@ -654,12 +654,12 @@ var
   fld: string;
   rng: TStringRange = (ptr:nil; pos:0; len:0);
 begin
-  if Tree.Selected.isNotNil then
+  if Tree.Selected.isAssigned then
     sel := Tree.Selected.GetTextPath;
   fConfNode.DeleteChildren;
   fFileNode.DeleteChildren;
 
-  if not assigned(fProj) then
+  if fProj.isNotAssigned then
     exit;
 
   Tree.BeginUpdate;
@@ -685,9 +685,9 @@ begin
       chd := nil;
       fld := rng.takeUntil(['/','\']).yield;
       chd := itm.FindNode(fld);
-      if chd.isNil and ((rng.empty and j.equals(1)) or (not rng.empty and j.equals(0))) then
+      if chd.isNotAssigned and ((rng.empty and j.equals(1)) or (not rng.empty and j.equals(0))) then
         chd := Tree.Items.AddChild(itm, fld);
-      if chd.isNotNil then
+      if chd.isAssigned then
         itm := chd;
       // reached fname
       if rng.empty and j.equals(1) then
@@ -728,7 +728,7 @@ begin
   if sel.isNotEmpty then
   begin
     itm := Tree.Items.FindNodeWithTextPath(sel);
-    if itm.isNotNil then
+    if itm.isAssigned then
     begin
       itm.Selected := true;
       itm.MakeVisible;

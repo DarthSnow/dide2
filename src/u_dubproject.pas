@@ -291,7 +291,7 @@ begin
     end;
   finally
     m.Free;
-    if r.isNotNil then
+    if r.isAssigned then
       r.Free;
   end;
 end;
@@ -405,9 +405,9 @@ var
 
 begin
 
-  if not assigned(Lfm) then
+  if Lfm.isNotAssigned then
     Lfm := getLifeTimeManager;
-  if not assigned(Lfm) or not (Lfm.getLifetimeStatus = lfsLoaded) then
+  if Lfm.isNotAssigned or not (Lfm.getLifetimeStatus = lfsLoaded) then
   begin
     if fDoneFirstUpdate and (not fNeedUpdate) then
       exit;
@@ -674,9 +674,8 @@ end;
 constructor TDubProject.create(aOwner: TComponent);
 begin
   inherited;
-  if not assigned(fCompilerSelector) then
+  if fCompilerSelector.isNotAssigned then
     fCompilerSelector := getCompilerSelector;
-  assert(assigned(fCompilerSelector));
   fAsProjectItf := self as ICommonProject;
   fSaveAsUtf8 := true;
   fJSON := TJSONObject.Create();
@@ -824,7 +823,7 @@ begin
         try
           fJSON := parser.Parse as TJSONObject;
         except
-          if assigned(fJSON) then
+          if fJSON.isAssigned then
             FreeAndNil(fJSON);
           fFilename := '';
         end;
@@ -839,13 +838,13 @@ begin
   begin
     FreeAndNil(fJSON);
     fJSON := sdl2json(fFilename);
-    if fJSON.isNil then
+    if fJSON.isNotAssigned then
       fFilename := ''
     else
       fIsSdl := true;
   end;
 
-  if not assigned(fJSON) then
+  if fJSON.isNotAssigned then
   begin
     fHasLoaded := false;
     fJson := TJSONObject.Create(['name','invalid json'])
@@ -1057,7 +1056,7 @@ end;
 {$REGION ICommonProject: actions ---------------------------------------------}
 procedure TDubProject.stopCompilation;
 begin
-  if fDubProc.isNotNil and fDubProc.Running then
+  if fDubProc.isAssigned and fDubProc.Running then
     fDubProc.Terminate(1);
 end;
 
@@ -1114,7 +1113,7 @@ var
   e: string;
   d: string;
 begin
-  if fDubProc.isNotNil and fDubProc.Active then
+  if fDubProc.isAssigned and fDubProc.Active then
   begin
     fMsgs.message('the project is already being processed by DUB', fAsProjectItf, amcProj, amkWarn);
     exit;
@@ -1233,7 +1232,7 @@ var
   d: TJSONData;
 begin
   result := nil;
-  if value.isBlank or fJSON.isNil or not fJSON.findArray('subPackages', a) then
+  if value.isBlank or fJSON.isNotAssigned or not fJSON.findArray('subPackages', a) then
     exit;
   for i := 0 to a.Count-1 do
   begin
@@ -1263,7 +1262,7 @@ procedure TDubProject.updatePackageNameFromJson;
 var
   value: TJSONData;
 begin
-  if fJSON.isNil then
+  if fJSON.isNotAssigned then
     exit;
   if not fJSON.findAny('name', value) then
     fPackageName := ''
@@ -1282,7 +1281,7 @@ var
 begin
   fBuildTypes.Clear;
   fConfigs.Clear;
-  if fJSON.isNil then
+  if fJSON.isNotAssigned then
     exit;
   // the CE interface for dub doesn't make the difference between build type
   //and config, instead each possible combination type + build is generated.
@@ -1366,7 +1365,7 @@ var
   //glb: TRegExpr;
 begin
   fSrcs.Clear;
-  if not assigned(fJSON) then
+  if fJSON.isNotAssigned then
     exit;
   lst := TStringList.Create;
   try
@@ -1396,7 +1395,7 @@ begin
       for i := 0 to arr.Count-1 do
         tryAddRelOrAbsFile(arr.Strings[i]);
     conf := getCurrentCustomConfig;
-    if conf.isNotNil then
+    if conf.isAssigned then
     begin
       if conf.findAny('mainSourceFile', item) then
       begin
@@ -1426,7 +1425,7 @@ begin
     {lst.Clear;
     getExclusion(fJSON);
       conf := getCurrentCustomConfig;
-    if conf.isNotNil then
+    if conf.isAssigned then
       getExclusion(conf);
     if lst.Count > 0 then
     begin
@@ -1459,7 +1458,7 @@ var
   tt: TJSONData;
 begin
   result := true;
-  if value.Find('mainSourceFile').isNotNil then
+  if value.Find('mainSourceFile').isAssigned then
     fBinKind := executable
   else if value.findAny('targetType', tt) then
   begin
@@ -1482,11 +1481,11 @@ var
   s: string;
 begin
   fBinKind := executable;
-  if fJSON.isNil then
+  if fJSON.isNotAssigned then
     exit;
   a := findTargetKindInd(fJSON);
   c := getCurrentCustomConfig;
-  if c.isNotNil then
+  if c.isAssigned then
     b := findTargetKindInd(c);
   if a or b then
     exit;
@@ -1693,7 +1692,7 @@ procedure TDubProject.updateImportPathsFromJson;
 var
   conf: TJSONObject;
 begin
-  if fJSON.isNil then
+  if fJSON.isNotAssigned then
     exit;
 
   addFrom(fJSON);
@@ -1712,7 +1711,7 @@ begin
   {$ENDIF}
 
   conf := getCurrentCustomConfig;
-  if conf.isNotNil then
+  if conf.isAssigned then
   begin
     addFrom(conf);
     addDepsFrom(conf);
@@ -1747,14 +1746,14 @@ var
   end;
 begin
   fOutputFileName := '';
-  if fJSON.isNil or not fJSON.findAny('name', item) then
+  if fJSON.isNotAssigned or not fJSON.findAny('name', item) then
     exit;
 
   namePart := item.AsString;
   pathPart := fBasePath;
   setFrom(fJSON);
   conf := getCurrentCustomConfig;
-  if conf.isNotNil then
+  if conf.isAssigned then
     setFrom(conf);
   pathPart := TrimRightSet(pathPart, ['/','\']);
   {$IFNDEF WINDOWS}
@@ -1841,7 +1840,7 @@ begin
       try
         jsn := prs.Parse;
         try
-          if jsn.isNotNil then
+          if jsn.isAssigned then
             result := TJSONObject(jsn.Clone)
           else
             result := nil;
@@ -1879,9 +1878,9 @@ begin
   try
     try
       maybe.loadFromFile(filename);
-      if maybe.json.isNil or maybe.filename.isEmpty then
+      if maybe.json.isNotAssigned or maybe.filename.isEmpty then
         result := false
-      else if maybe.json.Find('name').isNil then
+      else if maybe.json.Find('name').isNotAssigned then
         result := false;
     except
       result := false;

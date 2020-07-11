@@ -389,7 +389,7 @@ var
   m: IMessagesDisplay;
   h: IMultiDocHandler;
 begin
-  if (fDoc.isNil and (fFindScope <> scProj)) or
+  if (fDoc.isNotAssigned and (fFindScope <> scProj)) or
      ((fProj = nil) and (fFindScope = scProj)) then
       exit;
 
@@ -561,7 +561,7 @@ const
 var
   s: string;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
 
   fSearchMru.Insert(0, fToFind);
@@ -606,7 +606,7 @@ end;
 
 procedure TSearchWidget.actReplaceNextExecute(sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
 
   fSearchMru.Insert(0, fToFind);
@@ -640,7 +640,7 @@ procedure TSearchWidget.actReplaceAllExecute(sender: TObject);
 var
   opts: TSynSearchOptions;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
 
   fDocSelStart := fDoc.BlockBegin;
@@ -828,14 +828,14 @@ var
   canAll: boolean;
   hasTxt: boolean;
 begin
-  canAll := ((fDoc.isNotNil and (fFindScope <> scProj)) or
+  canAll := ((fDoc.isAssigned and (fFindScope <> scProj)) or
             ((fFindScope = scProj) and (fProj <> nil)));
   hasTxt := fToFind.isNotEmpty and not fToFind.isBlank;
-  btnFind.Enabled := fDoc.isNotNil and hasTxt;
+  btnFind.Enabled := fDoc.isAssigned and hasTxt;
   btnFindAll.Enabled := canAll and hasTxt;
-  btnReplace.Enabled := fDoc.isNotNil and chkEnableRep.Checked and fToFind.isNotEmpty;
+  btnReplace.Enabled := fDoc.isAssigned and chkEnableRep.Checked and fToFind.isNotEmpty;
   btnReplaceAll.Enabled := btnReplace.Enabled;
-  cbReplaceWth.Enabled := fDoc.isNotNil and chkEnableRep.Checked;
+  cbReplaceWth.Enabled := fDoc.isAssigned and chkEnableRep.Checked;
   cbToFind.Enabled := canAll;
 end;
 {$ENDREGION}

@@ -1060,11 +1060,11 @@ begin
     grp := getProjectGroup;
     pix := grp.reloadedProjectIndex;
     prj := MainForm.fFreeProj;
-    if assigned(prj) then
+    if prj.isAssigned then
       fProjName := prj.filename;
     fProjectGroup := getProjectGroup.groupFilename;
     if prj = MainForm.fProj then
-      fProjectIndex :=- 1
+      fProjectIndex := -1
     else
       fProjectIndex := pix;
   end else
@@ -1087,29 +1087,31 @@ begin
     if fProjName.isNotEmpty and fProjName.fileExists then
     begin
       dst.openProj(fProjName);
-      if not assigned(dst.fProj) then
+      if dst.fProj.isNotAssigned then
         exit;
       hdl := getMultiDocHandler;
-      if assigned(hdl) then
+      if hdl.isAssigned then
         mem := hdl.findDocument(dst.fProj.filename);
-      if mem.isNotNil then
+      if mem.isAssigned then
+      begin
         if dst.fProj.getFormat = pfDEXED then
           mem.Highlighter := LfmSyn
         else
           mem.Highlighter := JsSyn;
+      end;
     end;
 
     grp := getProjectGroup;
     if fProjectGroup.isNotEmpty and fProjectGroup.fileExists then
       grp.openGroup(fProjectGroup);
-    if fProjectIndex.equals(-1) and assigned(dst.fFreeProj) then
+    if fProjectIndex.equals(-1) and dst.fFreeProj.isAssigned then
       dst.fFreeProj.activate
     else if (fProjectIndex >= 0) and (grp.projectCount > 0)
       and (fProjectIndex < grp.projectCount) then
-      begin
-        grp.setProjectIndex(fProjectIndex);
-        grp.getProject(grp.getProjectIndex).activate;
-      end;
+    begin
+      grp.setProjectIndex(fProjectIndex);
+      grp.getProject(grp.getProjectIndex).activate;
+    end;
   end
   else inherited;
 end;
@@ -1127,7 +1129,7 @@ var
   str: string;
 begin
   docHandler := getMultiDocHandler;
-  if not assigned(docHandler) then
+  if docHandler.isNotAssigned then
     exit;
 
   for i:= 0 to docHandler.documentCount-1 do
@@ -1151,7 +1153,7 @@ var
   i: integer;
 begin
   docHandler := getMultiDocHandler;
-  if not assigned(docHandler) then
+  if docHandler.isNotAssigned then
     exit;
 
   for i := 0 to fDocuments.Count-1 do
@@ -1695,7 +1697,7 @@ begin
       begin
         if site is TAnchorDockHostSite then
         begin
-          if TAnchorDockHostSite(site).BoundSplitter.isNotNil then
+          if TAnchorDockHostSite(site).BoundSplitter.isAssigned then
             TAnchorDockHostSite(site).BoundSplitter.OnMouseWheel:= @DockSplitterMw;
         end
         else if site is TAnchorDockSplitter then
@@ -1756,7 +1758,7 @@ begin
         if w = fEditWidg then
           continue;
         h := DockMaster.GetAnchorSite(w);
-        if h.isNotNil then
+        if h.isAssigned then
           h.ManualFloat(w.ClientRect, false);
       end;
     end;
@@ -1974,7 +1976,7 @@ procedure TMainForm.FreeRunnableProc;
 var
   f: string;
 begin
-  if fRunProc.isNil then
+  if fRunProc.isNotAssigned then
     exit;
 
   f := fRunProc.Executable;
@@ -2039,7 +2041,7 @@ begin
         dat := arr.Objects[0];
         tgg := dat.FindPath('name');
       end;
-      if tgg.isNotNil then
+      if tgg.isAssigned then
       begin
         url := 'https://gitlab.com/basile.b/dexed/-/releases/' + tgg.AsString;
         res:= TResourceStream.Create(HINSTANCE, 'VERSION', RT_RCDATA);
@@ -2075,7 +2077,7 @@ begin
   // see: http://forum.lazarus.freepascal.org/index.php/topic,30616.0.htm
   if fAppliOpts.reloadLastDocuments then
     LoadLastDocsAndProj;
-  if not assigned(fProj) then
+  if fProj.isNotAssigned then
     newDubProj;
 
   DockMaster.ResetSplitters;
@@ -2170,7 +2172,7 @@ end;
 
 procedure TMainForm.ApplicationProperties1Exception(Sender: TObject;E: Exception);
 begin
-  if fMesgWidg.isNil then
+  if fMesgWidg.isNotAssigned then
     dlgOkError(E.Message)
   else
     fMsgs.message(E.Message, nil, amcApp, amkErr);
@@ -2198,7 +2200,7 @@ begin
     (dlgOkCancel('A project is still being compiled, close anyway ?') <> mrOK) then
       exit;
 
-  if assigned(fFreeProj) and fFreeProj.modified then
+  if fFreeProj.isAssigned and fFreeProj.modified then
   begin
     p += #9 + fFreeProj.filename + LineEnding;
     c := true;
@@ -2274,7 +2276,7 @@ begin
             if d.modified and not d.isTemporary then
               d.save;
           end;
-          if assigned(fProj) and fProj.modified then
+          if fProj.isAssigned and fProj.modified then
             fProj.saveToFile(fProj.filename);
           for i := 0 to fProjectGroup.projectCount-1 do
             if fProjectGroup.projectModified(i) then
@@ -2291,7 +2293,7 @@ begin
   SaveLastDocsAndProj;
   CanClose:= true;
   fProjectGroup.closeGroup;
-  if assigned(fFreeProj) then
+  if fFreeProj.isAssigned then
     fFreeProj.getProject.Free;
   for i:= fMultidoc.documentCount-1 downto 0 do
     fMultidoc.closeDocument(i, false);
@@ -2299,17 +2301,17 @@ end;
 
 procedure TMainForm.updateDocumentBasedAction(sender: TObject);
 begin
-  TAction(sender).Enabled := fDoc.isNotNil;
+  TAction(sender).Enabled := fDoc.isAssigned;
 end;
 
 procedure TMainForm.updateProjectBasedAction(sender: TObject);
 begin
-  TAction(sender).Enabled := assigned(fProj) {and not fProjActionsLock};
+  TAction(sender).Enabled := fProj.isAssigned {and not fProjActionsLock};
 end;
 
 procedure TMainForm.updateDocEditBasedAction(sender: TObject);
 begin
-  if fDoc.isNotNil and fDoc.Focused then
+  if fDoc.isAssigned and fDoc.Focused then
     TAction(sender).Enabled := true
   else
     TAction(sender).Enabled := false;
@@ -2326,10 +2328,10 @@ var
   s: string;
 begin
   srcLst := TMRUFileList(Sender);
-  if srcLst.isNil then
+  if srcLst.isNotAssigned then
     exit;
   trgMnu := TMenuItem(srcLst.objectTag);
-  if trgMnu.isNil then
+  if trgMnu.isNotAssigned then
     exit;
 
   if fUpdateCount > 0 then
@@ -2385,7 +2387,7 @@ var
   srcLst: TMRUFileList;
 begin
   srcLst := TMRUFileList(TmenuItem(Sender).Tag);
-  if srcLst.isNotNil then
+  if srcLst.isAssigned then
     srcLst.Clear;
 end;
 
@@ -2395,7 +2397,7 @@ var
   i: integer;
 begin
   srcLst := TMRUFileList(TmenuItem(Sender).Tag);
-  if srcLst.isNil then
+  if srcLst.isNotAssigned then
     exit;
   srcLst.BeginUpdate;
   for i := srcLst.Count-1 downto 0 do
@@ -2470,7 +2472,7 @@ begin
   else if project = fFreeProj then
     fFreeProj := nil;
 
-  if assigned(fProj) and mnuGitBranch.Count.equals(0) then
+  if fProj.isAssigned and mnuGitBranch.Count.equals(0) then
     actProjGitBranchesUpdExecute(nil);
 
   showProjTitle;
@@ -2498,7 +2500,7 @@ begin
       fMsgs.message('Build duration: ' + formatTicksAsDuration(GetTickCount64 - fCompStart),
         project, amcProj, amkInf);
     end;
-    if fRunProjAfterCompile and assigned(fProj) then
+    if fRunProjAfterCompile and fProj.isAssigned then
     begin
       if not success then
         runprev := dlgYesNo('last build failed, continue and run ?') = mrYes;
@@ -2533,7 +2535,7 @@ begin
         fMsgs.message('Group build duration: ' + formatTicksAsDuration(GetTickCount64 - fCompStart),
           nil, amcAll, amkInf);
       end;
-      if assigned(fProjBeforeGroup) then
+      if fProjBeforeGroup.isAssigned then
         fProjBeforeGroup.activate;
       fProjBeforeGroup := nil;
       fIsCompilingGroup := false;
@@ -2584,7 +2586,7 @@ procedure TMainForm.mnuDelete(value: TMenuItem);
 var
   i: integer;
 begin
-  if value.isNil then
+  if value.isNotAssigned then
     exit;
   i := mainMenu.Items.IndexOf(value);
   if i <> -1 then
@@ -2597,7 +2599,7 @@ procedure TMainForm.actFileHtmlExportExecute(Sender: TObject);
 var
   exp: TSynExporterHTML;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   exp := TSynExporterHTML.Create(nil);
   try
@@ -2649,7 +2651,7 @@ var
 begin
   with TOpenDialog.Create(nil) do
   try
-    if fDoc.isNotNil and not fDoc.isTemporary and fDoc.fileName.fileExists then
+    if fDoc.isAssigned and not fDoc.isTemporary and fDoc.fileName.fileExists then
       initialDir := fDoc.fileName.extractFileDir;
     options := options + [ofAllowMultiSelect];
     filter := DdiagFilter;
@@ -2663,7 +2665,7 @@ end;
 
 procedure TMainForm.actProjOpenContFoldExecute(Sender: TObject);
 begin
-  if not assigned(fProj) or not fProj.filename.fileExists then
+  if fProj.isNotAssigned or not fProj.filename.fileExists then
     exit;
   getExplorer.browse(fProj.filename.extractFilePath);
   fExplWidg.showWidget;
@@ -2700,7 +2702,7 @@ end;
 
 procedure TMainForm.actFileSaveAsExecute(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   with TSaveDialog.Create(nil) do
   try
@@ -2718,7 +2720,7 @@ procedure TMainForm.actFileSaveExecute(Sender: TObject);
 var
   str: string;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
 
   str := fDoc.fileName;
@@ -2730,7 +2732,7 @@ end;
 
 procedure TMainForm.actFileAddToProjExecute(Sender: TObject);
 begin
-  if fDoc.isNil or not assigned(fProj) then
+  if fDoc.isNotAssigned or fProj.isNotAssigned then
     exit;
   if fProj.filename = fDoc.fileName then
     exit;
@@ -2747,7 +2749,7 @@ end;
 
 procedure TMainForm.actFileCloseExecute(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     getMultiDocHandler.closeDocument(fDoc);
 end;
 
@@ -2780,7 +2782,7 @@ procedure TMainForm.actFileSaveCopyAsExecute(Sender: TObject);
 var
   str: TStringList;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   with TSaveDialog.create(nil) do
   try
@@ -2823,43 +2825,43 @@ end;
 {$REGION edit ------------------------------------------------------------------}
 procedure TMainForm.actEdCopyExecute(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.CopyToClipboard;
 end;
 
 procedure TMainForm.actEdCutExecute(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.CutToClipboard;
 end;
 
 procedure TMainForm.actEdPasteExecute(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.PasteFromClipboard;
 end;
 
 procedure TMainForm.actEdUndoExecute(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.Undo;
 end;
 
 procedure TMainForm.actEdRedoExecute(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.Redo;
 end;
 
 procedure TMainForm.actEdMacPlayExecute(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fEditWidg.macRecorder.PlaybackMacro(fDoc);
 end;
 
 procedure TMainForm.actEdMacStartStopExecute(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
   begin
     if fEditWidg.macRecorder.State = msRecording then
       fEditWidg.macRecorder.Stop
@@ -2869,13 +2871,13 @@ end;
 
 procedure TMainForm.actEdIndentExecute(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.ExecuteCommand(ecBlockIndent, '', nil);
 end;
 
 procedure TMainForm.actEdUnIndentExecute(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.ExecuteCommand(ecBlockUnIndent, '', nil);
 end;
 
@@ -2883,7 +2885,7 @@ procedure TMainForm.actEdFindExecute(Sender: TObject);
 var
   str: string;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
       exit;
   fFindWidg.showWidget;
 
@@ -2909,7 +2911,7 @@ var
   of_no: string;
 begin
   result := '';
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
 
   of_no := fDoc.fileName.stripFileExt + exeExt;
@@ -2930,7 +2932,7 @@ begin
       if fDoc.isTemporary then
         result := of_yes;
     end
-    else if assigned(fProj) then
+    else if fProj.isAssigned then
     begin
       if ifInProject in fRunnablesOptions.outputFolderConditions then
       begin
@@ -2978,7 +2980,7 @@ begin
   proc := TDexedProcess(sender);
   asyncprocOutput(sender);
   inph := EntitiesConnector.getSingleService('IProcInputHandler');
-  if inph.isNotNil then
+  if inph.isAssigned then
     (inph as IProcInputHandler).removeProcess(proc);
   if not proc.ExitStatus.equals(0) then
   begin
@@ -3014,7 +3016,7 @@ end;
 
 procedure TMainForm.ApplicationProperties1Activate(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.checkFileDate;
 end;
 
@@ -3038,7 +3040,7 @@ begin
   result := false;
   fMsgs.clearByData(fDoc);
   FreeRunnableProc;
-  if fDoc.isNil or fDoc.Lines.Count.equals(0) then
+  if fDoc.isNotAssigned or fDoc.Lines.Count.equals(0) then
     exit;
 
   firstlineFlags := fDoc.Lines[0];
@@ -3112,11 +3114,11 @@ begin
       dmdproc.Parameters.Add('-of' + fname + objExt);
     dmdproc.Parameters.Add('-J' + fDoc.fileName.extractFilePath);
     dmdproc.Parameters.AddStrings(fRunnablesOptions.staticSwitches);
-    if lst.isNotNil and not lst.Count.equals(0) then
+    if lst.isAssigned and not lst.Count.equals(0) then
       dmdproc.Parameters.AddStrings(lst);
     {$ifdef WINDOWS}
     {$ifdef CPUX86_64}
-    if lst.isNotNil and (lst.IndexOf('-m32') <> -1) then
+    if lst.isAssigned and (lst.IndexOf('-m32') <> -1) then
     begin
       i := dmdproc.Parameters.IndexOf('-m64');
       if i <> -1 then
@@ -3201,7 +3203,7 @@ begin
 
   finally
     dmdproc.Free;
-    if lst.isNotNil then
+    if lst.isAssigned then
       lst.Free;
   end;
 end;
@@ -3212,7 +3214,7 @@ var
   lst: TStringList;
   fname: string;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   fname := runnableExename;
   if not fname.fileExists then
@@ -3263,7 +3265,7 @@ const
   ic : array[boolean] of TAppMessageKind = (amkWarn, amkInf);
 begin
   asyncprocTerminate(sender);
-  if fCovModUt and assigned(fRunProc) and fRunProc.ExitStatus.equals(0) then
+  if fCovModUt and fRunProc.isAssigned and fRunProc.ExitStatus.equals(0) then
   begin
     fname   := fDoc.fileName.stripFileExt;
     fullcov := true;
@@ -3301,7 +3303,7 @@ end;
 
 procedure TMainForm.actFileUnittestExecute(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if compileRunnable(true) then
     executeRunnable(true, true);
@@ -3309,7 +3311,7 @@ end;
 
 procedure TMainForm.actFileCompAndRunExecute(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if compileRunnable(false) then
     executeRunnable(false, true);
@@ -3317,7 +3319,7 @@ end;
 
 procedure TMainForm.actFileCompileAndRunOutExecute(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if compileRunnable(false) then
     executeRunnable(false, false);
@@ -3327,7 +3329,7 @@ procedure TMainForm.actFileCompAndRunWithArgsExecute(Sender: TObject);
 var
   runargs: string = '';
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if compileRunnable(false) and InputQuery('Execution arguments', '', runargs) then
     executeRunnable(false, true, runargs);
@@ -3344,7 +3346,7 @@ var
   d: TDexedMemo;
   c: TDexedMemo;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   c := fDoc;
   for i := fMultidoc.documentCount-1 downto 0 do
@@ -3359,7 +3361,7 @@ procedure TMainForm.actFileCloseAllExecute(Sender: TObject);
 var
   i: integer;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   for i := fMultidoc.documentCount-1 downto 0 do
     fMultidoc.closeDocument(i);
@@ -3367,7 +3369,7 @@ end;
 
 procedure TMainForm.actEdFormatExecute(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   getCodeFormatting.formatCurrent();
 end;
@@ -3379,7 +3381,7 @@ var
   pth: string;
   msg: string;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if fDoc.isTemporary and fDoc.modified then
     fDoc.saveTempFile;
@@ -3408,7 +3410,7 @@ end;
 
 procedure TMainForm.actFileMetricsHalsteadExecute(Sender: TObject);
 begin
-  if fDoc.isNil or not fDoc.isDSource then
+  if fDoc.isNotAssigned or not fDoc.isDSource then
     exit;
   metrics.measure(fDoc);
 end;
@@ -3449,7 +3451,7 @@ procedure TMainForm.dubFile(outside: boolean);
 var
   d: string;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   FreeRunnableProc;
   fMsgs.clearByData(fDoc);
@@ -3498,7 +3500,7 @@ const
   messg2: string = 'The binary produced for a runnable that is not explicitly saved ' +
     'must be recompiled after each execution.' + LineEnding +  'Do you wish to recompile it now ?';
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   FreeRunnableProc;
   fname := runnableExename;
@@ -3532,7 +3534,7 @@ end;
 
 procedure TMainForm.actFileOpenContFoldExecute(Sender: TObject);
 begin
-  if fDoc.isNil or not fDoc.fileName.fileExists then
+  if fDoc.isNotAssigned or not fDoc.fileName.fileExists then
     exit;
   getExplorer.browse(fDoc.fileName.extractFilePath);
   fExplWidg.showWidget;
@@ -3595,7 +3597,7 @@ var
   widg: TDexedWidget;
   act: TAction;
 begin
-  if sender.isNil then
+  if sender.isNotAssigned then
     exit;
   act := TAction(sender);
   if act.Tag.equals(0) then
@@ -3617,7 +3619,7 @@ var
   widg: TDexedWidget;
 begin
   widg := TDexedWidget( TComponent(sender).tag );
-  if widg.isNotNil then
+  if widg.isAssigned then
     widg.showWidget;
 end;
 
@@ -3650,7 +3652,7 @@ begin
     if not w.isDockable then
       continue;
     h := DockMaster.GetAnchorSite(w);
-    if h.isNotNil and ((h.WindowState = wsMinimized) or (not h.HasParent)) then
+    if h.isAssigned and ((h.WindowState = wsMinimized) or (not h.HasParent)) then
       h.Close;
   end;
 
@@ -3723,8 +3725,8 @@ var
 const
   fstyle: array[boolean] of TFormStyle = (fsNormal, fsStayOnTop);
 begin
-  for widg in fWidgList do if widg.Parent.isNotNil and
-    widg.Parent.Parent.isNil and widg.isDockable then
+  for widg in fWidgList do if widg.Parent.isAssigned and
+    widg.Parent.Parent.isNotAssigned and widg.isDockable then
       TForm(widg.Parent).FormStyle := fstyle[onTop];
 end;
 
@@ -3738,13 +3740,13 @@ begin
   if not fDockingIsInitialized then
     exit;
   edtSite := DockMaster.GetSite(fEditWidg);
-  if edtSite.isNil then
+  if edtSite.isNotAssigned then
     exit;
   if GetDockSplitterOrParent(edtSite, akTop, topSite) then
   begin
     if topSite is TAnchorDockHostSite then
       topHost := TAnchorDockHostSite(topSite);
-    if topHost.isNotNil and topHost.BoundSplitter.isNotNil and
+    if topHost.isAssigned and topHost.BoundSplitter.isAssigned and
       (topHost.BoundSplitter.Top > 0) then
     begin
       topHost.BoundSplitter.OnCanOffset:=nil;
@@ -3775,7 +3777,7 @@ end;
 
 procedure TMainForm.showProjTitle;
 begin
-  if assigned(fProj) and fProj.filename.fileExists then
+  if fProj.isAssigned and fProj.filename.fileExists then
     caption := format('dexed - %s', [shortenPath(fProj.filename, 30)])
   else
     caption := 'dexed';
@@ -3785,8 +3787,7 @@ procedure TMainForm.saveProjSource(const document: TDexedMemo);
 var
   fname: string;
 begin
-  if not assigned(fProj) or checkProjectLock or
-    (fProj.filename <> document.fileName) then
+  if fProj.isNotAssigned or checkProjectLock or (fProj.filename <> document.fileName) then
       exit;
 
   fname := fProj.filename;
@@ -3796,7 +3797,7 @@ end;
 
 function TMainForm.closeProj: boolean;
 begin
-  if not assigned(fProj) then
+  if fProj.isNotAssigned then
     exit(true);
 
   result := false;
@@ -3818,7 +3819,7 @@ procedure TMainForm.actProjNewDialogExecute(Sender: TObject);
 var
   r: TModalResult;
 begin
-  if assigned(fProj) and not fProj.inGroup and fProj.modified and
+  if fProj.isAssigned and not fProj.inGroup and fProj.modified and
     (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   if not closeProj then
@@ -3835,7 +3836,7 @@ end;
 
 procedure TMainForm.actProjNewDubJsonExecute(Sender: TObject);
 begin
-  if assigned(fProj) and not fProj.inGroup and fProj.modified and
+  if fProj.isAssigned and not fProj.inGroup and fProj.modified and
     (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   if not closeProj then
@@ -3845,7 +3846,7 @@ end;
 
 procedure TMainForm.actProjNewNativeExecute(Sender: TObject);
 begin
-  if assigned(fProj) and not fProj.inGroup and fProj.modified and
+  if fProj.isAssigned and not fProj.inGroup and fProj.modified and
     (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   if not closeProj then
@@ -3905,7 +3906,7 @@ procedure TMainForm.mruProjItemClick(Sender: TObject);
 begin
   if checkProjectLock then
     exit;
-  if assigned(fProj) and not fProj.inGroup and fProj.modified and
+  if fProj.isAssigned and not fProj.inGroup and fProj.modified and
     (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   openProj(TMenuItem(Sender).Hint);
@@ -3926,7 +3927,7 @@ end;
 
 procedure TMainForm.actProjCloseExecute(Sender: TObject);
 begin
-  if assigned(fProj) and not fProj.inGroup and fProj.modified and
+  if fProj.isAssigned and not fProj.inGroup and fProj.modified and
     (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   closeProj;
@@ -3955,7 +3956,7 @@ end;
 
 procedure TMainForm.actProjSaveExecute(Sender: TObject);
 begin
-  if not assigned(fProj) then
+  if fProj.isNotAssigned then
     exit;
   if (fProj.getFormat = pfDUB) and TDubProject(fProj.getProject).isSDL then
   begin
@@ -3974,7 +3975,7 @@ procedure TMainForm.actProjOpenExecute(Sender: TObject);
 begin
   if checkProjectLock then
       exit;
-  if assigned(fProj) and fProj.modified and
+  if fProj.isAssigned and fProj.modified and
     (dlgFileChangeClose(fProj.filename, UnsavedProj) = mrCancel) then
       exit;
   with TOpenDialog.Create(nil) do
@@ -3991,13 +3992,13 @@ procedure TMainForm.actProjEditorExecute(Sender: TObject);
 var
   win: TControl = nil;
 begin
-  if assigned(fProj) then
+  if fProj.isAssigned then
     case fProj.getFormat of
       pfDUB: win := DockMaster.GetAnchorSite(fDubProjWidg);
       pfDEXED: win := DockMaster.GetAnchorSite(fPrjCfWidg);
     end
   else win := DockMaster.GetAnchorSite(fPrjCfWidg);
-  if win.isNotNil then
+  if win.isAssigned then
   begin
     win.Show;
     win.BringToFront;
@@ -4006,7 +4007,7 @@ end;
 
 procedure TMainForm.actProjSourceExecute(Sender: TObject);
 begin
-  if not assigned(fProj) or not fProj.filename.fileExists then
+  if fProj.isNotAssigned or not fProj.filename.fileExists then
     exit;
 
   if (fProj.getFormat = pfDUB) and TDubProject(fProj.getProject).isSDL then
@@ -4025,25 +4026,21 @@ end;
 
 procedure TMainForm.actProjOptViewExecute(Sender: TObject);
 begin
-  if not assigned(fProj) then
-    exit;
-  dlgOkInfo(fProj.getCommandLine, 'Compilation command line');
+  if fProj.isAssigned then
+    dlgOkInfo(fProj.getCommandLine, 'Compilation command line');
 end;
 
 procedure TMainForm.actProjTestExecute(Sender: TObject);
 begin
-  if not assigned(fProj) then
-    exit;
-  if checkProjectLock then
+  if fProj.isNotAssigned or checkProjectLock then
       exit;
   fProj.test;
 end;
 
 procedure TMainForm.actProjStopCompExecute(Sender: TObject);
 begin
-  if fProj = nil then
-    exit;
-  fProj.stopCompilation();
+  if fProj.isAssigned then
+    fProj.stopCompilation();
 end;
 
 procedure TMainForm.actProjDscanExecute(Sender: TObject);
@@ -4132,7 +4129,7 @@ var
   i: integer;
   b: string;
 begin
-  if not assigned(fProj) then
+  if fProj.isNotAssigned then
     exit;
   p := TProcess.Create(nil);
   r := TStringList.Create;
@@ -4167,7 +4164,7 @@ var
   m: TMenuItem;
   a: boolean;
 begin
-  if not assigned(fProj) then
+  if fProj.isNotAssigned then
     exit;
   a := mnuGitBranch.Count >= 2;
   if a then
@@ -4280,7 +4277,7 @@ end;
 
 procedure TMainForm.actProjSelUngroupedExecute(Sender: TObject);
 begin
-  if assigned(fFreeProj) then
+  if fFreeProj.isAssigned then
     fFreeProj.activate;
 end;
 
@@ -4290,7 +4287,7 @@ var
   e: TStrings;
   s: string;
 begin
-  if not assigned(fProj) or (fProj.getFormat <> pfDUB) then
+  if fProj.isNotAssigned or (fProj.getFormat <> pfDUB) then
     exit;
   p := TDubProject(fProj.getProject);
   e := p.getPersistentEnvironment;
@@ -4314,7 +4311,7 @@ end;
 
 procedure TMainForm.actProjAddToGroupExecute(Sender: TObject);
 begin
-  if not assigned(fFreeProj) or fFreeProj.inGroup or
+  if fFreeProj.isNotAssigned or fFreeProj.inGroup or
     not fFreeProj.filename.fileExists then
       exit;
   fProjectGroup.addProject(fFreeProj);
@@ -4390,7 +4387,7 @@ begin
     (dlgFileChangeClose(fProjectGroup.groupFilename, UnsavedPGrp) = mrCancel) then
       exit;
   fProjectGroup.closeGroup;
-  if assigned(fFreeProj) then
+  if fFreeProj.isAssigned then
     fFreeProj.activate;
 end;
 {$ENDREGION}

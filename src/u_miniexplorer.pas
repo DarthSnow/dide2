@@ -481,7 +481,7 @@ procedure TMiniExplorerWidget.lstFavSelect(Sender: TObject; Item: TListItem; Sel
 var
   d: string;
 begin
-  if not Selected or Item.Data.isNil then
+  if not Selected or Item.Data.isNotAssigned then
      exit;
   d := PString(Item.Data)^;
   if d.dirExists then
@@ -492,7 +492,7 @@ procedure TMiniExplorerWidget.btnRemFavClick(Sender: TObject);
 var
   i: Integer;
 begin
-  if lstFav.Selected.isNil then
+  if lstFav.Selected.isNotAssigned then
      exit;
   i := fFavorites.IndexOf(PString(lstFav.Selected.Data)^);
   if i <> -1 then
@@ -504,7 +504,7 @@ procedure TMiniExplorerWidget.lstFavClick(Sender: TObject);
 var
   d: string;
 begin
-  if lstFav.Selected.isNil or lstFav.Selected.Data.isNil then
+  if lstFav.Selected.isNotAssigned or lstFav.Selected.Data.isNotAssigned then
      exit;
   d := PString(lstFav.Selected.Data)^;
   if not d.dirExists and (dlgYesNo('The favorite folder `' + d +
@@ -517,7 +517,7 @@ end;
 
 procedure TMiniExplorerWidget.lstFavDeletion(Sender: TObject; Item: TListItem);
 begin
-  if Item.isNotNil and item.Data.isNotNil then
+  if Item.isAssigned and item.Data.isAssigned then
     dispose(PString(item.Data));
 end;
 
@@ -528,7 +528,7 @@ end;
 
 procedure TMiniExplorerWidget.lstFilesColumnClick(Sender: TObject;Column: TListColumn);
 begin
-  if Column.isNotNil then
+  if Column.isAssigned then
   begin
     if Column.Index = fFileListSortedColumnIndex then
     begin
@@ -543,14 +543,14 @@ end;
 
 procedure TMiniExplorerWidget.btnAddFavClick(Sender: TObject);
 begin
-  if treeFolders.Selected.isNil then
+  if treeFolders.Selected.isNotAssigned then
     exit;
   fFavorites.Add(treeFolders.GetPathFromNode(treeFolders.Selected).extractFileDir);
 end;
 
 procedure TMiniExplorerWidget.lstFavDblClick(Sender: TObject);
 begin
-  if lstFav.Selected.isNil then
+  if lstFav.Selected.isNotAssigned then
      exit;
   treeFolders.Root := lstFav.Selected.Caption;
 end;
@@ -673,7 +673,7 @@ var
   fname: string;
   fmt: TProjectFileFormat;
 begin
-  if lstFiles.Selected.isNil then
+  if lstFiles.Selected.isNotAssigned then
     exit;
   fname := lstFiles.GetPathFromItem(lstFiles.Selected);
   if not fname.fileExists then
@@ -681,7 +681,7 @@ begin
   fmt := projectFormat(fname);
   if fmt in [pffDexed, pffDub] then
   begin
-    if assigned(fFreeProj) then
+    if fFreeProj.isAssigned then
     begin
       if fFreeProj.modified and (dlgFileChangeClose(fFreeProj.filename, UnsavedProj) = mrCancel) then
         exit;
@@ -779,18 +779,18 @@ var
 begin
   if fLastListOrTree = lstFiles then
   begin
-    if lstFiles.Selected.isNil then
+    if lstFiles.Selected.isNotAssigned then
        exit;
     fname := lstFiles.GetPathFromItem(lstFiles.Selected);
   end else if fLastListOrTree = treeFolders then
   begin
-    if treeFolders.Selected.isNil then
+    if treeFolders.Selected.isNotAssigned then
        exit;
     fname := treeFolders.GetPathFromNode(treeFolders.Selected).extractFileDir;
   end
   else if fLastListOrTree = lstFav then
   begin
-    if lstFav.Selected.isNil or lstFav.Selected.Data.isNil then
+    if lstFav.Selected.isNotAssigned or lstFav.Selected.Data.isNotAssigned then
        exit;
     fname := PString(lstFav.Selected.Data)^;
   end;
@@ -809,7 +809,7 @@ end;
 procedure TMiniExplorerWidget.treeFoldersChange(Sender: TObject;
   Node: TTreeNode);
 begin
-  if treeFolders.Selected.isNil then
+  if treeFolders.Selected.isNotAssigned then
      exit;
   fLastFold := treeFolders.Path.extractFileDir; // trailing path sep
   subjMnexDirectoryChanged(fMnxSubj, fLastFold);
@@ -817,7 +817,7 @@ end;
 
 procedure TMiniExplorerWidget.treeFoldersDblClick(Sender: TObject);
 begin
-  if treeFolders.Selected.isNil then
+  if treeFolders.Selected.isNotAssigned then
      exit;
   treeFolders.Root := treeFolders.GetPathFromNode(treeFolders.Selected)
     .extractFileDir; // trailing path sep

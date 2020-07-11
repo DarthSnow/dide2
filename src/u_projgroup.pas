@@ -194,7 +194,7 @@ end;
 
 procedure TProjectGroup.projNew(project: ICommonProject);
 begin
-  if (project <> nil) and not project.inGroup then
+  if project.isAssigned and not project.inGroup then
     fFreeStanding := project;
 end;
 
@@ -202,11 +202,11 @@ procedure TProjectGroup.projChanged(project: ICommonProject);
 var
   itm: TProjectGroupItem;
 begin
-  if assigned(project) and project.inGroup and (project.getFormat = pfDUB) then
+  if project.isAssigned and project.inGroup and (project.getFormat = pfDUB) then
   begin
     itm := Self.addItem(project.filename);
-    if assigned(itm) then
-      itm.configurationIndex:=project.getActiveConfigurationIndex;
+    if itm.isAssigned then
+      itm.configurationIndex := project.getActiveConfigurationIndex;
   end;
 end;
 
@@ -270,7 +270,7 @@ begin
     result.fFilename := fname
   else
     result.fFilename := ExtractRelativepath(fBasePath, fname);
-  if assigned(fFreeStanding) and SameFileName(fname, fFreeStanding.filename) then
+  if fFreeStanding.isAssigned and SameFileName(fname, fFreeStanding.filename) then
   begin
     result.fProj := fFreeStanding;
     fFreeStanding.inGroup(true);
@@ -294,7 +294,7 @@ var
 begin
   result := false;
   p := item[ix].project;
-  if assigned(p) and (p.modified) then
+  if p.isAssigned and p.modified then
     result := true
 end;
 
@@ -329,7 +329,7 @@ begin
     p := item[i];
     p.fGroup := self;
     p.filename := patchPlateformPath(p.filename);
-    if assigned(fFreeStanding) and (p.absoluteFilename = fFreeStanding.filename) then
+    if fFreeStanding.isAssigned and (p.absoluteFilename = fFreeStanding.filename) then
     begin
       p.fProj := fFreeStanding;
       fFreeStanding.inGroup(true);
@@ -344,13 +344,13 @@ begin
     end;
   end;
   if fProjectIndex > projectCount -1 then
-    fProjectIndex:= projectCount -1;
+    fProjectIndex := projectCount -1;
   fSavedIndex := fProjectIndex;
   fModified := b;
   if b then
     dlgOkError('the following projects are missing and are removed from the group:' + f,
       'Project group error');
-  if not assigned(fFreeStanding) then
+  if fFreeStanding.isNotAssigned then
   begin
     item[fSavedIndex].lazyLoad;
     item[fSavedIndex].project.activate;

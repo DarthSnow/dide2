@@ -339,7 +339,7 @@ procedure TTermWidget.updateScrollBar();
 var
   i: TTerminalScrollInfo;
 begin
-  if fDisableScrollBarSync or not visible or fTerm.isNil then
+  if fDisableScrollBarSync or not visible or fTerm.isNotAssigned then
     exit;
   i := fTerm.getVScrollInfo();
   ScrollBar1.SetParams(i.value, i.min, i.max, i.pageSize);

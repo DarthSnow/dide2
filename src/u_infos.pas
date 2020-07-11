@@ -120,7 +120,7 @@ var
   pth: string;
   cmp: DCompiler;
 begin
-  if fLabel.isNil or fStatus.isNil then
+  if fLabel.isNotAssigned or fStatus.isNotAssigned then
     exit;
 
   fPresent := false;

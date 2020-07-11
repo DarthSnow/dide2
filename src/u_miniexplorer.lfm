@@ -194,11 +194,11 @@ inherited MiniExplorerWidget: TMiniExplorerWidget
     end
   end
   inherited contextMenu: TPopupMenu
-    left = 40
-    top = 48
+    Left = 40
+    Top = 48
   end
   object mnuDrives: TPopupMenu[2]
-    left = 8
-    top = 48
+    Left = 8
+    Top = 48
   end
 end

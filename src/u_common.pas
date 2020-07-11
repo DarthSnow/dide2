@@ -64,14 +64,29 @@ type
 
   // sugar for classes
   TObjectHelper = class helper for TObject
-    function isNil: boolean;
-    function isNotNil: boolean;
+    function isNotAssigned: boolean;
+    function isAssigned: boolean;
   end;
+
+  IDexedBaseInterface = interface
+  end;
+
+  // sugar for interfaces
+  TDexedInterfaceHelper = type helper for IDexedBaseInterface
+    function isNotAssigned: boolean;
+    function isAssigned: boolean;
+  end;
+
+  // maybe one day, sugar for events
+  {TNotifyEventHelper = type helper for TNotifyEvent
+    function isNotAssigned: boolean;
+    function isAssigned: boolean;
+  end;}
 
   // sugar for pointers
   TPointerHelper = type helper for Pointer
-    function isNil: boolean;
-    function isNotNil: boolean;
+    function isNotAssigned: boolean;
+    function isAssigned: boolean;
   end;
 
   // sugar for strings
@@ -434,24 +449,44 @@ begin
   else inherited;
 end;
 
-function TObjectHelper.isNil: boolean;
+function TDexedInterfaceHelper.isNotAssigned: boolean;
 begin
-  exit(self = nil);
+  result := not assigned(self);
 end;
 
-function TObjectHelper.isNotNil: boolean;
+function TDexedInterfaceHelper.isAssigned: boolean;
 begin
-  exit(self <> nil);
+  result := assigned(self);
 end;
 
-function TPointerHelper.isNil: boolean;
+{function TNotifyEventHelper.isNotAssigned: boolean;
 begin
-  exit(self = nil);
+  result := not assigned(self);
 end;
 
-function TPointerHelper.isNotNil: boolean;
+function TNotifyEventHelper.isAssigned: boolean;
 begin
-  exit(self <> nil);
+  result := assigned(self);
+end;}
+
+function TObjectHelper.isNotAssigned: boolean;
+begin
+  result := not assigned(self);
+end;
+
+function TObjectHelper.isAssigned: boolean;
+begin
+  result := assigned(self);
+end;
+
+function TPointerHelper.isNotAssigned: boolean;
+begin
+  result := not assigned(self);
+end;
+
+function TPointerHelper.isAssigned: boolean;
+begin
+  result := assigned(self);
 end;
 
 function TDexedStringHelper.isEmpty: boolean;
@@ -550,7 +585,7 @@ var
   v: TJSONData;
 begin
   v := self.Find(key);
-  if v.isNotNil then
+  if v.isAssigned then
   begin
     result := v.JSONType = jtObject;
     if result then
@@ -565,7 +600,7 @@ var
   v: TJSONData;
 begin
   v := self.Find(key);
-  if v.isNotNil then
+  if v.isAssigned then
   begin
     result := v.JSONType = jtArray;
     if result then
@@ -578,7 +613,7 @@ end;
 function TJSONObjectHelper.findAny(const key: TJSONStringType; out value: TJSONData): boolean;
 begin
   value := self.Find(key);
-  result := value.isNotNil;
+  result := value.isAssigned;
 end;
 
 function TListItemsHelper.findCaption(const value: string; out res: TListItem): boolean;
@@ -1023,7 +1058,7 @@ begin
   if additionalPath.isNotEmpty then
     env += PathSeparator + additionalPath;
   {$IFNDEF CEBUILD}
-  if Application.isNotNil then
+  if Application.isAssigned then
     env += PathSeparator + ExtractFileDir(application.ExeName.ExtractFilePath);
   {$ENDIF}
   exit(ExeSearch(fname, env));
@@ -1089,7 +1124,7 @@ end;
 
 procedure killProcess(var process: TAsyncProcess);
 begin
-  if process.isNil then
+  if process.isNotAssigned then
     exit;
   if process.Running then
     process.Terminate(0);

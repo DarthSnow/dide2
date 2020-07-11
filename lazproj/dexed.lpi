@@ -859,6 +859,7 @@
         <Filename Value="..\src\u_newdubproj.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CeNewDubProject"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit58>
       <Unit59>

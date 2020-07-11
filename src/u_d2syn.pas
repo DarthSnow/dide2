@@ -182,7 +182,7 @@ end;
 
 procedure TSynD2SynRange.copyFrom(source: TSynD2SynRange);
 begin
-  if assigned(source) then
+  if source.isAssigned then
   begin
     nestedCommentsCount := source.nestedCommentsCount;
     namedRegionCount := source.namedRegionCount;
@@ -476,7 +476,7 @@ begin
     end;
   end;
 
-  if not assigned(fCurrRange) then
+  if fCurrRange.isNotAssigned then
     fCurrRange := TSynD2SynRange.Create(nil);
 
   // line comments / region beg-end
@@ -1184,9 +1184,8 @@ var
 begin
   inherited SetRange(value);
   stored := TSynD2SynRange(CodeFoldRange.RangeType);
-  if not assigned(fCurrRange) or not Assigned(stored) then
-    exit;
-  fCurrRange.copyFrom(stored);
+  if fCurrRange.isAssigned and stored.isAssigned then
+    fCurrRange.copyFrom(stored);
 end;
 
 function TSynD2Syn.GetRange: Pointer;
@@ -1194,10 +1193,10 @@ var
   stored: TSynD2SynRange;
 begin
   stored := TSynD2SynRange(inherited GetRange);
-  if (stored = nil) then
+  if stored.isNotAssigned then
     stored := TSynD2SynRange.Create(nil);
   stored.copyFrom(fCurrRange);
-  //
+
   CodeFoldRange.RangeType := Pointer(stored);
   Result := inherited GetRange;
 end;

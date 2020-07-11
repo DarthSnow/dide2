@@ -60,7 +60,7 @@ const
 
 function metrics: THalsteadMetrics;
 begin
-  if fMetrics.isNil then
+  if fMetrics.isNotAssigned then
     fMetrics := THalsteadMetrics.create(nil);
   result := fMetrics;
 end;
@@ -75,7 +75,7 @@ begin
   prs := TJSONParser.Create(str, [joIgnoreTrailingComma, joUTF8]);
   try
     jps := prs.Parse();
-    if jps.isNotNil and (jps.JSONType = jtObject) then
+    if jps.isAssigned and (jps.JSONType = jtObject) then
       jsn := TJSONObject(jps.Clone);
     jps.Free;
   finally
@@ -193,35 +193,35 @@ procedure THalsteadMetrics.Measure(document: TDexedMemo);
   begin
     result := true;
     val := obj.Find('n1Count');
-    if val.isNil then
+    if val.isNotAssigned then
       exit;
     n1  := val.AsInteger;
     if n1.equals(0) then
       exit;
 
     val := obj.Find('n1Sum');
-    if val.isNil then
+    if val.isNotAssigned then
       exit;
     sn1 := val.AsInteger;
 
     val := obj.Find('n2Count');
-    if val.isNil then
+    if val.isNotAssigned then
       exit;
     n2  := val.AsInteger;
     if n2.equals(0) then
       exit;
 
     val := obj.Find('n2Sum');
-    if val.isNil then
+    if val.isNotAssigned then
       exit;
     sn2 := val.AsInteger;
 
     val := obj.Find('line');
-    if val.isNil then
+    if val.isNotAssigned then
       exit;
     line := val.AsInteger;
     val := obj.Find('name');
-    if val.isNil then
+    if val.isNotAssigned then
       exit;
 
     voc := max(1, n1 + n2);
@@ -272,21 +272,21 @@ begin
   and (maxBugsPerFunction = 0) and (maxBugsPerModule = 0) and (maxVolumePerFunction = 0) then
     exit;
 
-  if not assigned(fMsgs) then
+  if fMsgs.isNotAssigned then
     fMSgs := getMessageDisplay;
 
   getHalsteadMetrics(document.Lines, jsn);
-  if jsn.isNil then
+  if jsn.isNotAssigned then
     exit;
 
   val := jsn.Find('functions');
-  if val.isNil or (val.JSONType <> jtArray) then
+  if val.isNotAssigned or (val.JSONType <> jtArray) then
     exit;
   arr := TJSONArray(val);
   for i := 0 to arr.Count-1 do
   begin
     fnc := TJSONObject(arr.Objects[i]);
-    if fnc.isNotNil then
+    if fnc.isAssigned then
     begin
       fnW := checkFunction(fnc, bgS);
       noW := noW and fnW;

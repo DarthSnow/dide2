@@ -122,12 +122,12 @@ procedure TOptionEditorWidget.showOptionEditor(observer: IEditableOptions = nil)
 var
   n: TTreeNode;
 begin
-  if assigned(observer) then
+  if observer.isAssigned then
   begin
     if selCat.Items.Count.equals(0) then
       updateCategories;
     n := selCat.Items.FindNodeWithText(observer.optionedWantCategory());
-    if n.isNotNil then
+    if n.isAssigned then
       selCat.Selected := n;
   end;
   showWidget;
@@ -145,7 +145,7 @@ var
   ed: IEditableOptions;
   sel: string = '';
 begin
-  if selCat.Selected.isNotNil then
+  if selCat.Selected.isAssigned then
     sel := selCat.Selected.Text;
   fUpdatingCat := true;
   inspector.TIObject := nil;
@@ -175,7 +175,7 @@ end;
 
 procedure TOptionEditorWidget.selCatDeletion(Sender: TObject; Node: TTreeNode);
 begin
-  if node.Data.isNotNil then
+  if node.Data.isAssigned then
     Dispose(PCategoryData(node.Data));
 end;
 
@@ -188,9 +188,9 @@ begin
     exit;
   if csDestroying in ComponentState then
     exit;
-  if selCat.Selected.isNil then
+  if selCat.Selected.isNotAssigned then
     exit;
-  if selCat.Selected.Data.isNil then
+  if selCat.Selected.Data.isNotAssigned then
     exit;
   // accept/cancel is relative to a single category
   dt := PCategoryData(selCat.Selected.Data);
@@ -208,7 +208,7 @@ begin
   end else
   begin
     dt := PCategoryData(selCat.Selected.Data);
-    if dt^.container.isNil or (dt^.observer = nil) then
+    if dt^.container.isNotAssigned or (dt^.observer = nil) then
       exit;
     if dt^.observer.optionedOptionsModified() then
     begin
@@ -237,11 +237,11 @@ begin
     pnlEd.Controls[0].Parent := nil;
   end;
 
-  if selCat.Selected.isNil or selcat.Selected.Data.isNil then
+  if selCat.Selected.isNotAssigned or selcat.Selected.Data.isNotAssigned then
     exit;
 
   dt := PCategoryData(selCat.Selected.Data);
-  if dt^.container.isNil then
+  if dt^.container.isNotAssigned then
     exit;
   case dt^.kind of
     oekControl:
@@ -276,7 +276,7 @@ end;
 
 procedure TOptionEditorWidget.inspectorModified(Sender: TObject);
 begin
-  if selCat.Selected.isNil or selcat.Selected.Data.isNil then
+  if selCat.Selected.isNotAssigned or selcat.Selected.Data.isNotAssigned then
     exit;
 
   fCatChanged := true;
@@ -287,11 +287,11 @@ end;
 
 procedure TOptionEditorWidget.btnCancelClick(Sender: TObject);
 begin
-  if selCat.Selected.isNil or selcat.Selected.Data.isNil then
+  if selCat.Selected.isNotAssigned or selcat.Selected.Data.isNotAssigned then
     exit;
 
   fCatChanged := false;
-  if inspector.Parent.isNotNil then
+  if inspector.Parent.isAssigned then
     inspector.ItemIndex := -1;
   PCategoryData(selCat.Selected.Data)^
     .observer
@@ -325,11 +325,11 @@ end;
 
 procedure TOptionEditorWidget.btnAcceptClick(Sender: TObject);
 begin
-  if selCat.Selected.isNil or selcat.Selected.Data.isNil then
+  if selCat.Selected.isNotAssigned or selcat.Selected.Data.isNotAssigned then
     exit;
 
   fCatChanged := false;
-  if inspector.Parent.isNotNil then
+  if inspector.Parent.isAssigned then
     inspector.ItemIndex := -1;
   PCategoryData(selCat.Selected.Data)^
     .observer

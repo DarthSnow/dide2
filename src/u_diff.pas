@@ -40,7 +40,7 @@ begin
 
   editor.Gutter.LineNumberPart.Visible:=false;
 
-  if ed.isNotNil then
+  if ed.isAssigned then
     editor.Font.Assign(ed.Font);
 
   p := TProcess.Create(self);

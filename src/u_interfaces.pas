@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, actnList, menus, process,
-  u_synmemo, u_observer;
+  u_synmemo, u_observer, u_common;
 
 type
 
@@ -19,7 +19,7 @@ type
   (**
    * Common project interface.
    *)
-  ICommonProject = interface
+  ICommonProject = interface(IDexedBaseInterface)
   ['ICommonProject']
 
     // general properties ------------------------------------------------------

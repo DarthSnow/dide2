@@ -453,11 +453,11 @@ end;
 
 function TEditorWidget.closeQuery: boolean;
 begin
-  result := inherited and (Parent.isNil  or
+  result := inherited and (Parent.isNotAssigned  or
     // already set as dockable but not docked
     // necessary because it has te closed programmatically during loading sequence
     // otherwise the layout reloading has no effect.
-    Parent is TAnchorDockHostSite and Parent.Parent.isNil);
+    Parent is TAnchorDockHostSite and Parent.Parent.isNotAssigned);
 end;
 
 procedure TEditorWidget.setToolBarFlat(value: boolean);
@@ -503,7 +503,7 @@ end;
 
 procedure TEditorWidget.docClosing(document: TDexedMemo);
 begin
-  if document.isNil then
+  if document.isNotAssigned then
     exit;
   document.Parent := nil;
   if document = fDoc then
@@ -514,7 +514,7 @@ end;
 
 procedure TEditorWidget.docFocused(document: TDexedMemo);
 begin
-  if fDoc.isNotNil and pageControl.currentPage.isNotNil and
+  if fDoc.isAssigned and pageControl.currentPage.isAssigned and
     (pageControl.currentPage.Caption = newdocPageCaption) then
       updatePageCaption(pageControl.currentPage);
   if document = fDoc then
@@ -598,14 +598,14 @@ var
 begin
   showWidget;
   doc := findDocument(fname);
-  if doc.isNotNil then
+  if doc.isAssigned then
   begin
     PageControl.currentPage := TDexedPage(doc.Parent);
     exit;
   end;
   doc := TDexedMemo.Create(nil);
   fDoc.loadFromFile(TrimFilename(fname));
-  if assigned(fProj) and (fProj.filename = fDoc.fileName) then
+  if fProj.isAssigned and (fProj.filename = fDoc.fileName) then
   begin
     if fProj.getFormat = pfDEXED then
       fDoc.Highlighter := LfmSyn
@@ -619,7 +619,7 @@ var
   doc: TDexedMemo;
 begin
   doc := getDocument(index);
-  if doc.isNil then
+  if doc.isNotAssigned then
     exit(false);
   if promptOnChanged and (doc.modified or (doc.fileName = doc.tempFilename)) and
     (dlgFileChangeClose(doc.fileName, UnsavedFile) = mrCancel) then
@@ -636,7 +636,7 @@ var
   page: TDexedPage = nil;
 begin
   page := TDexedPage(doc.Parent);
-  if page.isNil then
+  if page.isNotAssigned then
     exit(false);
   exit(closeDocument(page.index, promptOnChanged));
 end;
@@ -668,7 +668,7 @@ end;
 
 procedure TEditorWidget.focusedEditorChanged;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   macRecorder.Editor:= fDoc;
   fDoc.PopupMenu := mnuEditor;
@@ -684,7 +684,7 @@ end;
 
 procedure TEditorWidget.PageControlChanged(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   fDoc.hideCallTips;
   fDoc.hideDDocs;
@@ -692,7 +692,7 @@ end;
 
 procedure TEditorWidget.PageControlChanging(Sender: TObject; var AllowChange: Boolean);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   fDoc.hideCallTips;
   fDoc.hideDDocs;
@@ -780,7 +780,7 @@ begin
   if (fname <> fDoc.fileName) and fname.fileExists then
   begin
     page := pageControl.splitPage;
-    if assigned(page) then
+    if page.isAssigned then
     begin
       fDoc := TDexedMemo(page.Controls[0]);
       if fDoc.fileName <> fname then
@@ -846,15 +846,15 @@ var
   dc1: TDexedMemo = nil;
   dc2: TDexedMemo = nil;
 begin
-  if page.isNil or page.ControlCount.equals(0) then
+  if page.isNotAssigned or page.ControlCount.equals(0) then
     exit;
-  if pageControl.splitPage.isNotNil and
+  if pageControl.splitPage.isAssigned and
     (page <> pageControl.splitPage) then
   begin
     txt := '';
     dc1 := TDexedMemo(page.Controls[0]);
     dc2 := TDexedMemo(pageControl.splitPage.Controls[0]);
-    if dc1.isNotNil and dc2.isNotNil then
+    if dc1.isAssigned and dc2.isAssigned then
       txt := dc1.pageCaption(fDetectModuleName) + ' - ' +
         dc2.pageCaption(fDetectModuleName);
   end
@@ -878,7 +878,7 @@ end;
 procedure TEditorWidget.updateImperative;
 begin
   updateStatusBar;
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     updatePageCaption(pageControl.currentPage);
 end;
 
@@ -889,7 +889,7 @@ begin
   updateStatusBar;
   if not fKeyChanged then
     exit;
-  if pageControl.currentPage.isNotNil then
+  if pageControl.currentPage.isAssigned then
     updatePageCaption(pageControl.currentPage);
 end;
 {$ENDREGION}
@@ -897,13 +897,13 @@ end;
 {$REGION Editor context menu ---------------------------------------------------}
 procedure TEditorWidget.mnuedCopyClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.ExecuteCommand(ecCopy, '', nil);
 end;
 
 procedure TEditorWidget.mnuedCallTipClick(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   mnuEditor.Close;
   fDoc.hideDDocs;
@@ -914,25 +914,25 @@ end;
 
 procedure TEditorWidget.mnuedCommClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.CommandProcessor(ecCommentSelection, '', nil);
 end;
 
 procedure TEditorWidget.mnuedPrevClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.CommandProcessor(ecPreviousLocation, '', nil);
 end;
 
 procedure TEditorWidget.mnuedNextClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.CommandProcessor(ecNextLocation, '', nil);
 end;
 
 procedure TEditorWidget.mnuedInvAllNoneClick(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if not fDoc.IsDSource and not fDoc.alwaysAdvancedFeatures then
     exit;
@@ -941,7 +941,7 @@ end;
 
 procedure TEditorWidget.MenuItem5Click(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if not fDoc.IsDSource and not fDoc.alwaysAdvancedFeatures then
     exit;
@@ -961,37 +961,37 @@ end;
 
 procedure TEditorWidget.mnuedUpcaseClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.CommandProcessor(ecUpperCaseWordOrSel, #0, nil);
 end;
 
 procedure TEditorWidget.mnuedLowcaseClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.CommandProcessor(ecLowerCaseWordOrSel, #0, nil);
 end;
 
 procedure TEditorWidget.mnuedPrevWarnClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.previousWarning;
 end;
 
 procedure TEditorWidget.mnuEdSetSpacesClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.Options := fDoc.Options + [eoTabsToSpaces];
 end;
 
 procedure TEditorWidget.mnuEdSetTabsClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.Options := fDoc.Options - [eoTabsToSpaces];
 end;
 
 procedure TEditorWidget.mnuEdShowSpecClick(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if mnuEdShowSpec.Checked then
     fDoc.Options := fDoc.Options + [eoShowSpecialChars]
@@ -1001,13 +1001,13 @@ end;
 
 procedure TEditorWidget.mnuedSortLinesClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.CommandProcessor(ecSortLines, #0, nil);
 end;
 
 procedure TEditorWidget.mnuEdTabWidth2Click(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
 
   fDoc.TabWidth:= TMenuItem(sender).Tag;
@@ -1025,19 +1025,19 @@ end;
 
 procedure TEditorWidget.mnuedNextCareaClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.nextChangedArea;
 end;
 
 procedure TEditorWidget.mnuedPrevProtGrpClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.previousProtectionGroup;
 end;
 
 procedure TEditorWidget.mnuedDdocTmpClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.insertDdocTemplate;
 end;
 
@@ -1074,31 +1074,31 @@ end;
 
 procedure TEditorWidget.FormShow(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.Visible:=true;
 end;
 
 procedure TEditorWidget.mnuedGotolineClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.gotoLinePrompt;
 end;
 
 procedure TEditorWidget.mnuedNextWarnClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.nextWarning;
 end;
 
 procedure TEditorWidget.mnuedNextProtGrpClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.nextProtectionGroup;
 end;
 
 procedure TEditorWidget.mnuedPrevCareaClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.previousChangedArea;
 end;
 
@@ -1106,7 +1106,7 @@ procedure TEditorWidget.MenuItem8Click(Sender: TObject);
 var
   str: TStringList;
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   if not fDoc.IsDSource and not fDoc.alwaysAdvancedFeatures then
     exit;
@@ -1129,25 +1129,25 @@ end;
 
 procedure TEditorWidget.MenuItem6Click(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.CommandProcessor(ecCommentIdentifier, '', nil);
 end;
 
 procedure TEditorWidget.mnuedRenameClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.CommandProcessor(ecRenameIdentifier, '', nil);
 end;
 
 procedure TEditorWidget.mnuedCutClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.ExecuteCommand(ecCut, '', nil);
 end;
 
 procedure TEditorWidget.mnuedDdocClick(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   mnuEditor.Close;
   fDoc.hideCallTips;
@@ -1158,31 +1158,31 @@ end;
 
 procedure TEditorWidget.mnuedPasteClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.ExecuteCommand(ecPaste, '', nil);
 end;
 
 procedure TEditorWidget.mnuedUndoClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.ExecuteCommand(ecUndo, '', nil);
 end;
 
 procedure TEditorWidget.mnuedRedoClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     fDoc.ExecuteCommand(ecRedo, '', nil);
 end;
 
 procedure TEditorWidget.mnuedJum2DeclClick(Sender: TObject);
 begin
-  if fDoc.isNotNil then
+  if fDoc.isAssigned then
     getSymbolLoc;
 end;
 
 procedure TEditorWidget.mnuEditorPopup(Sender: TObject);
 begin
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
 
   mnuedCut.Enabled:=fDoc.SelAvail;

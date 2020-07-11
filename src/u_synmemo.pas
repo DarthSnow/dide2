@@ -823,7 +823,7 @@ var
   i, start, prev: Integer;
   itm : TFoldCache;
 begin
-  if fMemo.isNil then
+  if fMemo.isNotAssigned then
     exit;
 
   fCaretPosition := fMemo.SelStart;
@@ -854,7 +854,7 @@ var
   i: integer;
   itm : TFoldCache;
 begin
-  if fMemo.isNil then
+  if fMemo.isNotAssigned then
     exit;
 
   if fFontSize > 0 then
@@ -1008,12 +1008,12 @@ begin
   fMemo.Font.Assign(fSource.Font);
   fMemo.Lines := fSource.Lines;
   width := fSource.Width div 2;
-  if fSource.Highlighter.isNotNil then
+  if fSource.Highlighter.isAssigned then
   begin
     fMemo.Color:= fSource.Color;
     fMemo.LineHighlightColor.Assign(fSource.LineHighlightColor);
     fMemo.SelectedColor.Assign(fSource.SelectedColor);
-    if fMemo.Highlighter.isNil then
+    if fMemo.Highlighter.isNotAssigned then
     begin
       fD2Hl.Assign(fSource.Highlighter);
       fTxtHl.Assign(fSource.Highlighter);
@@ -2573,7 +2573,7 @@ end;
 
 procedure TDexedMemo.sortLines;
 begin
-  if not assigned(fSortDialog) then
+  if fSortDialog.isNotAssigned then
     fSortDialog := TSortDialog.construct(self);
   fSortDialog.Show;
 end;
@@ -2683,14 +2683,14 @@ end;
 {$REGION DDoc & CallTip --------------------------------------------------------}
 procedure TDexedMemo.InitHintWins;
 begin
-  if fCallTipWin.isNil then
+  if fCallTipWin.isNotAssigned then
   begin
     fCallTipWin := TEditorCallTipWindow.Create(self);
     fCallTipWin.Color := clInfoBk + $01010100;
     fCallTipWin.Font.Color:= clInfoText;
     fCallTipWin.AutoHide:=false;
   end;
-  if fDDocWin.isNil then
+  if fDDocWin.isNotAssigned then
   begin
     fDDocWin := TEditorHintWindow.Create(self);
     fDDocWin.Color := clInfoBk + $01010100;
@@ -2768,7 +2768,7 @@ begin
   if not fIsDSource and not alwaysAdvancedFeatures then
     exit;
 
-  if assigned(fDebugger) and fDebugger.running then
+  if fDebugger.isAssigned and fDebugger.running then
   begin
     lexWholeText([TLexOption.lxoNoComments]);
     exp := getExpressionAt(fLexToks, fMouseLogical);
@@ -3129,7 +3129,7 @@ begin
   begin
     if fSmartDdocNewline and not (eoAutoIndent in Options) then
       Options := Options + [eoAutoIndent];
-    if Beautifier.isNotNil and (Beautifier is TSynBeautifier) then
+    if Beautifier.isAssigned and (Beautifier is TSynBeautifier) then
     begin
       if not (eoTabsToSpaces in Options) and not (eoSpacesToTabs in Options) then
         TSynBeautifier(Beautifier).IndentType := sbitConvertToTabOnly
@@ -3819,7 +3819,7 @@ var
   s: integer;
   t: integer;
 begin
-  if fLifeTimeManager.isNotNil and not fIdentDialShown and (lines.Count <> 0) and
+  if fLifeTimeManager.isAssigned and not fIdentDialShown and (lines.Count <> 0) and
     ((fLifeTimeManager as ILifetimeManager).getLifetimeStatus = lfsLoaded)
       then
   begin
@@ -3873,7 +3873,7 @@ begin
   if findBreakPoint(line) then
     exit;
   addGutterIcon(line, giBreakSet);
-  if assigned(fDebugger) then
+  if fDebugger.isAssigned then
     fDebugger.addBreakPoint(fFilename, line, bpkBreak);
 end;
 
@@ -3887,7 +3887,7 @@ begin
   removeGutterIcon(line, giBreakSet);
   if fDscannerEnabled and lineHasDscannerWarning(line) then
     addGutterIcon(line, giWarn);
-  if assigned(fDebugger) then
+  if fDebugger.isAssigned then
   begin
     fDebugger.removeBreakPoint(fFilename, line);
     if break2step and fDebugger.running then
@@ -3928,7 +3928,7 @@ begin
   result := false;
   if line <= lines.count then
     m := marks.Line[line];
-  if m.isNotNil then
+  if m.isAssigned then
     for i := 0 to m.count - 1 do
       if (m[i].ImageIndex = integer(value)) then
         exit(true);
@@ -3957,7 +3957,7 @@ var
   s: boolean = false;
 begin
   m := Marks.Line[line];
-  if m.isNotNil then
+  if m.isAssigned then
     for i := 0 to m.Count-1 do
   begin
     n := m.Items[i];
@@ -3982,7 +3982,7 @@ var
   i: integer;
 begin
   m := Marks.Line[line];
-  if m.isNotNil then
+  if m.isAssigned then
     for i := m.Count-1 downto 0 do
   begin
     n := m.Items[i];

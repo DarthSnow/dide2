@@ -343,7 +343,7 @@ begin
   if fDoc = document then
     exit;
   fDoc := document;
-  if fDoc.isNotNil and Visible and fAutoRefresh then
+  if fDoc.isAssigned and Visible and fAutoRefresh then
     scanTodoItems(true);
 end;
 
@@ -405,11 +405,11 @@ end;
 {$REGION Todo list things ------------------------------------------------------}
 function TTodoListWidget.getContext: TTodoContext;
 begin
-  if (fProj = nil) and fDoc.isNil then
+  if fProj.isNotAssigned and fDoc.isNotAssigned then
     exit(tcNone);
-  if (fProj = nil) and fDoc.isNotNil then
+  if fProj.isNotAssigned and fDoc.isAssigned then
     exit(tcFile);
-  if (fProj <> nil) and fDoc.isNil then
+  if fProj.isAssigned and fDoc.isNotAssigned then
     exit(tcProject);
 
   if fProj.isSource(fDoc.fileName) then
@@ -557,7 +557,7 @@ var
   itm: TTodoItem;
   fname, ln: string;
 begin
-  if lstItems.Selected.isNil or lstItems.Selected.Data.isNil then
+  if lstItems.Selected.isNotAssigned or lstItems.Selected.Data.isNotAssigned then
     exit;
 
   // the collection will be cleared if a file is opened
@@ -568,7 +568,7 @@ begin
   ln := itm.line;
   getMultiDocHandler.openDocument(fname);
 
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
 
   fDoc.setFocus;
@@ -591,7 +591,7 @@ procedure TTodoListWidget.lstItemsColumnClick(Sender: TObject; Column: TListColu
 var
   curr: TListItem;
 begin
-  if lstItems.Selected.isNil then
+  if lstItems.Selected.isNotAssigned then
     exit;
   lstItems.BeginUpdate;
   curr := lstItems.Selected;
@@ -673,9 +673,9 @@ end;
 procedure TTodoListWidget.refreshVisibleColumns;
 begin
 
-  if lstItems.isNil then
+  if lstItems.isNotAssigned then
     exit;
-  if lstItems.Columns.isNil then
+  if lstItems.Columns.isNotAssigned then
     exit;
   if lstItems.ColumnCount <> 6 then
     exit;

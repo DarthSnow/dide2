@@ -485,7 +485,7 @@ end;
 
 procedure TMessagesWidget.listDeletion(Sender: TObject; Node: TTreeNode);
 begin
-  if node.data.isNotNil then
+  if node.data.isAssigned then
     Dispose(PMessageData(Node.Data));
 end;
 
@@ -540,7 +540,7 @@ var
   i: Integer;
   o: TAppMessageCtxt;
 begin
-  if sender.isNil then
+  if sender.isNotAssigned then
     exit;
   //
   o := fCtxt;
@@ -774,7 +774,7 @@ begin
   case fCtxt of
     amcAll, amcApp, amcMisc :
       clearbyContext(fCtxt);
-    amcEdit: if fDoc.isNotNil then
+    amcEdit: if fDoc.isAssigned then
       clearbyData(fDoc);
     amcProj: if fProj <> nil then
       clearbyData(fProj);
@@ -878,9 +878,9 @@ end;
 procedure TMessagesWidget.docNew(document: TDexedMemo);
 begin
 
-  if fDoc.isNotNil and fOptions.fAutoSelect and (fCtxt = amcEdit) then
+  if fDoc.isAssigned and fOptions.fAutoSelect and (fCtxt = amcEdit) then
   begin
-    if list.Selected.isNotNil then
+    if list.Selected.isAssigned then
       fEditorMessagePos[fDoc.fileName] := list.Selected.Index
     else
       fEditorMessagePos[fDoc.fileName] := -1;
@@ -906,9 +906,9 @@ var
 begin
   if fDoc = document then
     exit;
-  if fDoc.isNotNil and fOptions.fAutoSelect and (fCtxt = amcEdit) then
+  if fDoc.isAssigned and fOptions.fAutoSelect and (fCtxt = amcEdit) then
   begin
-    if list.Selected.isNotNil then
+    if list.Selected.isAssigned then
       fEditorMessagePos[fDoc.fileName] := list.Selected.Index
     else
       fEditorMessagePos[fDoc.fileName] := -1;
@@ -1040,9 +1040,9 @@ var
   d: PMessageData;
   n: TTreeNode;
 begin
-  if data.isNil then
+  if data.isNotAssigned then
     exit;
-  if (TObject(data) = fDoc) and (fDoc.isNotNil) then
+  if (TObject(data) = fDoc) and (fDoc.isAssigned) then
     fEditorMessagePos[fDoc.fileName] := -1;
   list.BeginUpdate;
   TreeFilterEdit1.Filter := '';
@@ -1102,7 +1102,7 @@ begin
   else
   begin
     i := List.BottomItem;
-    fMustScrollToBack := i.isNotNil and i.IsVisible;
+    fMustScrollToBack := i.isAssigned and i.IsVisible;
   end;
 end;
 
@@ -1110,7 +1110,7 @@ procedure TMessagesWidget.scrollToBack;
 begin
   if not Visible or not fMustScrollToBack then
     exit;
-  if List.BottomItem.isNotNil then
+  if List.BottomItem.isAssigned then
     List.BottomItem.MakeVisible;
 end;
 
@@ -1121,7 +1121,7 @@ var
   dat: PMessageData;
   old: TDexedMemo;
 begin
-  if List.Selected.isNil then
+  if List.Selected.isNotAssigned then
     exit;
   if ssCtrl in GetKeyShiftState then
     exit;
@@ -1137,7 +1137,7 @@ begin
 
   // from here, since a doc has the focus, List.Selected is nil
   pos := getLineFromMessage(msg);
-  if fDoc.isNil then
+  if fDoc.isNotAssigned then
     exit;
   fDoc.setFocus;
   fDoc.CaretXY := pos;

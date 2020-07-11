@@ -249,13 +249,13 @@ var
 begin
   inherited;
   s := DockMaster.GetAnchorSite(self);
-  if s.isNotNil then
+  if s.isAssigned then
     n := s.Parent;
   if fOldSiteParent <> n then
   begin
-    if fOldSiteParent.isNil and n.isNotNil and assigned(fOnDockingChanged) then
+    if fOldSiteParent.isNotAssigned and n.isAssigned and assigned(fOnDockingChanged) then
       fOnDockingChanged(self, wdsDocked)
-    else if fOldSiteParent.isNotNil and n.isNil and assigned(fOnDockingChanged) then
+    else if fOldSiteParent.isAssigned and n.isNotAssigned and assigned(fOnDockingChanged) then
       fOnDockingChanged(self, wdsUndocked)
     else
       fOnDockingChanged(self, wdsRedocked);
@@ -289,13 +289,13 @@ begin
   fTimerUpdateKind := value;
   if fTimerUpdateKind = tukNone then
   begin
-    if fUpdateTimer.isNil then
+    if fUpdateTimer.isNotAssigned then
       exit;
     FreeAndNil(fUpdateTimer);
   end
   else
   begin
-    if fUpdateTimer.isNil then
+    if fUpdateTimer.isNotAssigned then
       fUpdateTimer := TTimer.Create(nil);
     if fTimerUpdateKind = tukDelay then
     begin
@@ -317,7 +317,7 @@ begin
   if fDelayDur = value then
     exit;
   fDelayDur := value;
-  if fUpdateTimer.isNotNil and (fTimerUpdateKind = tukDelay) then
+  if fUpdateTimer.isAssigned and (fTimerUpdateKind = tukDelay) then
     fUpdateTimer.Interval := fDelayDur;
 end;
 
@@ -326,7 +326,7 @@ begin
   if fLoopInter = value then
     exit;
   fLoopInter := value;
-  if fUpdateTimer.isNotNil and (fTimerUpdateKind = tukLoop) then
+  if fUpdateTimer.isAssigned and (fTimerUpdateKind = tukLoop) then
     fUpdateTimer.Interval := fLoopInter;
 end;
 

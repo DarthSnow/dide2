@@ -126,7 +126,7 @@ inherited OptionEditorWidget: TOptionEditorWidget
     end
   end
   inherited contextMenu: TPopupMenu
-    left = 144
-    top = 24
+    Left = 144
+    Top = 24
   end
 end

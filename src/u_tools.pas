@@ -200,7 +200,7 @@ procedure TToolItem.setToolAlias(value: string);
 var
   i: integer = 0;
 begin
-  while fToolItems.findTool(value).isNotNil do
+  while fToolItems.findTool(value).isAssigned do
   begin
     value += intToStr(i);
     i += 1;
@@ -256,7 +256,7 @@ begin
   if fProcess.Executable.fileExists then
   begin
     fProcess.Execute;
-    if previous.isNotNil and previous.outputToNext
+    if previous.isAssigned and previous.outputToNext
       and (poUsePipes in previous.Options) and (poUsePipes in Options) then
     begin
       setLength(inp, previous.process.StdoutEx.Size);
@@ -310,7 +310,7 @@ begin
     if fNextToolAlias.isNotEmpty then
     begin
       nxt := fToolItems.findTool(fNextToolAlias);
-      if nxt.isNotNil then
+      if nxt.isAssigned then
         nxt.execute(self);
     end;
   end;
@@ -351,10 +351,10 @@ var
   colitm: TToolItem;
   i: integer;
 begin
-  if fMenu.isNil then
+  if fMenu.isNotAssigned then
   begin
     mnu := getMainMenu;
-    if not assigned(mnu) then
+    if mnu.isNotAssigned then
       exit;
     fMenu := mnu.mnuAdd;
     fMenu.Caption:='Custom tools';
@@ -492,11 +492,11 @@ procedure TTools.executeTool(tool: TToolItem);
 var
   txt: string = '';
 begin
-  if tool.isNil then
+  if tool.isNotAssigned then
     exit;
   tool.execute(nil);
-  if (tool.pipeInputKind <> pikNone) and fDoc.isNotNil
-    and (poUsePipes in tool.options) and tool.fProcess.Input.isNotNil then
+  if (tool.pipeInputKind <> pikNone) and fDoc.isAssigned
+    and (poUsePipes in tool.options) and tool.fProcess.Input.isAssigned then
   begin
     case tool.pipeInputKind of
       pikEditor:    txt := fDoc.Text;

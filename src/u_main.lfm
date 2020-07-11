@@ -11,8 +11,9 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnResize = FormResize
   ShowHint = True
+  LCLVersion = '2.0.10.0'
   object mainMenu: TMainMenu
-    top = 1
+    Top = 1
     object MenuItem1: TMenuItem
       Caption = 'File'
       object MenuItem5: TMenuItem
@@ -413,8 +414,8 @@ object MainForm: TMainForm
     end
   end
   object Actions: TActionList
-    left = 32
-    top = 1
+    Left = 32
+    Top = 1
     object actEdCopy: TAction
       Category = 'Edit'
       Caption = 'Copy'
@@ -857,7 +858,7 @@ object MainForm: TMainForm
   object ApplicationProperties1: TApplicationProperties
     OnActivate = ApplicationProperties1Activate
     OnException = ApplicationProperties1Exception
-    left = 64
-    top = 1
+    Left = 64
+    Top = 1
   end
 end

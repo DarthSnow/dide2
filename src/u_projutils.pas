@@ -129,7 +129,7 @@ begin
   for i:= 0 to project.sourcesCount-1 do
   begin
     doc := mdh.findDocument(project.sourceAbsolute(i));
-    if doc.isNotNil and doc.modified then
+    if doc.isAssigned and doc.modified then
       doc.save;
   end;
 end;
@@ -166,7 +166,7 @@ begin
 
   result := '';
 
-  if clbck.isNil then
+  if clbck.isNotAssigned then
     clbck := TLexNameCallback.Create;
 
   // 1 source, same folder

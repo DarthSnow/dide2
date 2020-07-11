@@ -252,7 +252,7 @@ begin
   if hasValidLibProject then
   begin
     prj := loadProject(fLibProject, true);
-    if not assigned(prj) then
+    if prj.isNotAssigned then
       exit;
     str := TStringList.Create;
     try
@@ -278,7 +278,7 @@ begin
           fModulesByName.insert(lne, mdi);
         end else
         begin
-          if not lne.isEmpty and mdi.isNotNil then
+          if not lne.isEmpty and mdi.isAssigned then
             mdi.imports.Add(lne);
         end;
       end;
@@ -314,7 +314,7 @@ begin
           fModulesByName.insert(lne, mdi);
         end else
         begin
-          if not lne.isEmpty and mdi.isNotNil then
+          if not lne.isEmpty and mdi.isAssigned then
             mdi.imports.Add(lne);
         end;
       end;
@@ -342,7 +342,7 @@ begin
   begin
     lb2 := libraryByIndex[i];
     lb1 := libraryByAlias[lb2.libAlias];
-    if lb1.isNotNil and (lb1.Index < lb2.Index) then
+    if lb1.isAssigned and (lb1.Index < lb2.Index) then
     begin
       fCollection.Delete(i);
       continue;
@@ -385,7 +385,7 @@ var
   cli: TLibraryItem;
   dep: TLibraryItem;
 begin
-  if data.isNil then
+  if data.isNotAssigned then
     exit;
 
   if operation <> ooDeleteItem then
@@ -399,7 +399,7 @@ begin
   for i:= 0 to lib.dependencies.Count-1 do
   begin
     dep := libraryByAlias[lib.dependencies[i]];
-    if assigned(dep) then
+    if dep.isAssigned then
     begin
       j := dep.clients.IndexOf(lib.libAlias);
       if j <> -1 then
@@ -409,7 +409,7 @@ begin
   for i:= 0 to lib.clients.Count-1 do
   begin
     cli := libraryByAlias[lib.clients[i]];
-    if assigned(cli) then
+    if cli.isAssigned then
     begin
       j := cli.dependencies.IndexOf(lib.libAlias);
       if j <> -1 then
@@ -538,7 +538,7 @@ var
   i: Integer;
 begin
   // no selector = all libs
-  if aliases.isNil then
+  if aliases.isNotAssigned then
   begin
     for i:= 0 to librariesCount-1 do
     begin
@@ -551,7 +551,7 @@ begin
   else for i := 0 to aliases.Count-1 do
   begin
     lib := libraryByAlias[aliases[i]];
-    if lib.isNotNil and lib.enabled then
+    if lib.isAssigned and lib.enabled then
       add(lib);
   end;
 end;
@@ -564,7 +564,7 @@ begin
   if fMsgs = nil then
     fMsgs := getMessageDisplay;
   // no selector = all libs
-  if aliases.isNil then
+  if aliases.isNotAssigned then
   begin
     for i:= 0 to librariesCount-1 do
     begin
@@ -585,7 +585,7 @@ begin
     for i := 0 to aliases.Count-1 do
     begin
       lib := libraryByAlias[aliases[i]];
-      if lib.isNotNil and lib.enabled and lib.hasValidLibSourcePath then
+      if lib.isAssigned and lib.enabled and lib.hasValidLibSourcePath then
         list.Add('-I' + lib.libSourcePath);
     end;
   end;
@@ -609,7 +609,7 @@ begin
     begin
       // get library for import I
       itm := libraryByImport[imp[i]];
-      if itm.isNotNil then
+      if itm.isAssigned then
       begin
         if sel.contains(itm) then
           continue;
@@ -618,7 +618,7 @@ begin
         for j:= itm.dependencies.Count-1 downto 0 do
         begin
           dep := libraryByAlias[itm.dependencies[j]];
-          if dep.isNotNil then
+          if dep.isAssigned then
             sel.insert(dep)
           else
             //auto update: item removed, detect on usage that it has disapeared
@@ -633,7 +633,7 @@ begin
       while true do
       begin
         itm := Data;
-        if itm.isNil then
+        if itm.isNotAssigned then
           break;
         if itm.hasValidLibFile then
         begin
@@ -666,7 +666,7 @@ begin
   for i := 0 to imports.Count-1 do
   begin
     b := libraryByImport[imports[i]];
-    if b.isNotNil and b.enabled then
+    if b.isAssigned and b.enabled then
     begin
       s := b.libFile;
       if opts.IndexOf(s).equals(-1) and not s.isEmpty then
@@ -704,7 +704,7 @@ begin
         continue;
       dep := libraryByImport[imp];
       // std / core / etc ...
-      if dep.isNil then
+      if dep.isNotAssigned then
         continue;
       // ... this should not happen
       if dep = lib then
@@ -726,7 +726,7 @@ end;
 
 function LibMan: TLibraryManager;
 begin
-  if fLibMan.isNil then
+  if fLibMan.isNotAssigned then
     fLibMan := TLibraryManager.create(nil);
   result := fLibMan;
 end;

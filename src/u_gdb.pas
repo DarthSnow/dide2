@@ -354,7 +354,7 @@ type
 
   TDebugOptions = class(TDebugOptionsBase, IEditableOptions)
   private
-    FonChangesApplied: TNotifyEvent;
+    fOnChangesApplied: TNotifyEvent;
     fBackup: TDebugOptionsBase;
     function optionedWantCategory(): string;
     function optionedWantEditorKind: TOptionEditorKind;
@@ -364,7 +364,7 @@ type
   public
     constructor create(aOwner: TComponent); override;
     destructor destroy; override;
-    property onChangesApplied: TNotifyEvent read FonChangesApplied write FonChangesApplied;
+    property onChangesApplied: TNotifyEvent read fOnChangesApplied write fOnChangesApplied;
   end;
 
   TGdbState = (gsNone, gsRunning, gsPaused);
@@ -835,8 +835,8 @@ begin
     oeeAccept:
     begin
       fBackup.assign(self);
-      if assigned(FonChangesApplied) then
-        FonChangesApplied(self);
+      if assigned(fOnChangesApplied) then
+        fOnChangesApplied(self);
     end;
   end;
 end;
@@ -1333,10 +1333,10 @@ var
   bmp: TBitmap;
 begin
   mnu := getMainMenu;
-  if not assigned(mnu) then
+  if mnu.isNotAssigned then
     exit;
 
-  if fMenu.isNil then
+  if fMenu.isNotAssigned then
   begin
     fMenu := mnu.mnuAdd;
     fMenu.Caption:='Debugger';
@@ -1580,7 +1580,7 @@ end;
 {$REGION Unsorted Debugging things ---------------------------------------------}
 function TGdbWidget.running: boolean;
 begin
-  if assigned(fGdb) then
+  if fGdb.isAssigned then
     exit(fGdb.Running)
   else
     exit(false);
@@ -1593,7 +1593,7 @@ end;
 
 procedure TGdbWidget.killGdb;
 begin
-  if not assigned(fGdb) then
+  if fGdb.isNotAssigned then
     exit;
   if fGdb.Running then
     fGdb.Terminate(0);
@@ -1615,9 +1615,9 @@ var
 begin
   if fSynchronizingBreakpoints then
     exit;
-  if assigned(fBreakPoints) then
+  if fBreakPoints.isAssigned then
     a := fBreakPoints.addItem(fname, line, kind);
-  if not a or fGdb.isNil or not fGdb.Running then
+  if not a or fGdb.isNotAssigned or not fGdb.Running then
     exit;
   r := fGdbState = gsRunning;
   if r then
@@ -1648,9 +1648,9 @@ var
   v: TJSONData;
   i: integer;
 begin
-  if assigned(fBreakPoints) then
+  if fBreakPoints.isAssigned then
     d := fBreakPoints.deleteItem(fname, line, kind);
-  if not d or fGdb.isNil or not fGdb.Running then
+  if not d or fGdb.isNotAssigned or not fGdb.Running then
     exit;
 
   r := fGdbState = gsRunning;
@@ -1926,7 +1926,7 @@ begin
     dlgOkInfo('No project to debug', 'GDB commander');
     exit;
   end;
-  if (fDebugTargetKind = dtkRunnable) and fDoc.isNil then
+  if (fDebugTargetKind = dtkRunnable) and fDoc.isNotAssigned then
   begin
     dlgOkInfo('No runnable to debug', 'GDB commander');
     exit;
@@ -2086,7 +2086,7 @@ begin
   case fDebugTargetKind of
     dtkProject  : if fProj <> nil then
       nme := fProj.filename;
-    dtkRunnable : if fDoc.isNotNil then
+    dtkRunnable : if fDoc.isAssigned then
       nme := fDoc.filename;
     dtkCustom   : if fCustomTargetFile.fileExists then
       nme := fCustomTargetFile;
@@ -2440,7 +2440,7 @@ begin
             infoAsm(fLastFilename);
           fLastFunction := val.AsString;
         end;
-        if fDocHandler.findDocument(fLastFilename).isNil and fLastFilename.fileExists then
+        if fDocHandler.findDocument(fLastFilename).isNotAssigned and fLastFilename.fileExists then
           fDocHandler.openDocument(fLastFilename);
         setState(gsPaused);
         autoGetStuff;
@@ -2487,7 +2487,7 @@ begin
       if fCatchPause then
       begin
         fCatchPause := false;
-        if  fDocHandler.findDocument(fLastFilename).isNil and fLastFilename.fileExists then
+        if  fDocHandler.findDocument(fLastFilename).isNotAssigned and fLastFilename.fileExists then
           fDocHandler.openDocument(fLastFilename);
         autoGetStuff;
         setState(gsPaused);
@@ -2505,7 +2505,7 @@ begin
         end
         else
         begin
-          if not fDocHandler.findDocument(fLastFilename).isNil and fLastFilename.fileExists then
+          if not fDocHandler.findDocument(fLastFilename).isNotAssigned and fLastFilename.fileExists then
             fDocHandler.openDocument(fLastFilename);
           autoGetStuff;
           setState(gsPaused);
@@ -2539,7 +2539,7 @@ begin
     for i := 0 to arr.Count-1 do
     begin
       obj := TJSONObject(arr.Objects[i]);
-      if obj.isNil then
+      if obj.isNotAssigned then
         break;
       if obj.findAny('number', val) then
         number := val.AsInteger;
@@ -2592,13 +2592,13 @@ begin
     for i := 0 to arr.Count-1 do
     begin
       obj := arr.Objects[i];
-      if obj.isNil then
+      if obj.isNotAssigned then
         break;
       val := obj.Find('fullname');
-      if val.isNotNil then
+      if val.isAssigned then
         fLastFilename:= val.AsString;
       val := obj.Find('func');
-      if val.isNotNil then
+      if val.isAssigned then
       begin
         if fOptions.autoDemangle then
           func:= demangle(val.AsString)
@@ -2606,10 +2606,10 @@ begin
           func := val.AsString;
       end;
       val := obj.Find('addr');
-      if val.isNotNil then
+      if val.isAssigned then
         addr := val.AsInt64;
       val := obj.Find('line');
-      if val.isNotNil then
+      if val.isAssigned then
         line := val.AsInteger;
       fStackItems.addItem(addr, fLastFilename, func, line);
     end;
@@ -2617,9 +2617,9 @@ begin
   end;
 
   val := fJson.Find('variables');
-  if val.isNil then
+  if val.isNotAssigned then
     val := fJson.Find('locals');
-  if val.isNotNil and (val.JSONType = jtArray) then
+  if val.isAssigned and (val.JSONType = jtArray) then
   begin
     j := lstVariables.ItemIndex;
     lstVariables.BeginUpdate;
@@ -2632,11 +2632,11 @@ begin
         continue;
       obj := TJSONObject(val);
       val := obj.Find('name');
-      if val.isNil then
+      if val.isNotAssigned then
         continue;
       nme := val.AsString;
       val := obj.Find('value');
-      if val.isNil then
+      if val.isNotAssigned then
         continue;
       lstVariables.AddItem(nme, nil);
       with lstVariables.Items[lstVariables.Items.Count-1] do
@@ -2655,12 +2655,12 @@ begin
     begin
       obj := arr.Objects[i];
       val := obj.Find('address');
-      if val.isNotNil then
+      if val.isAssigned then
         nme := val.AsString;
       //val := obj.Find('func-name');
       //val := obj.Find('offset');
       val := obj.Find('inst');
-      if val.isNotNil then
+      if val.isAssigned then
       begin
         lstAsm.AddItem(nme, nil);
         if nme = fLastOffset then
@@ -2671,7 +2671,7 @@ begin
           lstAsm.Items[lstAsm.Items.Count-1].SubItems.Add(val.AsString);
       end;
     end;
-    if lstAsm.Selected.isNotNil then
+    if lstAsm.Selected.isAssigned then
       lstAsm.Selected.MakeVisible(false);
     lstAsm.EndUpdate;
     selectAsmInstr;
@@ -2693,7 +2693,7 @@ begin
         if obj.findAny('core', val) then
           k.SubItems.Add(val.AsString);
         val := obj.Find('frame');
-        if val.isNotNil and (val.JSONType = jtObject) then
+        if val.isAssigned and (val.JSONType = jtObject) then
         begin
           obj := TJSONObject(val);
           if obj.findAny('func', val) then
@@ -2753,14 +2753,14 @@ var
 begin
   if (fGdbState = gsNone) or not fOptions.showOutput then
     exit;
-  if fOutput.isNil and fOutputName.fileExists then
+  if fOutput.isNotAssigned and fOutputName.fileExists then
   try
     fOutput := TFileStream.Create(fOutputName, 0);
   except
-    if fOutput.isNotNil then
+    if fOutput.isAssigned then
       FreeAndNil(fOutput);
   end;
-  if fOutput.isNil then
+  if fOutput.isNotAssigned then
     exit;
   str := TMemoryStream.Create;
   lst := TStringList.Create;
@@ -2787,7 +2787,7 @@ end;
 {$REGION GDB commands & actions ------------------------------------------------}
 procedure TGdbWidget.gdbCommand(aCommand: string; gdbOutProcessor: TNotifyEvent = nil);
 begin
-  if fGdb.isNil or not fGdb.Running then
+  if fGdb.isNotAssigned or not fGdb.Running then
     exit;
   fCommandProcessed := false;
   aCommand += #10;
@@ -2840,7 +2840,7 @@ end;
 procedure TGdbWidget.continueDebugging;
 begin
   gdbCommand('-exec-continue --all', @gdboutJsonize);
-  if assigned(fGdb) and fgdb.Running then
+  if fGdb.isAssigned and fgdb.Running then
   begin
     setState(gsRunning);
     subjDebugContinue(fSubj);
@@ -2861,7 +2861,7 @@ procedure TGdbWidget.btnEvalClick(Sender: TObject);
 var
   e: string = '';
 begin
-  if fGdb.isNil or not fGdb.Running then
+  if fGdb.isNotAssigned or not fGdb.Running then
     exit;
   case fEvalKind of
     gekCustom:
@@ -2893,7 +2893,7 @@ const
   cmd: array[boolean] of string = ('-exec-step','-exec-step-instruction');
 begin
   gdbCommand(cmd[mnuNextMachine.Checked], @gdboutJsonize);
-  if assigned(fGdb) and fgdb.Running then
+  if fGdb.isAssigned and fgdb.Running then
     setState(gsRunning);
 end;
 
@@ -2902,13 +2902,13 @@ const
   cmd: array[boolean] of string = ('-exec-next','-exec-next-instruction');
 begin
   gdbCommand(cmd[mnuStepMachine.Checked], @gdboutJsonize);
-  if assigned(fGdb) and fgdb.Running then
+  if fGdb.isAssigned and fgdb.Running then
     setState(gsRunning);
 end;
 
 procedure TGdbWidget.btnPauseClick(Sender: TObject);
 begin
-  if assigned(fGdb) and fGdb.Running then
+  if fGdb.isAssigned and fGdb.Running then
     fCatchPause:=true;
   gdbCommand('-exec-interrupt --all', @gdboutJsonize);
 end;
@@ -2969,7 +2969,7 @@ var
   nme: string;
   doc: TDexedMemo;
 begin
-  if lstCallStack.Selected.isNil or lstCallStack.Selected.Data.isNil then
+  if lstCallStack.Selected.isNotAssigned or lstCallStack.Selected.Data.isNotAssigned then
     exit;
   itm := TStackItem(lstCallStack.Selected.Data);
   nme := itm.filename;
@@ -2977,7 +2977,7 @@ begin
     exit;
   fDocHandler.openDocument(nme);
   doc := fDocHandler.findDocument(nme);
-  if doc.isNotNil then
+  if doc.isAssigned then
     doc.CaretY:= itm.line;
   {gdbCommand('-stack-select-frame ' + intToStr(lstCallStack.ItemIndex));
   if fOptions.autoGetVariables then
@@ -2992,7 +2992,7 @@ var
   nme: string;
   doc: TDexedMemo = nil;
 begin
-  if (lstThreads.Selected.isNil) or (lstThreads.Selected.SubItems.Count < 6) then
+  if lstThreads.Selected.isNotAssigned or (lstThreads.Selected.SubItems.Count < 6) then
     exit;
   lne := StrToIntDef(lstThreads.Selected.SubItems[5], -1);
   nme := lstThreads.Selected.SubItems[4];
@@ -3000,7 +3000,7 @@ begin
     exit;
   fDocHandler.openDocument(nme);
   doc := fDocHandler.findDocument(nme);
-  if doc.isNotNil then
+  if doc.isAssigned then
     doc.CaretY:= lne;
 end;
 
@@ -3011,7 +3011,7 @@ var
 begin
   p := lstVariables.ScreenToControl(mouse.CursorPos);
   i := lstVariables.GetItemAt(p.x, p.y);
-  if assigned(i) and (i.SubItems.Count > 0) then
+  if i.isAssigned and not i.SubItems.Count.equals(0) then
     HintInfo^.HintStr:= i.SubItems[0];
 end;
 
@@ -3063,7 +3063,7 @@ begin
   if edit1.Items.IndexOf(cmd).equals(-1) then
     edit1.Items.Add(cmd);
   cmd := fSyms.expand(cmd);
-  if (cmd.length > 1) and (cmd[1] = '>') and assigned(fInput) then
+  if (cmd.length > 1) and (cmd[1] = '>') and fInput.isAssigned then
   begin
     cmd := cmd[2..cmd.length] + #10;
     fInput.Write(cmd[1], cmd.length);
