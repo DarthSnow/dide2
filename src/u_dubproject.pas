@@ -770,9 +770,10 @@ end;
 
 procedure TDubProject.loadFromFile(const fname: string);
 var
-  loader: TMemoryStream;
+  loader: TStringStream;
   parser : TJSONParser;
   ext: string;
+  s: string = '';
   bom: dword = 0;
 begin
   fFilename := fname;
@@ -784,7 +785,7 @@ begin
   fIsSdl := false;
   if ext = '.JSON' then
   begin
-    loader := TMemoryStream.Create;
+    loader := TStringStream.Create();
     try
       loader.LoadFromFile(fFilename);
       // skip BOMs, they crash the parser
@@ -815,8 +816,10 @@ begin
       else
         loader.Position:= 0;
       //
+      setLength(s, loader.Size - loader.Position);
+      loader.Read(s[1], loader.Size - loader.Position);
       FreeAndNil(fJSON);
-      parser := TJSONParser.Create(loader, [joIgnoreTrailingComma, joUTF8]);
+      parser := TJSONParser.Create(s, [joIgnoreTrailingComma, joUTF8]);
       try
         try
           fJSON := parser.Parse as TJSONObject;
