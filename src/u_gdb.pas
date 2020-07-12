@@ -2476,7 +2476,10 @@ begin
         if obj.findAny('fullname', val) then
           fLastFilename := val.AsString;
         if obj.findAny('line', val) then
+        begin
           line := val.AsInteger;
+          fLastLine := val.AsString;
+        end;
         if obj.findAny('func', val) then
         begin
           if fOptions.autoDisassemble and (val.AsString <> fLastFunction) then
@@ -2610,7 +2613,10 @@ begin
         addr := val.AsInt64;
       val := obj.Find('line');
       if val.isAssigned then
+      begin
         line := val.AsInteger;
+        fLastLine := val.AsString;
+      end;
       fStackItems.addItem(addr, fLastFilename, func, line);
     end;
     fStackItems.assignToList(lstCallStack);
