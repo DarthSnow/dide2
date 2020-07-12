@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, TreeFilterEdit, Forms, Controls, Graphics, ExtCtrls, Menus,
   ComCtrls, u_widget, jsonparser, process, actnlist, Buttons, Clipbrd, LCLProc,
   u_common, u_observer, u_synmemo, u_interfaces, u_writableComponent,
-  u_processes, u_sharedres, u_dsgncontrols, u_dexed_d;
+  u_sharedres, u_dsgncontrols, u_dexed_d;
 
 type
 
@@ -117,8 +117,6 @@ type
     procedure TreeKeyPress(Sender: TObject; var Key: char);
   private
     fImages: TImageList;
-    fHasToolExe: boolean;
-    fToolExeName: string;
     fOptions: TSymbolListOptions;
     fSyms: TSymbolList;
     fMsgs: IMessagesDisplay;

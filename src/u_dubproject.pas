@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, fpjson, jsonparser, jsonscanner, process, strutils,
   LazFileUtils, RegExpr, fgl,
-  u_common, u_interfaces, u_observer, u_dialogs, u_processes, u_projutils,
+  u_common, u_interfaces, u_observer, u_dialogs, u_processes,
   u_writableComponent, u_compilers, u_semver, u_stringrange;
 
 type

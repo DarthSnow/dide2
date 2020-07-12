@@ -7,8 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, ListFilterEdit, Forms, Controls,
   strutils, Graphics, Dialogs, ExtCtrls, Menus, Buttons, ComCtrls,
-  syncobjs,
-  u_widget, process, u_common, u_interfaces, u_synmemo, u_processes,
+  u_widget, process, u_common, u_interfaces, u_synmemo,
   u_writableComponent, u_observer, u_sharedres, u_dexed_d,
   u_dsgncontrols;
 
@@ -434,9 +433,9 @@ begin
   c := getContext;
   case c of
     tcNone: exit;
-    tcProject: if fProj.isNotAssigned or fProj.sourcesCount.equals(0) then
+    tcProject: if (fProj = nil) or fProj.sourcesCount.equals(0) then
       exit;
-    tcFile: if fDoc.isNotAssigned then
+    tcFile: if fDoc = nil then
       exit;
   end;
 
