@@ -769,7 +769,7 @@ end;
 
 procedure TDubProject.loadFromFile(const fname: string);
 var
-  loader: TStringStream;
+  loader: TMemoryStream;
   parser : TJSONParser;
   ext: string;
   s: string = '';
