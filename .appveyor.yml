@@ -1,0 +1,78 @@
+image:
+  - Visual Studio 2019
+
+clone_script:
+  - cmd: |
+         git clone -q --recursive --branch=%APPVEYOR_REPO_BRANCH% https://gitlab.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER% 
+         git checkout -qf %APPVEYOR_REPO_COMMIT%
+
+artifacts:
+  - path: setup\output
+  #- path: setup\output\dexed.%APPVEYOR_REPO_TAG_NAME%.win64.zip
+  #  name: zipped-binaries
+  #- path: setup\output\dexed.%APPVEYOR_REPO_TAG_NAME%.win64.setup.zip
+  #  name: zipped-installer
+
+branches:
+  only:
+    - /v\d*\.\d*\.\d*/
+
+install:
+  - ps: |
+        $LDC_URL = "https://github.com/ldc-developers/ldc/releases/download/v1.22.0/ldc2-1.22.0-windows-x64.7z"
+        $LDC_NME = "C:\ldc.7z";
+        $LAZ_URL = "https://gitlab.com/basile.b/laz-bin-cache.git"
+        $LAZ_NME = "laz-bin-cache\lazarus-2.0.10-fpc-3.2.0-win64.exe"
+
+        (new-object net.webclient).DownloadFile($LDC_URL, $LDC_NME)
+        7z x $LDC_NME -o"C:\" -y -r
+        Rename-Item "C:\ldc2-1.22.0-windows-x64" "C:\ldc"
+
+        git clone $LAZ_URL
+        Start-Process -FilePath $LAZ_NME -Wait -ArgumentList "/SILENT", "/SUPPRESSMSGBOXES", "/DIR=C:\lazarus"
+
+build_script:
+  - cmd: |
+        echo "building dexed..."
+        set PATH=C:\ldc\bin\;%PATH%
+        cd lazproj
+        C:\lazarus\lazbuild.exe -B dexeddesigncontrols.lpk
+        C:\lazarus\lazbuild.exe -B dexed.lpi
+        cd ..
+
+        echo "building dcd..."
+        git clone https://github.com/dlang-community/dcd.git
+        cd dcd
+        C:\ldc\bin\dub.exe build --config=server --build=release --compiler=ldc2.exe
+        C:\ldc\bin\dub.exe build --config=client --build=release --compiler=ldc2.exe
+        cd ..
+
+        echo "building d-scanner..."
+        git clone https://github.com/dlang-community/d-scanner.git
+        cd d-scanner
+        C:\ldc\bin\dub.exe build --build=release --compiler=ldc2.exe
+        cd ..
+
+        echo "moving files..."
+        mkdir setup\output
+        mkdir setup\win64
+        copy "bin\dexed.exe" "setup\win64\dexed.exe"
+        copy "bin\dexed-d.dll" "setup\win64\dexed-d.dll"
+        copy "d-scanner\bin\dscanner.exe" "setup\win64\dscanner.exe"
+        copy "dcd\bin\dcd-client.exe" "setup\win64\dcd-client.exe"
+        copy "dcd\bin\dcd-server.exe" "setup\win64\dcd-server.exe"
+        copy "logo\dexed.ico" "setup\win64\dexed.ico"
+        copy "logo\dexed256.png" "setup\win64\dexed.png"
+        copy "LICENSE_1_0.txt" "setup\win64\dexed.license.txt"
+        copy "dcd\License.txt" "setup\win64\dcd.license.txt"
+
+        echo "building installer and zips..."
+        cd setup
+        set /p ver=<version.txt
+        set ver=%ver:~1%
+
+        7z a -tzip -mx9 output\dexed.%ver%.win64.zip win64\dcd.license.txt win64\dexed.license.txt win64\dexed.exe win64\dexed-d.dll win64\dexed.ico win64\dexed.png win64\dcd-server.exe win64\dcd-client.exe win64\dscanner.exe
+
+        set SETUP_APP_NAME=dexed.%ver%.win64.setup
+        ldmd2.exe setup.d -O -release -Jwin64 -J./ -of%SETUP_APP_NAME%.exe
+        7z a -tzip -mx9 output\%SETUP_APP_NAME%.zip %SETUP_APP_NAME%.exe
