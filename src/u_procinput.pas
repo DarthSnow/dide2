@@ -153,7 +153,7 @@ procedure TProcInputWidget.sendInput;
 var
   inp: string;
 begin
-  if fProc.Input.isNotAssigned or fProc.Input.Handle.equals(0) then
+  if fProc.Input.isNotAssigned {or fProc.Input.Handle.equals(0)} then
     exit;
 
   fMru.Insert(0,txtInp.Text);
