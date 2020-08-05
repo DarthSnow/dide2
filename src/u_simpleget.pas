@@ -5,14 +5,11 @@ unit u_simpleget;
 interface
 
 uses
-  classes, {$ifdef UNIX}libcurl,{$else} fphttpclient,{$endif} fpjson, jsonparser, jsonscanner;
+  classes, fpjson, jsonparser, jsonscanner, fphttpclient,
+  openssl, opensslsockets;
 
 type
   PStream = ^TStream;
-
-{$ifdef VER3_2_0}
-  {$Warning 'workarounds to avoid SSL context errors may be unecessary starting from FCL 3.2.0'}
-{$endif}
 
 // Get the content of 'url' in the string 'data'
 function simpleGet(url: string; var data: string): boolean; overload;
@@ -22,75 +19,12 @@ function simpleGet(url: string; data: TStream): boolean; overload;
 function simpleGet(url: string; var data: TJSONData): boolean; overload;
 
 const
-  {$ifdef windows} libcurlFname = 'libeay32.dll, ssleay32.dll';    {$endif}
-  {$ifdef linux}   libcurlFname = 'libcurl.so';     {$endif}
-  {$ifdef darwin}  libcurlFname = 'libcurl.dylib';  {$endif}
-  simpleGetErrMsg = 'no network or ' + libcurlFname + ' not setup correctly';
+  simpleGetErrMsg = 'no network or incompatible libssl';
 
 implementation
 
-{$ifdef UNIX}
-var
-  fCurlHandle: CURL = nil;
-
-function curlHandle(): CURL;
-begin
-  if not assigned(fCurlHandle) then
-  begin
-    curl_global_init(CURL_GLOBAL_SSL or CURL_GLOBAL_ALL);
-    fCurlHandle := curl_easy_init();
-  end;
-  result := fCurlHandle;
-end;
-
-function simpleGetClbckForStream(buffer:Pchar; size:PtrInt; nitems:PtrInt;
-  appender: PStream): PtrInt; cdecl;
-begin
-  try
-    result := appender^.write(buffer^, size * nitems);
-  except
-    result := 0;
-  end;
-end;
-
-function simpleGetClbckForString(buffer:Pchar; size:PtrInt; nitems:PtrInt;
-  appender: PString): PtrInt; cdecl;
-begin
-  result := size* nitems;
-  try
-    (appender^) += buffer;
-  except
-    result := 0;
-  end;
-end;
-{$endif}
-
 function simpleGet(url: string; var data: string): boolean; overload;
-{$ifdef UNIX}
-var
-  c: CURLcode;
-  h: CURL;
-{$endif}
 begin
-  {$ifdef UNIX}
-  h := curlHandle();
-  if not assigned(h) then
-    exit(false);
-  c := curl_easy_setopt(h, CURLOPT_USERAGENT, ['curl-fclweb']);
-  if c <> CURLcode.CURLE_OK then
-    exit(false);
-  c := curl_easy_setopt(h, CURLOPT_URL, [PChar(url)]);
-  if c <> CURLcode.CURLE_OK then
-    exit(false);
-  c := curl_easy_setopt(h, CURLOPT_WRITEDATA, [@data]);
-  if c <> CURLcode.CURLE_OK then
-    exit(false);
-  c := curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, [@simpleGetClbckForString]);
-  if c <> CURLcode.CURLE_OK then
-    exit(false);
-  c := curl_easy_perform(h);
-  result := c = CURLcode.CURLE_OK;
-  {$else}
   result := true;
   with TFPHTTPClient.Create(nil) do
   try
@@ -103,35 +37,10 @@ begin
   finally
     free;
   end;
-  {$endif}
 end;
 
 function simpleGet(url: string; data: TStream): boolean; overload;
-{$ifdef UNIX}
-var
-  c: CURLcode;
-  h: CURL;
-{$endif}
 begin
-  {$ifdef UNIX}
-  h := curlHandle();
-  if not assigned(h) then
-    exit(false);
-  c := curl_easy_setopt(h, CURLOPT_USERAGENT, ['curl-fclweb']);
-  if c <> CURLcode.CURLE_OK then
-    exit(false);
-  c := curl_easy_setopt(h, CURLOPT_URL, [PChar(url)]);
-  if c <> CURLcode.CURLE_OK then
-   exit(false);
-  c := curl_easy_setopt(h, CURLOPT_WRITEDATA, [@data]);
-  if c <> CURLcode.CURLE_OK then
-   exit(false);
-  c := curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, [@simpleGetClbckForStream]);
-  if c <> CURLcode.CURLE_OK then
-   exit(false);
-  c := curl_easy_perform(h);
-  result := c = CURLcode.CURLE_OK;
-  {$else}
   result := true;
   with TFPHTTPClient.Create(nil) do
   try
@@ -144,7 +53,6 @@ begin
   finally
     free;
   end;
-  {$endif}
 end;
 
 function simpleGet(url: string; var data: TJSONData): boolean; overload;
@@ -166,10 +74,10 @@ begin
   end;
 end;
 
+initialization
+{$IFDEF POSIX}
+  // openssl.DLLVersions[2] := '1.1.1';
+{$ENDIF}
 finalization
-  {$ifdef UNIX}
-  if assigned(fCurlHandle) then
-    curl_easy_cleanup(fCurlHandle);
-  {$endif}
 end.
 
