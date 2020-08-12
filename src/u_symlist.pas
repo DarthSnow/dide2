@@ -848,6 +848,7 @@ begin
   tree.BeginUpdate;
   clearTree;
   updateVisibleCat;
+  fSyms.symbols.Clear;
   fSyms.LoadFromString(fTreeDataFromThread);
   f := TreeFilterEdit1.Filter;
   TreeFilterEdit1.Text := '';
