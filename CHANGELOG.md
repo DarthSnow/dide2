@@ -1,12 +1,16 @@
 # v3.9.7-dev
 
-## Other
+## Regressions
 
-- compilation: FPC 3.2.0 now required to compile dexed.
+- Messages, the messages matching to the call stack printed on assert failure were not clickable anymore. The regression was introduced when the support for GNU-style messages was added.
 
 ## Enhancements
 
 - Project menu, git: add the first line of last commit message as additional information, between square brackets, to the items of the list of branches. (#53)
+
+## Other
+
+- compilation: FPC 3.2.0 now required to compile dexed.
 
 # v3.9.6
 

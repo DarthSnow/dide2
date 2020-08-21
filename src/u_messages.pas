@@ -1245,7 +1245,7 @@ begin
   gnuStyle := (rng.front = ':') and (not rng.empty) and (rng.popFront^.front in ['1'..'9']);
   if gnuStyle then
   begin
-    lne := rng.takeUntil(':').yield;
+    lne := rng.takeUntil([':', ' ']).yield;
     if rng.front = ':' then
       col := rng.popWhile(':')^.takeUntil(' ').yield;
   end else
