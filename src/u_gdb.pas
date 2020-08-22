@@ -1862,14 +1862,14 @@ end;
 
 procedure TGdbWidget.mnuSelCustomClick(Sender: TObject);
 begin
+  mnuSelProj.Checked:=false;
+  mnuSelRunnable.Checked:=false;
   with TOpenDialog.Create(nil) do
   try
     if execute then
     begin
       fCustomTargetFile := FileName;
       fDebugTargetKind := dtkCustom;
-      mnuSelProj.Checked:=false;
-      mnuSelRunnable.Checked:=false;
       updateDebugeeOptionsEditor;
     end;
   finally
