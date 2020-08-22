@@ -9,6 +9,10 @@
 - Project menu, git: add the first line of last commit message as additional information, between square brackets, to the items of the list of branches. (#53)
 - Symbol list: keep errors and warnings at the top of the tree and never sort these two categories, to respect the lexicographic order. (#58)
 
+## Bugs
+
+- Project menu, git: no label in the list of branches when in "detached HEAD" after a checkout
+
 ## Other
 
 - compilation: FPC 3.2.0 now required to compile dexed.

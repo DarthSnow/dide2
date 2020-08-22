@@ -4218,7 +4218,10 @@ begin
         processOutputToStrings(p, c);
         while p.Running do ;
         if not c.Count.equals(0) then
-          m.caption := m.Hint + '  [last commit: ' + c[0] + ' ]';
+          m.caption := m.Hint + '  [last commit: ' + c[0] + ' ]'
+        else
+          // e.g "(HEAD detached on ...)"
+          m.caption := m.Hint;
         mnuGitBranch.Add(m);
       end;
     end;
