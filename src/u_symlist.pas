@@ -423,20 +423,20 @@ begin
     fOptions.loadFromFile(fname);
   fOptions.AssignTo(self);
 
-  ndAlias   := Tree.Items[0];
-  ndClass   := Tree.Items[1];
-  ndEnum    := Tree.Items[2];
-  ndFunc    := Tree.Items[3];
-  ndImp     := Tree.Items[4];
-  ndIntf    := Tree.Items[5];
-  ndMix     := Tree.Items[6];
-  ndStruct  := Tree.Items[7];
-  ndTmp     := Tree.Items[8];
-  ndUni     := Tree.Items[9];
-  ndUt      := Tree.Items[10];
-  ndVar     := Tree.Items[11];
-  ndWarn    := Tree.Items[12];
-  ndErr     := Tree.Items[13];
+  ndErr     := Tree.Items[0];
+  ndWarn    := Tree.Items[1];
+  ndAlias   := Tree.Items[2];
+  ndClass   := Tree.Items[3];
+  ndEnum    := Tree.Items[4];
+  ndFunc    := Tree.Items[5];
+  ndImp     := Tree.Items[6];
+  ndIntf    := Tree.Items[7];
+  ndMix     := Tree.Items[8];
+  ndStruct  := Tree.Items[9];
+  ndTmp     := Tree.Items[10];
+  ndUni     := Tree.Items[11];
+  ndUt      := Tree.Items[12];
+  ndVar     := Tree.Items[13];
 
   Tree.OnDblClick := @TreeDblClick;
   Tree.PopupMenu := contextMenu;
@@ -865,6 +865,8 @@ begin
     for i:= 0 to tree.Items.Count-1 do
   begin
     n := Tree.Items[i];
+    if (n = ndErr) or (n = ndWarn) then
+      continue;
     if n.Count > 0 then
       n.CustomSort(nil);
   end;
