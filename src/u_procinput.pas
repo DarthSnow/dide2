@@ -63,7 +63,7 @@ begin
   EntitiesConnector.addSingleService(self);
   fname := getDocPath + OptsFname;
   if OptsFname.fileExists then
-    fMru.LoadFromFile(fname);
+    fMru.LoadFromFile(fname, TEncoding.Default);
   if fMru.Count.equals(0) then
     fMru.Insert(0, '(your input here)');
 
@@ -94,7 +94,7 @@ end;
 destructor TProcInputWidget.destroy;
 begin
   // note that mru list max count is not saved.
-  fMru.SaveToFile(getDocPath + OptsFname);
+  fMru.SaveToFile(getDocPath + OptsFname, TEncoding.UTF8);
   fMru.Free;
   inherited;
 end;

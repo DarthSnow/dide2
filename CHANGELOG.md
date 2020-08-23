@@ -8,6 +8,7 @@
 ## Regressions fixed
 
 - Messages, the messages matching to the call stack printed on assert failure were not clickable anymore. The regression was introduced when the support for GNU-style messages was added.
+- Segfault on exit since built with FPC 3.2.0. (#54)
 
 ## Bugs fixed
 
