@@ -346,6 +346,11 @@ begin
   noComment := lxoNoComments in Options;
 
   reader.Create(@text[1], Point(0, 0));
+
+  if (reader.head^ = '#') and (reader.Next^ = '!') then
+    while (reader.head^ <> #10) do
+      reader.Next;
+
   while (True) do
   begin
 
