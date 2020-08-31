@@ -12,8 +12,9 @@ There are four ways to get the program:
 
 In all the cases, the _DMD_ D2 compiler must setup and its location has to match to one of the directory of the PATH environment variable.
 If it's not already installed, [download](http://dlang.org/download.html) and setup DMD2 for your platform.
-The latest Dexed version requires at least DMD 2.072.
-Note that DMD is only required for the _ddemangle_ tool otherwise the software can be fully used with only LDC or GDC as compiler.
+
+Note that Windows releases are currently not well integrated to the project host.
+The can be found on [AppVeyor](https://ci.appveyor.com/project/BBasile/dexed/history), from the _Artifacts_ tab visible when clicking one of item that listed.
 
 For each platform Dexed can be setup using a setup program or by extracting the binaries.
 

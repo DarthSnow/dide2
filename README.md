@@ -42,7 +42,8 @@ Dexed, the _D Extended EDitor_, is an IDE for the [D programming language](https
 The _zip_ archives allow to move freely the files.
 The _setup.zip_ archives contain a command line program that installs to predefined locations so that the software can be run without additional intervention.
 The _deb_ and the _rpm_ packages are for those who prefer the official setup system of their linux systems.
-FreeBSD (all archs), Linux (32 bit) and Windows (all archs) versions must be [built manually](https://basile.b.gitlab.io/dexed/build.html).
+FreeBSD (all archs), Linux (32 bit) and Windows (32 bits) versions must be [built manually](https://basile.b.gitlab.io/dexed/build.html).
+A Windows 64bit build can be found [on appveyor](https://ci.appveyor.com/project/BBasile/dexed/history). Click the top most item that has a green left margin and download the file listed in the "Artifacts" tab.
 
 [**See this page**](https://basile.b.gitlab.io/dexed/setup.html) for more information about the setup.
 
