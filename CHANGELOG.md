@@ -1,4 +1,4 @@
-# v3.9.7-dev
+# v3.9.7
 
 ## Enhancements
 
@@ -12,12 +12,13 @@
 
 ## Bugs fixed
 
-- Editor: module name not displayed in the tab caption if the module has a shebang line.
+- Editor: module name not displayed in the tab caption if the module has the shebang line.
 - Project menu, git: no label in the list of branches when in "detached HEAD" after a checkout.
 
 ## Other
 
 - compilation: FPC 3.2.0 now required to compile dexed.
+- It is recommended to deactivate the automatic update of the _Todo List_ widget, due to [a crasher](https://gitlab.com/basile.b/dexed/-/issues/55)
 
 # v3.9.6
 
