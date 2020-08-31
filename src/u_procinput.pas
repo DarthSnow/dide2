@@ -63,7 +63,7 @@ begin
   EntitiesConnector.addSingleService(self);
   fname := getDocPath + OptsFname;
   if OptsFname.fileExists then
-    fMru.LoadFromFile(fname, TEncoding.Default);
+    fMru.LoadFromFile(fname, TEncoding.UTF8);
   if fMru.Count.equals(0) then
     fMru.Insert(0, '(your input here)');
 
