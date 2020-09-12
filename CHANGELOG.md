@@ -1,17 +1,17 @@
-# v3.9.8-dev
+# v3.9.8
 
 ## Enhancements
 
-- Messages, searches: results of Find All with for scope a whole project go in their own category, preventing to repeat the operation in certain circumstances. (#60)
-- Project inspector: moved the list of configuration to a combo box over the file tree.
+- Messages, searches: results of _Find All_ with for scope a whole project go in their own category, preventing to repeat the operation in certain circumstances. (#60)
+- Project inspector: moved the list of configuration to a combo box located over the file tree.
 
 ## Bugs fixed
 
-- GDB commander, editor: bad expression returned when using mouse motion to get value of an expression within square brackets.
+- GDB commander, editor: bad expression returned when using mouse motion to get value of an expression located within square brackets.
 
 ## Other
 
-- Release links error 404. This is due to a problem in Gitlab, that got worse by the end of August...
+- Release links error 404. This is due to an old problem of Gitlab but that unfortunately got worse by the end of August...
 
 # v3.9.7
 
