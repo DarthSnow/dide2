@@ -418,7 +418,7 @@ begin
         begin
           m := getMessageDisplay;
           m.message(format('0 result for the pattern <%s>', [fToFind]),
-            nil, amcMisc, amkInf);
+            nil, amcSearch, amkInf);
         end;
       finally
         c.Free;
@@ -439,7 +439,7 @@ begin
         begin
           m := getMessageDisplay;
           m.message(format('0 result for the pattern <%s>', [fToFind]),
-            nil, amcMisc, amkInf);
+            nil, amcSearch, amkInf);
         end;
       finally
         c.Free;
@@ -499,7 +499,7 @@ begin
     begin
       msg := format('%d result(s) for the pattern `%s` in %s',
         [length(res), fToFind, filename]);
-      msgs.message(msg, nil, amcMisc, amkInf);
+      msgs.message(msg, nil, amcSearch, amkInf);
     end;
     fmt := fileName + '(%d,%d): "%s"';
     // highlighting
@@ -537,7 +537,7 @@ begin
           until
             not r.ExecNext();
           s += msg[rStart .. msg.length];
-          msgs.message(format(fmt, [res[i].Y, res[i].X, s]), nil, amcMisc, amkInf);
+          msgs.message(format(fmt, [res[i].Y, res[i].X, s]), nil, amcSearch, amkInf);
           o := res[i].Y;
         end;
       finally
@@ -548,7 +548,7 @@ begin
     begin
       msg := Trim(lines[res[i].Y-1]);
       msg := strutils.ReplaceStr(msg, fToFind, '`' + fToFind + '`');
-      msgs.message(format(fmt, [res[i].Y, res[i].X, msg]), nil, amcMisc, amkInf);
+      msgs.message(format(fmt, [res[i].Y, res[i].X, msg]), nil, amcSearch, amkInf);
     end;
   finally
     search.free;

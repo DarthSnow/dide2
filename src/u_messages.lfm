@@ -47,8 +47,8 @@ inherited MessagesWidget: TMessagesWidget
       Wrapable = False
       OnResize = toolbarResize
       object sep: TDexedToolButton[0]
-        Left = 832
-        Height = 5
+        Left = 405
+        Height = 28
         Hint = 'Clean filtered messages'
         Top = 0
         AutoSize = True
@@ -56,7 +56,7 @@ inherited MessagesWidget: TMessagesWidget
         scaledSeparator = False
       end
       object btnSelMisc: TDexedToolButton[1]
-        Left = 262
+        Left = 367
         Hint = 'filter the other messages'
         Top = 0
         AutoSize = True
@@ -65,7 +65,7 @@ inherited MessagesWidget: TMessagesWidget
       end
       object button2: TDexedToolButton[2]
         Left = 257
-        Height = 5
+        Height = 28
         Top = 0
         AutoSize = True
         Caption = 'button2'
@@ -82,7 +82,7 @@ inherited MessagesWidget: TMessagesWidget
       end
       object button4: TDexedToolButton[4]
         Left = 171
-        Height = 5
+        Height = 28
         Top = 0
         AutoSize = True
         Caption = 'button4'
@@ -99,7 +99,7 @@ inherited MessagesWidget: TMessagesWidget
       end
       object button6: TDexedToolButton[6]
         Left = 113
-        Height = 5
+        Height = 28
         Top = 0
         AutoSize = True
         Caption = 'button6'
@@ -116,7 +116,7 @@ inherited MessagesWidget: TMessagesWidget
       end
       object button8: TDexedToolButton[8]
         Left = 62
-        Height = 5
+        Height = 28
         Top = 0
         AutoSize = True
         Caption = 'button8'
@@ -133,11 +133,11 @@ inherited MessagesWidget: TMessagesWidget
         scaledSeparator = False
       end
       object TreeFilterEdit1: TTreeFilterEdit[10]
-        Left = 304
+        Left = 416
         Height = 28
         Hint = 'in the selected category, filter the messages that contain the text typed here'
         Top = 1
-        Width = 528
+        Width = 416
         OnAfterFilter = TreeFilterEdit1AfterFilter
         ButtonWidth = 23
         Align = alRight
@@ -158,10 +158,26 @@ inherited MessagesWidget: TMessagesWidget
       end
       object sepCat: TDexedToolButton[12]
         Left = 29
-        Height = 5
+        Height = 28
         Top = 0
         AutoSize = True
         Caption = 'sepCat'
+        Style = tbsDivider
+        scaledSeparator = False
+      end
+      object btnSelSearches: TDexedToolButton[13]
+        Left = 262
+        Top = 0
+        AutoSize = True
+        Caption = 'Search results'
+        scaledSeparator = False
+      end
+      object button3: TDexedToolButton[14]
+        Left = 362
+        Height = 28
+        Top = 0
+        AutoSize = True
+        Caption = 'button3'
         Style = tbsDivider
         scaledSeparator = False
       end

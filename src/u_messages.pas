@@ -70,6 +70,8 @@ type
 
   TMessagesWidget = class(TDexedWidget, IEditableOptions, IDocumentObserver, IProjectObserver, IMessagesDisplay)
     btnClearCat: TDexedToolButton;
+    btnSelSearches: TDexedToolButton;
+    button3: TDexedToolButton;
     sepCat: TDexedToolButton;
     btnSelAll: TDexedToolButton;
     btnSelApp: TDexedToolButton;
@@ -448,11 +450,13 @@ begin
   btnSelEdit.OnClick  := @selCtxtClick;
   btnSelApp.OnClick   := @selCtxtClick;
   btnSelAll.OnClick   := @selCtxtClick;
+  btnSelSearches.OnClick  := @selCtxtClick;
   fBtns[amcAll] := btnSelAll;
   fBtns[amcApp] := btnSelApp;
   fBtns[amcEdit]:= btnSelEdit;
   fBtns[amcMisc]:= btnSelMisc;
   fBtns[amcProj]:= btnSelProj;
+  fBtns[amcSearch]:= btnSelSearches;
 
   btnClearCat.OnClick := @actClearCurCatExecute;
 
@@ -557,7 +561,9 @@ begin
   else if btn = btnSelApp then
     fCtxt := amcApp
   else if btn = btnSelMisc then
-    fCtxt := amcMisc;
+    fCtxt := amcMisc
+  else if btn = btnSelSearches then
+    fCtxt := amcSearch;
   if o <> fCtxt then
     fJustChangedContext := true;
   filterMessages(fCtxt);
@@ -1160,6 +1166,7 @@ begin
     amcProj: result := (fProj = ICommonProject(msgDt^.data)) and (aCtxt = amcProj);
     amcApp:  result := aCtxt = amcApp;
     amcMisc: result := aCtxt = amcMisc;
+    amcSearch: result := aCtxt = amcSearch;
   end;
 end;
 

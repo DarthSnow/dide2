@@ -248,6 +248,7 @@ type
     amcProj,        // used as filter
     amcApp,         // used as filter
     amcMisc,        // used as filter
+    amcSearch,      // used as filter
     amcAutoEdit,    // same as amcEdit but the message data is set automatically by the IMessagesDisplay
     amcAutoProj,    // same as amcProj but the message data is set automatically by the IMessagesDisplay
     amcAutoCompile  // same as amcAutoEdit or amcAutoProj but set by the IMessagesDisplay according to what's being compiled.

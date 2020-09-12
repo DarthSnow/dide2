@@ -2,6 +2,7 @@
 
 ## Enhancements
 
+- Messages, searches: results of Find All with for scope a whole project go in their own category, preventing to repeat the operation in certain circumstances. (#60)
 - Project inspector: moved the list of configuration to a combo box over the file tree.
 
 ## Bugs fixed
