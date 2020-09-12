@@ -126,10 +126,17 @@ if [ ! -z "$GITLAB_CI" ]; then
     LOG=$(./extract_last_changelog_part)
     LOG=$(echo "$LOG" | sed -z 's/\n/\\n/g' | sed -z 's/\"/\\"/g')
 
-    ASSET_RPM='{ "name" : "'$RPM_NAME'" , "url" : "'$LNK_BASE$RPM_NAME'" , "filepath" : "/binaries/'$RPM_NAME'" }'
-    ASSET_DEB='{ "name" : "'$DEB_NAME'" , "url" : "'$LNK_BASE$DEB_NAME'" , "filepath" : "/binaries/'$DEB_NAME'" }'
-    ASSET_ZP1='{ "name" : "'$ZP1_NAME'" , "url" : "'$LNK_BASE$ZP1_NAME'" , "filepath" : "/binaries/'$ZP1_NAME'" }'
-    ASSET_ZP2='{ "name" : "'$ZP2_NAME'" , "url" : "'$LNK_BASE$ZP2_NAME'" , "filepath" : "/binaries/'$ZP2_NAME'" }'
+    # fixed URL didnt work, see https://gitlab.com/gitlab-org/gitlab/-/issues/211622#note_406196179
+    # but now they also lead to 404...
+    # ASSET_RPM='{ "name" : "'$RPM_NAME'" , "url" : "'$LNK_BASE$RPM_NAME'" , "filepath" : "/binaries/'$RPM_NAME'" }'
+    # ASSET_DEB='{ "name" : "'$DEB_NAME'" , "url" : "'$LNK_BASE$DEB_NAME'" , "filepath" : "/binaries/'$DEB_NAME'" }'
+    # ASSET_ZP1='{ "name" : "'$ZP1_NAME'" , "url" : "'$LNK_BASE$ZP1_NAME'" , "filepath" : "/binaries/'$ZP1_NAME'" }'
+    # ASSET_ZP2='{ "name" : "'$ZP2_NAME'" , "url" : "'$LNK_BASE$ZP2_NAME'" , "filepath" : "/binaries/'$ZP2_NAME'" }'
+
+    ASSET_RPM='{ "name" : "'$RPM_NAME'" , "url" : "'$LNK_BASE$RPM_NAME'" }'
+    ASSET_DEB='{ "name" : "'$DEB_NAME'" , "url" : "'$LNK_BASE$DEB_NAME'" }'
+    ASSET_ZP1='{ "name" : "'$ZP1_NAME'" , "url" : "'$LNK_BASE$ZP1_NAME'" }'
+    ASSET_ZP2='{ "name" : "'$ZP2_NAME'" , "url" : "'$LNK_BASE$ZP2_NAME'" }'
 
     REQ_DATA='{ "name" : "'$semver'", "tag_name": "'$semver'", "description": "'$LOG'", "assets": { "links": [ '$ASSET_RPM' , '$ASSET_DEB' , '$ASSET_ZP1' , '$ASSET_ZP2'] } }'
 

@@ -9,6 +9,10 @@
 
 - GDB commander, editor: bad expression returned when using mouse motion to get value of an expression within square brackets.
 
+## Other
+
+- Release links error 404. This is due to a problem in Gitlab, that got worse by the end of August...
+
 # v3.9.7
 
 ## Enhancements
