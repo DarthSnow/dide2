@@ -23,8 +23,8 @@ inherited ProjectInspectWidget: TProjectInspectWidget
       PopupMenu = nil
       object Tree: TTreeView[0]
         Left = 2
-        Height = 218
-        Top = 2
+        Height = 184
+        Top = 36
         Width = 420
         Align = alClient
         AutoExpand = True
@@ -43,10 +43,25 @@ inherited ProjectInspectWidget: TProjectInspectWidget
         OnSelectionChanged = TreeSelectionChanged
         Options = [tvoAutoExpand, tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoReadOnly, tvoRightClickSelect, tvoShowButtons, tvoShowLines, tvoThemedDraw]
         Items.Data = {
-          F9FFFFFF020002000000000000000000000000000000FFFFFFFF000000000000
-          0000000C000000536F757263652066696C6573010000000100000001000000FF
-          FFFFFF0000000000000000000E000000436F6E66696775726174696F6E73
+          F9FFFFFF020001000000000000000000000000000000FFFFFFFF000000000000
+          0000000C000000536F757263652066696C6573
         }
+      end
+      object selConf: TComboBox[1]
+        Left = 4
+        Height = 30
+        Hint = 'select the active configuaration'
+        Top = 2
+        Width = 416
+        Align = alTop
+        BorderSpacing.Left = 4
+        BorderSpacing.Top = 2
+        BorderSpacing.Right = 4
+        BorderSpacing.Bottom = 4
+        ItemHeight = 0
+        OnChange = selConfChange
+        Style = csDropDownList
+        TabOrder = 1
       end
     end
     inherited toolbar: TDexedToolBar

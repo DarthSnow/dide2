@@ -6,9 +6,9 @@ interface
 
 uses
   Classes, SysUtils, TreeFilterEdit, Forms, Controls, Graphics, actnlist,
-  Dialogs, ExtCtrls, ComCtrls, Menus, Buttons, lcltype, u_ceproject, u_interfaces,
-  u_common, u_widget, u_observer, u_dialogs, u_sharedres, u_dsgncontrols,
-  u_dubproject, u_synmemo, u_stringrange, u_writableComponent;
+  Dialogs, ExtCtrls, ComCtrls, Menus, Buttons, lcltype, StdCtrls, u_ceproject,
+  u_interfaces, u_common, u_widget, u_observer, u_dialogs, u_sharedres,
+  u_dsgncontrols, u_dubproject, u_synmemo, u_stringrange, u_writableComponent;
 
 type
 
@@ -28,6 +28,7 @@ type
     btnRemFile: TDexedToolButton;
     btnRemFold: TDexedToolButton;
     btnTree: TDexedToolButton;
+    selConf: TComboBox;
     Tree: TTreeView;
     TreeFilterEdit1: TTreeFilterEdit;
     procedure btnAddFileClick(Sender: TObject);
@@ -37,6 +38,7 @@ type
     procedure btnTreeClick(Sender: TObject);
     procedure btnReloadClick(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const fnames: array of String);
+    procedure selConfChange(Sender: TObject);
     procedure toolbarResize(Sender: TObject);
     procedure TreeClick(Sender: TObject);
     procedure TreeDeletion(Sender: TObject; Node: TTreeNode);
@@ -49,10 +51,9 @@ type
     procedure setToolBarFlat(value: boolean); override;
   private
     fActOpenFile: TAction;
-    fActSelConf: TAction;
     fActBuildConf: TAction;
     fProj: ICommonProject;
-    fFileNode, fConfNode: TTreeNode;
+    fFileNode: TTreeNode;
     fLastFileOrFolder: string;
     fSymStringExpander: ISymStringExpander;
     fImages: TImageList;
@@ -100,12 +101,8 @@ begin
   fSymStringExpander:= getSymStringExpander;
 
   fActOpenFile := TAction.Create(self);
-  fActOpenFile.Caption := 'Open file in editor';
+  fActOpenFile.Caption := 'Open file(s) in editor';
   fActOpenFile.OnExecute := @actOpenFileExecute;
-  fActSelConf := TAction.Create(self);
-  fActSelConf.Caption := 'Select configuration';
-  fActSelConf.OnExecute := @actOpenFileExecute;
-  fActSelConf.OnUpdate := @actUpdate;
   fActBuildConf:= TAction.Create(self);
   fActBuildConf.Caption := 'Build configuration';
   fActBuildConf.OnExecute := @actBuildExecute;
@@ -158,7 +155,6 @@ begin
 
   Tree.OnDblClick := @TreeDblClick;
   fFileNode := Tree.Items[0];
-  fConfNode := Tree.Items[1];
 
   Tree.Images := fImages;
   Tree.PopupMenu := contextMenu;
@@ -218,15 +214,14 @@ end;
 
 function TProjectInspectWidget.contextActionCount: integer;
 begin
-  exit(3);
+  exit(2);
 end;
 
 function TProjectInspectWidget.contextAction(index: integer): TAction;
 begin
   case index of
     0: exit(fActOpenFile);
-    1: exit(fActSelConf);
-    2: exit(fActBuildConf);
+    1: exit(fActBuildConf);
     else exit(nil);
   end;
 end;
@@ -362,6 +357,8 @@ begin
   if Tree.Selected.isAssigned then
   begin
     Tree.MultiSelect := Tree.Selected.Parent = fFileNode;
+    if Tree.Selected.isNotAssigned() then
+      exit;
     if not (Tree.Selected.Parent = fFileNode) then
     begin
       Tree.MultiSelect := false;
@@ -396,43 +393,32 @@ end;
 
 procedure TProjectInspectWidget.TreeDblClick(sender: TObject);
 var
-  fname: string;
+  f: string;
   i: integer;
 begin
   if fProj.isNotAssigned or Tree.Selected.isNotAssigned then
     exit;
-
-  if Tree.Selected.Parent <> fConfNode then
+  for i := 0 to Tree.SelectionCount - 1 do
+    if Tree.Selections[i].Data.isAssigned() then
   begin
-    if Tree.Selected.Data.isAssigned then
-    begin
-      fname := PString(Tree.Selected.Data)^;
-      if isEditable(fname.extractFileExt) and fname.fileExists then
-        getMultiDocHandler.openDocument(fname);
-    end;
-  end
-  else
-  begin
-    i := Tree.Selected.Index;
-    fProj.setActiveConfigurationIndex(i);
-    beginDelayedUpdate;
+    f := PString(Tree.Selections[i].Data)^;
+    if isEditable(f.extractFileExt) and f.fileExists then
+      getMultiDocHandler.openDocument(f);
   end;
+  Tree.Selected := nil;
 end;
 
 procedure TProjectInspectWidget.actUpdate(sender: TObject);
 begin
-  fActSelConf.Enabled := false;
   fActOpenFile.Enabled := false;
   fActBuildConf.Enabled:= false;
   if Tree.Selected.isNotAssigned then
     exit;
-  fActSelConf.Enabled := Tree.Selected.Parent = fConfNode;
-  fActBuildConf.Enabled := Tree.Selected.Parent = fConfNode;
+  fActBuildConf.Enabled := true;
   fActOpenFile.Enabled := Tree.Selected.ImageIndex = 2;
 end;
 
-procedure TProjectInspectWidget.DetectNewDubSources(const document: TDexedMemo
-  );
+procedure TProjectInspectWidget.DetectNewDubSources(const document: TDexedMemo);
 begin
   if fProj.isNotAssigned or (fProj.getFormat <> pfDUB) then
     exit;
@@ -634,6 +620,13 @@ begin
   end;
 end;
 
+procedure TProjectInspectWidget.selConfChange(Sender: TObject);
+begin
+  if fProj.isNotAssigned or selConf.ItemIndex.equals(-1) or selConf.Items.Count.equals(0) then
+    exit;
+  fProj.setActiveConfigurationIndex(selConf.ItemIndex);
+end;
+
 procedure TProjectInspectWidget.toolbarResize(Sender: TObject);
 begin
   TreeFilterEdit1.Width := toolbar.Width - TreeFilterEdit1.Left - TreeFilterEdit1.BorderSpacing.Around;
@@ -656,7 +649,6 @@ var
 begin
   if Tree.Selected.isAssigned then
     sel := Tree.Selected.GetTextPath;
-  fConfNode.DeleteChildren;
   fFileNode.DeleteChildren;
 
   if fProj.isNotAssigned then
@@ -705,36 +697,15 @@ begin
       end;
     end;
   end;
-
-
-  j := fProj.getActiveConfigurationIndex;
-  for i := 0 to fProj.configurationCount-1 do
-  begin
-    conf := fProj.configurationName(i);
-    if i = j then
-      conf += ' (active)';
-    itm := Tree.Items.AddChild(fConfNode, conf);
-    if i = j then
-    begin
-      itm.ImageIndex := 4;
-      itm.SelectedIndex:= 4;
-    end
-    else
-    begin
-      itm.ImageIndex := 3;
-      itm.SelectedIndex:= 3;
-    end;
-  end;
-  if sel.isNotEmpty then
-  begin
-    itm := Tree.Items.FindNodeWithTextPath(sel);
-    if itm.isAssigned then
-    begin
-      itm.Selected := true;
-      itm.MakeVisible;
-    end;
-  end;
   Tree.EndUpdate;
+
+  selConf.Items.BeginUpdate();
+  j := fProj.getActiveConfigurationIndex;
+  selConf.Items.Clear;
+  for i := 0 to fProj.configurationCount-1 do
+    selConf.Items.Add(fProj.configurationName(i));
+  selConf.ItemIndex := j;
+  selConf.Items.EndUpdate();
 end;
 {$ENDREGION --------------------------------------------------------------------}
 

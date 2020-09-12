@@ -4,6 +4,10 @@
 
 - Project inspector: moved the list of configuration to a combo box over the file tree.
 
+## Bugs fixed
+
+- GDB commander, editor: bad expression returned when using mouse motion to get value of an expression within square brackets.
+
 # v3.9.7
 
 ## Enhancements
