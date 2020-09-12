@@ -1021,7 +1021,7 @@ begin
       begin
         EndCodeFoldBlock(fkBrackets in fFoldKinds);
         if (reader^ = '}') and (rkAsm in fCurrRange.rangeKinds) then
-          fCurrRange.rangeKinds -= [rkAsm]; ;
+          fCurrRange.rangeKinds -= [rkAsm];
         if ((reader+1)^ in stringPostfixes) and not isIdentifier((reader+2)^) then
           readerNext;
       end;
