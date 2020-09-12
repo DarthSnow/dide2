@@ -1,3 +1,9 @@
+# v3.9.8-dev
+
+## Enhancements
+
+- Project inspector: moved the list of configuration to a combo box over the file tree.
+
 # v3.9.7
 
 ## Enhancements

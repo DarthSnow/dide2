@@ -1153,6 +1153,7 @@ var
   ri: integer;
   li: integer = -1;
   p : integer = 1;
+  s : integer = 1;
   i : integer;
   t : PLexToken;
 begin
@@ -1185,6 +1186,14 @@ begin
     p -= Byte((t^.kind = TLexTokenKind.ltkSymbol) and (t^.Data = '('));
     //  (a.(b).c|.d)  ->  a.(b).c
     if p.equals(0) then
+    begin
+      li := i+1;
+      break;
+    end;
+    s += Byte((t^.kind = TLexTokenKind.ltkSymbol) and (t^.Data = ']'));
+    s -= Byte((t^.kind = TLexTokenKind.ltkSymbol) and (t^.Data = '['));
+    //  [a.[b].c|  ->  a.[b].c
+    if s.equals(0) then
     begin
       li := i+1;
       break;
