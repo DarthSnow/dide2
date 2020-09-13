@@ -778,7 +778,7 @@ end;
 procedure TMessagesWidget.actClearCurCatExecute(Sender: TObject);
 begin
   case fCtxt of
-    amcAll, amcApp, amcMisc :
+    amcAll, amcApp, amcMisc, amcSearch:
       clearbyContext(fCtxt);
     amcEdit: if fDoc.isAssigned then
       clearbyData(fDoc);

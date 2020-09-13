@@ -1,3 +1,9 @@
+# v3.9.9-dev
+
+## Bugs fixed
+
+- Messages, when selected, the recently added _Search Results_ category could not be emptied.
+
 # v3.9.8
 
 ## Enhancements
