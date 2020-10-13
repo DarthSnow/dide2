@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, RegExpr, ComCtrls,
   PropEdits, GraphPropEdits, RTTIGrids, Dialogs, ExtCtrls, Menus, Buttons,
-  StdCtrls, process, fpjson, typinfo, Unix, ListViewFilterEdit, SynEdit,
-  ObjectInspector, math,
+  StdCtrls, process, fpjson, typinfo, {$IFDEF UNIX}Unix,{$ELSE} Windows,{$ENDIF}
+  ListViewFilterEdit, SynEdit, ObjectInspector, math,
   u_common, u_interfaces, u_widget, u_processes, u_observer, u_synmemo,
   u_sharedres, u_stringrange, u_dsgncontrols, u_dialogs, u_dbgitf,
   u_ddemangle, u_writableComponent, EditBtn, strutils, u_controls;
@@ -1330,7 +1330,7 @@ procedure TGdbWidget.updateMenu;
 var
   mnu: IMainMenu;
   itm: TMenuItem;
-  bmp: TBitmap;
+  bmp: Graphics.TBitmap;
 begin
   mnu := getMainMenu;
   if mnu.isNotAssigned then
@@ -1343,7 +1343,7 @@ begin
   end;
   fMenu.Clear;
 
-  bmp := TBitmap.Create;
+  bmp := Graphics.TBitmap.Create;
 
   itm := TMenuItem.Create(fMenu);
   itm.ShortCut:=fOptions.shortcuts.start;
@@ -1967,7 +1967,7 @@ begin
   end;
 
   if fInputName.fileExists then
-    deletefile(fInputName);
+    SysUtils.deletefile(fInputName);
   fInput:= TFileStream.Create(fInputName, fmCreate or fmShareExclusive);
   subjDebugStart(fSubj, self as IDebugger);
   case fDebugTargetKind of
@@ -2103,9 +2103,9 @@ begin
   if fOptions.keepRedirectedStreams then
     exit;
   if fOutputName.fileExists then
-    deleteFile(fOutputName);
+    SysUtils.deleteFile(fOutputName);
   if fInputName.fileExists then
-    deleteFile(fInputName);
+    SysUtils.deleteFile(fInputName);
 end;
 {$ENDREGION}
 

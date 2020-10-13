@@ -13,9 +13,9 @@ artifacts:
   #- path: setup\output\dexed.%APPVEYOR_REPO_TAG_NAME%.win64.setup.zip
   #  name: zipped-installer
 
-branches:
-  only:
-    - /v\d*\.\d*\.\d*/
+#branches:
+#  only:
+#    - /v\d*\.\d*\.\d*/
 
 install:
   - ps: |
