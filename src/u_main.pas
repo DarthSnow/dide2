@@ -14,7 +14,7 @@ uses
   u_widget, u_messages, u_interfaces, u_editor, u_projinspect, u_ceprojeditor,
   u_search, u_miniexplorer, u_libman, u_libmaneditor, u_todolist, u_observer,
   u_toolseditor, u_procinput, u_optionseditor, u_symlist, u_mru, u_processes,
-  u_infos, u_dubproject, u_dialogs, u_dubprojeditor,{$IFDEF UNIX} u_gdb,{$ENDIF}
+  u_infos, u_dubproject, u_dialogs, u_dubprojeditor, u_gdb,
   u_dfmt, u_lcldragdrop, u_projgroup, u_projutils, u_stringrange, u_dexed_d,
   u_halstead, u_profileviewer, u_semver, u_dsgncontrols, u_term, u_newdubproj;
 
@@ -426,9 +426,9 @@ type
     fInfoWidg: TInfoWidget;
     fDubProjWidg: TDubProjectEditorWidget;
     fPrjGrpWidg: TProjectGroupWidget;
+    fGdbWidg: TGdbWidget;
     {$IFDEF UNIX}
     fTermWWidg: TTermWidget;
-    fGdbWidg: TGdbWidget;
     {$ENDIF}
 
     fDfmtWidg: TDfmtWidget;
@@ -1602,9 +1602,9 @@ begin
   fDfmtWidg   := TDfmtWidget.create(self);
   fPrjGrpWidg := TProjectGroupWidget.create(self);
   fProfWidg   := TProfileViewerWidget.create(self);
+  fGdbWidg    := TGdbWidget.create(self);
   {$IFDEF UNIX}
   fTermWWidg  := TTermWidget.create(self);
-  fGdbWidg    := TGdbWidget.create(self);
   {$ENDIF}
 
   getMessageDisplay(fMsgs);
@@ -1627,9 +1627,9 @@ begin
   fWidgList.addWidget(@fDfmtWidg);
   fWidgList.addWidget(@fPrjGrpWidg);
   fWidgList.addWidget(@fProfWidg);
+  fWidgList.addWidget(@fGdbWidg);
   {$IFDEF UNIX}
   fWidgList.addWidget(@fTermWWidg);
-  fWidgList.addWidget(@fGdbWidg);
   {$ENDIF}
 
   fWidgList.sort(@CompareWidgCaption);

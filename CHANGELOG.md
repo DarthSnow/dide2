@@ -1,5 +1,10 @@
 # v3.9.9-dev
 
+## Enhancement
+
+- GDB commander: The widget is now activated on Windows systems. Note that it might only works if the project is compiled with LDC >= 1.23.0 and if debug info  are generated and if the _-gdwarf_ switch is also part of the config.
+See [LDC announcement](https://forum.dlang.org/post/ssvxmrdpklhsrqlgrzas@forum.dlang.org). GDB for windows can be found [here](https://sourceforge.net/projects/lazarus/files/Lazarus%20Windows%2064%20bits/Alternative%20GDB/) for example.
+
 ## Bugs fixed
 
 - Messages, when selected, the recently added _Search Results_ category could not be emptied.
