@@ -8,6 +8,7 @@ See [LDC announcement](https://forum.dlang.org/post/ssvxmrdpklhsrqlgrzas@forum.d
 ## Bugs fixed
 
 - Messages, when selected, the recently added _Search Results_ category could not be emptied.
+- Highlighter, `q"()"`, `q"[]"`, `q"<>"`, `q"{}>"` strings highlighting was broken.
 
 # v3.9.8
 

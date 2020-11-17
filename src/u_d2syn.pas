@@ -143,6 +143,7 @@ begin
     nestedQGeStrings:= rng.nestedQGeStrings;
     nestedQParensStrings := rng.nestedQParensStrings;
     nestedQSquareStrings := rng.nestedQSquareStrings;
+    nestedQCurlyStrings := rng.nestedQCurlyStrings;
   end;
 end;
 
@@ -176,6 +177,10 @@ begin
   inherited;
   nestedCommentsCount := 0;
   namedRegionCount := 0;
+  nestedQGeStrings:= 0;
+  nestedQParensStrings := 0;
+  nestedQSquareStrings := 0;
+  nestedQCurlyStrings := 0;
   rangeKinds := [];
   rString := false;
 end;
@@ -187,6 +192,10 @@ begin
     nestedCommentsCount := source.nestedCommentsCount;
     namedRegionCount := source.namedRegionCount;
     rangeKinds := source.rangeKinds;
+    nestedQGeStrings:= source.nestedQGeStrings;
+    nestedQParensStrings := source.nestedQParensStrings;
+    nestedQSquareStrings := source.nestedQSquareStrings;
+    nestedQCurlyStrings := source.nestedQCurlyStrings;
     rString := source.rString;
   end;
 end;
