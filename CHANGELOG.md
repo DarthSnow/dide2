@@ -9,6 +9,7 @@ See [LDC announcement](https://forum.dlang.org/post/ssvxmrdpklhsrqlgrzas@forum.d
 
 - Messages, when selected, the recently added _Search Results_ category could not be emptied.
 - Highlighter, `q"()"`, `q"[]"`, `q"<>"`, `q"{}>"` strings highlighting was broken.
+- HTML export, the dialog proposed to open a file, not to save one.
 
 # v3.9.8
 

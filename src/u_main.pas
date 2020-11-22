@@ -2603,7 +2603,7 @@ begin
     exit;
   exp := TSynExporterHTML.Create(nil);
   try
-    with TOpenDialog.Create(nil) do
+    with TSaveDialog.Create(nil) do
     try
       if Execute then
       begin
