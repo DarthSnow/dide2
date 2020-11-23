@@ -7,6 +7,7 @@ See [LDC announcement](https://forum.dlang.org/post/ssvxmrdpklhsrqlgrzas@forum.d
 
 ## Bugs fixed
 
+- About box, ddemangle was listed as a required tool but it is not anymore. (#74)
 - Messages, when selected, the recently added _Search Results_ category could not be emptied.
 - Highlighter, `q"()"`, `q"[]"`, `q"<>"`, `q"{}>"` strings highlighting was broken.
 - HTML export, the dialog proposed to open a file, not to save one.

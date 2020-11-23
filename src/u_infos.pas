@@ -247,10 +247,6 @@ begin
     'optional, the LDC D compiler, setup in "Options - Compilers paths"');
   itm.Parent := boxTools;
   itm.ReAlign;
-  itm := TToolInfo.Construct(self, tikFindable, 'ddemangle',
-    'optional, allows to demangle the symbols in the message widget');
-  itm.Parent := boxTools;
-  itm.ReAlign;
   itm := TToolInfo.Construct(self, tikRunning, 'dcd-server',
     'mandatory, provides IDE-grade features such as the completion');
   itm.Parent := boxTools;
